@@ -1,11 +1,11 @@
 package com.example.cginvoice.domain.model.user
 
 data class User(
-    val userId: Long,
+    val userId: String,
     val businessName: String,
     val logo: String,
     val signature: String,
-    val addressId: Long,
-    val contactId: Long,
+    val addressId: String,
+    val contactId: String,
     val taxId: String
 )

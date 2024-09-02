@@ -6,7 +6,7 @@ import com.example.cginvoice.domain.model.user.User
 
 object Constants {
     val sampleAddress = Address(
-        addressId = 12345L,
+        addressId = "12345L",
         country = "USA",
         street = "456 Elm St",
         aptSuite = "Suite 12",
@@ -15,8 +15,8 @@ object Constants {
     )
 
     val sampleContact = Contact(
-        contactId = 67890L,
-        name = "Jane Smith",
+        contactId = "fSA3X2zEts",
+        name = "Jane Smooth",
         phone = 9876543210L,
         cell = 1234567890L,
         email = "janesmith@example.com",
@@ -25,7 +25,7 @@ object Constants {
     )
 
     val sampleUser = User(
-        userId = 54321L,
+        userId = "54321L",
         businessName = "Sample Business",
         logo = "https://example.com/logo.png",
         signature = "https://example.com/signature.png",
