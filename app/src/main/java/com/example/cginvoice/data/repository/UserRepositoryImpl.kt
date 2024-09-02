@@ -3,7 +3,9 @@ package com.example.cginvoice.data.repository
 import com.example.cginvoice.data.APIResource
 import com.example.cginvoice.data.DBResource
 import com.example.cginvoice.data.source.local.LocalUserDataSource
-import com.example.cginvoice.data.source.remote.RemoteUserDataSource
+import com.example.cginvoice.data.source.remote.user.RemoteUserDataSource
+import com.example.cginvoice.domain.model.common.Address
+import com.example.cginvoice.domain.model.common.Contact
 import com.example.cginvoice.domain.model.user.User
 import javax.inject.Inject
 
@@ -21,8 +23,8 @@ class UserRepositoryImpl@Inject constructor(private val localUserDataSource: Loc
         return null
     }
 
-    override suspend fun createUserInfo() {
-        TODO("Not yet implemented")
+    override suspend fun createUserInfo(user: User,contact: Contact,address: Address) {
+        remoteUserDataSource.insertUserRemote(user,contact,address)
     }
 
     override suspend fun updateUserInfo(user: User) {
