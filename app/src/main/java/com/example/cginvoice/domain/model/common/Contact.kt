@@ -7,5 +7,6 @@ data class Contact(
     val cell: Long,
     val email: String,
     val fax: String,
-    val website: String
+    val website: String,
+    val objectId : String
 )

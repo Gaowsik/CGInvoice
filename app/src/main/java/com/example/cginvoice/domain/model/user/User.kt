@@ -7,5 +7,6 @@ data class User(
     val signature: String,
     val addressId: String,
     val contactId: String,
-    val taxId: String
+    val taxId: String,
+    val objectId : String
 )
