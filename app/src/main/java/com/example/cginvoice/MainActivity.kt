@@ -17,6 +17,7 @@ import com.example.cginvoice.ui.theme.CGInvoiceTheme
 import com.example.cginvoice.utills.Constants.sampleAddress
 import com.example.cginvoice.utills.Constants.sampleContact
 import com.example.cginvoice.utills.Constants.sampleUser
+import com.example.cginvoice.utills.Constants.sampleUserInfoResponse
 import com.parse.Parse
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -28,7 +29,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        userViewModel.insertUserRemote(sampleUser, sampleContact, sampleAddress)
+      //  userViewModel.insertUserRemote(sampleUser, sampleContact, sampleAddress)
+        userViewModel.getUserInfo("jNCK5iHKYl")
+        userViewModel.updateUserInfo(sampleUserInfoResponse)
         setContent {
             CGInvoiceTheme {
 
