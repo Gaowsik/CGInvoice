@@ -51,6 +51,76 @@ class Back4AppUserManager {
                                 put("contact", contactObject) // Link Contact
                             }
 
+
+                            // Save UserInfo object
+                            userInfoObject.saveInBackground { userInfoSaveException ->
+                                if (userInfoSaveException == null) {
+                                    Log.d("insertUserInfo", "UserInfo saved successfully.")
+                                } else {
+                                    Log.e(
+                                        "insertUserInfo",
+                                        "Failed to save UserInfo: ${userInfoSaveException.message}"
+                                    )
+                                }
+                            }
+                        } else {
+                            Log.e(
+                                "insertUserInfo",
+                                "Failed to save Contact: ${contactSaveException.message}"
+                            )
+                        }
+                    }
+                } else {
+                    Log.e(
+                        "insertUserInfo",
+                        "Failed to save Address: ${addressSaveException.message}"
+                    )
+                }
+            }
+        }
+
+
+    suspend fun insertUserInfoR(userInfoResponse: UserInfoResponse) =
+        withContext(Dispatchers.IO) {
+
+            // Save Address object
+            var addressData = userInfoResponse.address
+            val addressObject: ParseObject = ParseObject("Address").apply {
+                addressData?.let { put("country", it.country) }
+                addressData?.let { put("street", it.street) }
+                addressData?.let { put("aptSuite", it.aptSuite) }
+                addressData?.let { put("postalCode", it.postalCode) }
+                addressData?.let { put("city", it.city) }
+            }
+
+            // Save Contact object
+            var contactData = userInfoResponse.contact
+            val contactObject = ParseObject("Contact").apply {
+                contactData?.let { put("name", it.name) }
+                contactData?.let { put("phone", it.phone) }
+                contactData?.let { put("cell", it.cell) }
+                contactData?.let { put("email", it.email) }
+                contactData?.let { put("fax", it.fax) }
+                contactData?.let { put("website", it.website) }
+            }
+
+            // Save both objects asynchronously
+            addressObject.saveInBackground { addressSaveException ->
+                if (addressSaveException == null) {
+                    // Address saved successfully
+                    contactObject.saveInBackground { contactSaveException ->
+                        if (contactSaveException == null) {
+                            // Contact saved successfully
+                            // Create UserInfo object and link address and contact
+                            val userInfoObject = ParseObject("UserInfo").apply {
+                                put("businessName", userInfoResponse.businessName)
+                                put("logo", userInfoResponse.logo)
+                                put("signature", userInfoResponse.signature)
+                                put("address", addressObject) // Link Address
+                                put("contact", contactObject) // Link Contact
+                            }
+
+
                             // Save UserInfo object
                             userInfoObject.saveInBackground { userInfoSaveException ->
                                 if (userInfoSaveException == null) {

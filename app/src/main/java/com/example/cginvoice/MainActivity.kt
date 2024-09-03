@@ -29,9 +29,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-      //  userViewModel.insertUserRemote(sampleUser, sampleContact, sampleAddress)
-        userViewModel.getUserInfo("jNCK5iHKYl")
-        userViewModel.updateUserInfo(sampleUserInfoResponse)
+        userViewModel.insertUserRemote(sampleUser, sampleContact, sampleAddress)
+      //  userViewModel.getUserInfo("jNCK5iHKYl")
+      //  userViewModel.updateUserInfo(sampleUserInfoResponse)
         setContent {
             CGInvoiceTheme {
 

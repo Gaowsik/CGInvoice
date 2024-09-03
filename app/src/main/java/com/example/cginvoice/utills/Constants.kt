@@ -26,7 +26,7 @@ object Constants {
     )
 
     val sampleUser = User(
-        userId = "54321L",
+        userId = "BWuEIYNAbk",
         businessName = "Sample Business boo",
         logo = "https://example.com/logo.png",
         signature = "https://example.com/signature.png",
@@ -36,7 +36,7 @@ object Constants {
     )
 
     val sampleUserInfoResponse = UserInfoResponse(
-        userId = "a4mjPevSTW",
+        userId = "hellonesfwbaby",
         businessName = "Hello boo",
         logo = "https://example.com/logo.png",
         signature = "https://example.com/signature.png",
