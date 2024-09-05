@@ -2,6 +2,8 @@ package com.example.cginvoice.data.source.local.entitiy.common
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.example.cginvoice.data.source.local.entitiy.user.UserEntity
+import com.example.cginvoice.data.source.remote.model.UserInfoResponse
 import com.example.cginvoice.domain.model.common.Address
 
 @Entity
@@ -40,3 +42,17 @@ fun Address.toAddressEntity(): AddressEntity {
         objectId = objectId
     )
 }
+
+fun UserInfoResponse.toAddressEntity(): AddressEntity {
+    return AddressEntity(
+        addressId = address?.addressId ?: 0,  // Assuming Address has an 'id' field as a String
+        country = address?.country ?: "",
+        street = address?.street ?: "",
+        aptSuite = address?.aptSuite ?: "",
+        postalCode = address?.postalCode ?: "",
+        city = address?.city ?: "",
+        objectId = objectId ?: ""
+    )
+}
+
+

@@ -2,6 +2,7 @@ package com.example.cginvoice.data.source.local.entitiy.common
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.example.cginvoice.data.source.remote.model.UserInfoResponse
 import com.example.cginvoice.domain.model.common.Contact
 
 @Entity
@@ -41,6 +42,19 @@ fun Contact.toContactEntity(): ContactEntity {
         fax = fax,
         website = website,
         objectId = objectId
+    )
+}
+
+fun UserInfoResponse.toContactEntity(): ContactEntity {
+    return ContactEntity(
+        contactId = contact?.contactId ?: 0,  // Assuming Contact has an 'id' field as a String
+        name = contact?.name ?: "",
+        phone = contact?.phone ?: 0L,
+        cell = contact?.cell ?: 0L,
+        email = contact?.email ?: "",
+        fax = contact?.fax ?: "",
+        website = contact?.website ?: "",
+        objectId = objectId ?: ""
     )
 }
 

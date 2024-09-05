@@ -387,9 +387,93 @@ class Back4AppUserManager {
                 businessName = it.getString("businessName") ?: "",
                 logo = it.getString("logo") ?: "",
                 signature = it.getString("signature") ?: "",
-                address = addressData,
-                contact = contactData
+                address = addressData!!,
+                contact = contactData!!
             )
         }
+
+
     }
+
+    suspend fun saveOrUpdateUserInfo(userInfoResponse: UserInfoResponse) =
+        withContext(Dispatchers.IO) {
+            // Save or Update Address object
+            val addressObject = if (userInfoResponse.address?.objectId.isNullOrEmpty()) {
+                ParseObject("Address")
+            } else {
+                val query = ParseQuery.getQuery<ParseObject>("Address")
+                query.get(userInfoResponse.address?.objectId.toString())
+            }.apply {
+                userInfoResponse.address?.let {
+                    put("country", it.country)
+                    put("street", it.street)
+                    put("aptSuite", it.aptSuite)
+                    put("postalCode", it.postalCode)
+                    put("city", it.city)
+                }
+            }
+
+            addressObject.saveInBackground { addressSaveException ->
+                if (addressSaveException == null) {
+                    // Save or Update Contact object
+                    val contactObject = if (userInfoResponse.contact?.objectId.isNullOrEmpty()) {
+                        ParseObject("Contact")
+                    } else {
+                        val query = ParseQuery.getQuery<ParseObject>("Contact")
+                        query.get(userInfoResponse.contact?.objectId.toString())
+                    }.apply {
+                        userInfoResponse.contact?.let {
+                            put("name", it.name)
+                            put("phone", it.phone)
+                            put("cell", it.cell)
+                            put("email", it.email)
+                            put("fax", it.fax)
+                            put("website", it.website)
+                        }
+                    }
+
+                    contactObject.saveInBackground { contactSaveException ->
+                        if (contactSaveException == null) {
+                            // Save or Update UserInfo object
+                            val userInfoObject = if (userInfoResponse.objectId.isNullOrEmpty()) {
+                                ParseObject("UserInfo")
+                            } else {
+                                val query = ParseQuery.getQuery<ParseObject>("UserInfo")
+                                query.get(userInfoResponse.objectId.toString())
+                            }.apply {
+                                put("businessName", userInfoResponse.businessName)
+                                put("logo", userInfoResponse.logo)
+                                put("signature", userInfoResponse.signature)
+                                put("address", addressObject)
+                                put("contact", contactObject)
+                            }
+
+                            userInfoObject.saveInBackground { userInfoSaveException ->
+                                if (userInfoSaveException == null) {
+                                    Log.d(
+                                        "saveOrUpdateUserInfo",
+                                        "UserInfo saved/updated successfully."
+                                    )
+                                } else {
+                                    Log.e(
+                                        "saveOrUpdateUserInfo",
+                                        "Failed to save/update UserInfo: ${userInfoSaveException.message}"
+                                    )
+                                }
+                            }
+                        } else {
+                            Log.e(
+                                "saveOrUpdateUserInfo",
+                                "Failed to save/update Contact: ${contactSaveException.message}"
+                            )
+                        }
+                    }
+                } else {
+                    Log.e(
+                        "saveOrUpdateUserInfo",
+                        "Failed to save/update Address: ${addressSaveException.message}"
+                    )
+                }
+            }
+        }
 }

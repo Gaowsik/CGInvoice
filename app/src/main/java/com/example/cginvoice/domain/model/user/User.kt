@@ -5,8 +5,7 @@ data class User(
     val businessName: String,
     val logo: String,
     val signature: String,
-    val addressId: String,
-    val contactId: String,
-    val taxId: String,
+    val addressId: Int,
+    val contactId: Int,
     val objectId: String
 )

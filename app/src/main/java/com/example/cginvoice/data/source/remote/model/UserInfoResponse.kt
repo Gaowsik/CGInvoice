@@ -8,6 +8,8 @@ data class UserInfoResponse(
     val businessName: String,
     val logo: String,
     val signature: String,
-    val address: Address?,
-    val contact: Contact?
+    val objectId: String? = "",
+    val address: Address,
+    val contact: Contact
+
 )

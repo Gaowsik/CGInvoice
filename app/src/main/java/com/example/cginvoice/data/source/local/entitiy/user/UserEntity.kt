@@ -2,6 +2,7 @@ package com.example.cginvoice.data.source.local.entitiy.user
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.example.cginvoice.data.source.remote.model.UserInfoResponse
 import com.example.cginvoice.domain.model.user.User
 
 @Entity
@@ -10,9 +11,8 @@ data class UserEntity(
     val businessName: String,
     val logo: String,
     val signature: String,
-    val addressId: String,
-    val contactId: String,
-    val taxId: String,
+    val addressId: Int,
+    val contactId: Int,
     val objectId: String
 ) {
 
@@ -25,7 +25,6 @@ data class UserEntity(
             signature = signature,
             addressId = addressId,
             contactId = contactId,
-            taxId = taxId,
             objectId = objectId
         )
     }
@@ -40,7 +39,18 @@ fun User.toUserEntity(): UserEntity {
         signature = signature,
         addressId = addressId,
         contactId = contactId,
-        taxId = taxId,
         objectId = objectId
+    )
+}
+
+fun UserInfoResponse.toUserEntity(): UserEntity {
+    return UserEntity(
+        userId = userId.toIntOrNull() ?: 0,
+        businessName = businessName,
+        logo = logo,
+        signature = signature,
+        addressId = address.addressId,
+        contactId = contact.contactId,
+        objectId = objectId ?: ""
     )
 }

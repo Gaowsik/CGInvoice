@@ -33,6 +33,10 @@ interface UserDao {
     @Query("SELECT * FROM UserEntity WHERE userId = :userId")
     suspend fun getUserEntityWithInvoiceEntities(userId: String): List<UserEntityWithInvoiceEntities>
 
+    // Method to return the first UserEntity
+    @Query("SELECT * FROM UserEntity LIMIT 1")
+    suspend fun getUserEntity(): UserEntity
+
     @Query("DELETE FROM UserEntity")
     suspend fun deleteUserEntity()
 }

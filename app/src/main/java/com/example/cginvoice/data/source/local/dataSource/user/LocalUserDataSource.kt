@@ -17,6 +17,7 @@ interface LocalUserDataSource {
     suspend fun getUserAndContact(contactId: String): DBResource<List<UserAndContact>>
     suspend fun getUserAndAddress(addressId: String): DBResource<List<UserAndAddress>>
     suspend fun getUserWithInvoices(userId: String): DBResource<List<UserWithInvoices>>
+    suspend fun getUser() : DBResource<User>
     suspend fun deleteUserEntity(): DBResource<Unit>
 
 }

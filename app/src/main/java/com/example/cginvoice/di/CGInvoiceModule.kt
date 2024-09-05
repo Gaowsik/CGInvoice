@@ -2,8 +2,8 @@ package com.example.cginvoice.di
 
 import android.content.Context
 import androidx.room.Room
-import com.example.cginvoice.data.repository.UserRepository
-import com.example.cginvoice.data.repository.UserRepositoryImpl
+import com.example.cginvoice.data.repository.user.UserRepository
+import com.example.cginvoice.data.repository.user.UserRepositoryImpl
 import com.example.cginvoice.data.source.local.CGInvoiceDatabase
 import com.example.cginvoice.data.source.local.dataSource.common.LocalCommonDataSource
 import com.example.cginvoice.data.source.local.dataSource.common.LocalCommonDataSourceImpl

@@ -39,6 +39,10 @@ class LocalUserDataSourceImpl(private val userDao: UserDao) : LocalUserDataSourc
         }
     }
 
+    override suspend fun getUser() =safeDbCall {
+        userDao.getUserEntity().toUser()
+    }
+
 
     override suspend fun deleteUserEntity() = safeDbCall {
         userDao.deleteUserEntity()
