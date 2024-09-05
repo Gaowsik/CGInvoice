@@ -359,7 +359,7 @@ class Back4AppUserManager {
             // Create Address data class from the ParseObject
             val addressData = addressObject?.let { addr ->
                 Address(
-                    addressId = addr.objectId,
+                    objectId = addr.objectId,
                     country = addr.getString("country") ?: "",
                     street = addr.getString("street") ?: "",
                     aptSuite = addr.getString("aptSuite") ?: "",
@@ -371,7 +371,7 @@ class Back4AppUserManager {
             // Create Contact data class from the ParseObject
             val contactData = contactObject?.let { contact ->
                 Contact(
-                    contactId = contact.objectId,
+                    objectId = contact.objectId,
                     name = contact.getString("name") ?: "",
                     phone = contact.getLong("phone"),
                     cell = contact.getLong("cell"),

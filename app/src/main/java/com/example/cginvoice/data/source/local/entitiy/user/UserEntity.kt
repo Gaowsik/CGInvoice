@@ -6,7 +6,7 @@ import com.example.cginvoice.domain.model.user.User
 
 @Entity
 data class UserEntity(
-    @PrimaryKey(autoGenerate = true) val userId: String,
+    @PrimaryKey(autoGenerate = true) val userId: Int,
     val businessName: String,
     val logo: String,
     val signature: String,

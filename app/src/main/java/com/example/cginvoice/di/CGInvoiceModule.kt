@@ -1,19 +1,23 @@
 package com.example.cginvoice.di
 
-import android.app.Application
-import androidx.core.content.ContextCompat.getString
-import com.example.cginvoice.R
+import android.content.Context
+import androidx.room.Room
 import com.example.cginvoice.data.repository.UserRepository
 import com.example.cginvoice.data.repository.UserRepositoryImpl
-import com.example.cginvoice.data.source.local.LocalUserDataSource
-import com.example.cginvoice.data.source.local.LocalUserDataSourceImpl
+import com.example.cginvoice.data.source.local.CGInvoiceDatabase
+import com.example.cginvoice.data.source.local.dataSource.common.LocalCommonDataSource
+import com.example.cginvoice.data.source.local.dataSource.common.LocalCommonDataSourceImpl
+import com.example.cginvoice.data.source.local.dataSource.invoice.LocalInvoiceDataSource
+import com.example.cginvoice.data.source.local.dataSource.invoice.LocalInvoiceDataSourceImpl
+import com.example.cginvoice.data.source.local.dataSource.user.LocalUserDataSource
+import com.example.cginvoice.data.source.local.dataSource.user.LocalUserDataSourceImpl
 import com.example.cginvoice.data.source.remote.user.Back4AppUserManager
 import com.example.cginvoice.data.source.remote.user.RemoteUserDataSource
 import com.example.cginvoice.data.source.remote.user.RemoteUserDataSourceImpl
-import com.parse.Parse
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -32,7 +36,6 @@ class CGInvoiceModule {
         }
     }
 
-
     @Module
     @InstallIn(SingletonComponent::class)
     object DataSourceModule {
@@ -46,8 +49,25 @@ class CGInvoiceModule {
         @Singleton
         @Provides
         fun provideLocalUserDataSource(
+            database: CGInvoiceDatabase
         ): LocalUserDataSource {
-            return LocalUserDataSourceImpl()
+            return LocalUserDataSourceImpl(database.userDao())
+        }
+
+        @Singleton
+        @Provides
+        fun provideLocalCommonDataSource(
+            database: CGInvoiceDatabase
+        ): LocalCommonDataSource {
+            return LocalCommonDataSourceImpl(database.commonDao())
+        }
+
+        @Singleton
+        @Provides
+        fun provideLocalInvoiceDataSource(
+            database: CGInvoiceDatabase
+        ): LocalInvoiceDataSource {
+            return LocalInvoiceDataSourceImpl(database.invoiceDao())
         }
 
         @Provides
@@ -56,6 +76,18 @@ class CGInvoiceModule {
             return Back4AppUserManager()
         }
 
+    }
+
+    @Module
+    @InstallIn(SingletonComponent::class)
+    object DatabaseModule {
+        @Singleton
+        @Provides
+        fun provideDatabase(@ApplicationContext context: Context): CGInvoiceDatabase {
+            return Room.databaseBuilder(
+                context.applicationContext, CGInvoiceDatabase::class.java, "WMS.db"
+            ).build()
+        }
     }
 
 }

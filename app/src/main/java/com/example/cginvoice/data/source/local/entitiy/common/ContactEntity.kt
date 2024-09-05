@@ -6,7 +6,7 @@ import com.example.cginvoice.domain.model.common.Contact
 
 @Entity
 data class ContactEntity(
-    @PrimaryKey(autoGenerate = false) val contactId: String,
+    @PrimaryKey(autoGenerate = true) val contactId: Int,
     val name: String,
     val phone: Long,
     val cell: Long,

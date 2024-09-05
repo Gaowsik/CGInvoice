@@ -1,8 +1,6 @@
 package com.example.cginvoice.data.repository
 
-import com.example.cginvoice.data.APIResource
-import com.example.cginvoice.data.DBResource
-import com.example.cginvoice.data.source.local.LocalUserDataSource
+import com.example.cginvoice.data.source.local.dataSource.user.LocalUserDataSource
 import com.example.cginvoice.data.source.remote.model.UserInfoResponse
 import com.example.cginvoice.data.source.remote.user.RemoteUserDataSource
 import com.example.cginvoice.domain.model.common.Address

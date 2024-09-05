@@ -6,7 +6,7 @@ import com.example.cginvoice.domain.model.common.Address
 
 @Entity
 data class AddressEntity(
-    @PrimaryKey(autoGenerate = true) val addressId: String,
+    @PrimaryKey(autoGenerate = true) val addressId: Int,
     val country: String,
     val street: String,
     val aptSuite: String,
