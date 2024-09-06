@@ -1,5 +1,6 @@
 package com.example.cginvoice.data.repository.user
 
+import com.example.cginvoice.data.APIResource
 import com.example.cginvoice.data.DBResource
 import com.example.cginvoice.data.repository.common.CommonRepository
 import com.example.cginvoice.data.source.local.dataSource.common.LocalCommonDataSource
@@ -23,18 +24,16 @@ class UserRepositoryImpl @Inject constructor(
     private val localCommonDataSource: LocalCommonDataSource
 ) : UserRepository {
     override suspend fun insertUserInfoResponseToDB(userInfoResponse: UserInfoResponse) {
-        val (userEntity, addressEntity, contactEntity) = userInfoResponse.toEntities()
+        val (addressEntity, contactEntity) = userInfoResponse.toEntities()
+        val responseAddress = localCommonDataSource.insertAddressEntity(addressEntity)
+        val responseContact = localCommonDataSource.insertContactEntity(contactEntity)
+        if (responseAddress is DBResource.Success && responseContact is DBResource.Success) {
 
-        userEntity.let {
+            val userEntity = userInfoResponse.toUserEntity(
+                responseAddress.value.toInt(),
+                responseContact.value.toInt()
+            )
             localUserDataSource.insertUserEntity(userEntity)
-        }
-
-        addressEntity.let {
-            localCommonDataSource.insertAddressEntity(addressEntity)
-        }
-
-        contactEntity.let {
-            localCommonDataSource.insertContactEntity(contactEntity)
         }
     }
 
@@ -42,9 +41,11 @@ class UserRepositoryImpl @Inject constructor(
         val response = localUserDataSource.getUser()
         if (response is DBResource.Success) {
             try {
-                val contactResponse = localUserDataSource.getUserAndContact(response.value.contactId.toString())
+                val contactResponse =
+                    localUserDataSource.getUserAndContact(response.value.contactId.toString())
 
-                val addressResponse = localUserDataSource.getUserAndAddress(response.value.addressId.toString())
+                val addressResponse =
+                    localUserDataSource.getUserAndAddress(response.value.addressId.toString())
 
                 if (contactResponse is DBResource.Success && addressResponse is DBResource.Success) {
                     val userInfoResponse = getUserResponse(
@@ -70,6 +71,9 @@ class UserRepositoryImpl @Inject constructor(
         return DBResource.Error(Exception("Unexpected error occurred while fetching user info."))
     }
 
+    override suspend fun getUserInfoRemote(objectId: String) =
+        remoteUserDataSource.getUserRemote(userId = objectId)
+
 
     override suspend fun createUserInfo(user: User, contact: Contact, address: Address) {
         remoteUserDataSource.insertUserRemote(user, contact, address)
@@ -86,19 +90,18 @@ class UserRepositoryImpl @Inject constructor(
     suspend fun getUerRemote(userId: String) = remoteUserDataSource.getUserRemote(userId)
 
 
-    private fun UserInfoResponse.toEntities(): Triple<UserEntity, AddressEntity, ContactEntity> {
-        val userEntity = this.toUserEntity()
+    private fun UserInfoResponse.toEntities(): Pair<AddressEntity, ContactEntity> {
         val addressEntity = this.toAddressEntity()
         val contactEntity = this.toContactEntity()
 
-        return Triple(userEntity, addressEntity, contactEntity)
+        return Pair(addressEntity, contactEntity)
 
 
     }
 
     private fun getUserResponse(user: User, contact: Contact, address: Address) =
         UserInfoResponse(
-            userId = user.userId.toString(),
+            userId = user.userId,
             businessName = user.businessName,
             logo = user.logo,
             signature = user.signature,

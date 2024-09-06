@@ -3,6 +3,7 @@ package com.example.cginvoice.presentaion.user
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cginvoice.data.APIResource
+import com.example.cginvoice.data.repository.user.UserRepository
 import com.example.cginvoice.data.source.remote.model.UserInfoResponse
 import com.example.cginvoice.data.source.remote.user.RemoteUserDataSource
 import com.example.cginvoice.domain.model.common.Address
@@ -17,26 +18,28 @@ import javax.inject.Inject
 
 @HiltViewModel
 class UserViewModel @Inject constructor(
-    val remoteUserDataSource: RemoteUserDataSource
+    val userRepository: UserRepository
 ) : ViewModel() {
     private val _errorMessage = MutableSharedFlow<String>()
     val errorMessage = _errorMessage.asSharedFlow()
 
     private val _getUserInfo = MutableSharedFlow<UserInfoResponse>()
     val getUserInfo = _getUserInfo.asSharedFlow()
-    fun insertUserRemote(user: User, contact: Contact, address: Address) {
-        viewModelScope.launch {
-            remoteUserDataSource.insertUserRemote(user, contact, address)
-        }
 
-    }
+    /*    fun insertUserRemote(user: User, contact: Contact, address: Address) {
+            viewModelScope.launch {
+                userRepository.insertUserRemote(user, contact, address)
+            }
 
-    fun getUserInfo(userId: String) {
+        }*/
+
+    fun getUserInfo(objectId: String) {
         viewModelScope.launch {
-            val response = remoteUserDataSource.getUserRemote(userId)
+            val response = userRepository.getUserInfoRemote(objectId)
             when (response) {
                 is APIResource.Success -> {
                     _getUserInfo.emit(response.value)
+                    userRepository.insertUserInfoResponseToDB(response.value)
                 }
 
                 is APIResource.Loading -> {
@@ -57,12 +60,11 @@ class UserViewModel @Inject constructor(
 
     }
 
-
-    fun updateUserInfo(userInfoResponse: UserInfoResponse){
-        viewModelScope.launch {
-            remoteUserDataSource.updateUserRemote(userInfoResponse)
-        }
-    }
+    /*    fun updateUserInfo(userInfoResponse: UserInfoResponse){
+            viewModelScope.launch {
+                remoteUserDataSource.updateUserRemote(userInfoResponse)
+            }
+        }*/
 
 
 }

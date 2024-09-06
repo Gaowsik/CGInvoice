@@ -11,9 +11,9 @@ import com.example.cginvoice.data.source.local.entitiy.invoice.InvoiceEntity
 @Dao
 interface CommonDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertContactEntity(contactEntity: ContactEntity)
+    suspend fun insertContactEntity(contactEntity: ContactEntity) : Long
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAddressEntity(addressEntity: AddressEntity)
+    suspend fun insertAddressEntity(addressEntity: AddressEntity) : Long
     @Query("DELETE FROM ContactEntity")
     suspend fun deleteContactEntity()
 

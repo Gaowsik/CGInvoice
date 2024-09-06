@@ -12,7 +12,7 @@ import com.example.cginvoice.domain.model.user.UserAndContact
 import com.example.cginvoice.domain.model.user.UserWithInvoices
 
 interface LocalUserDataSource {
-    suspend fun insertUserEntity(userEntity: UserEntity): DBResource<Unit>
+    suspend fun insertUserEntity(userEntity: UserEntity): DBResource<Long>
     suspend fun updateUserEntity(userEntity: UserEntity): DBResource<Unit>
     suspend fun getUserAndContact(contactId: String): DBResource<List<UserAndContact>>
     suspend fun getUserAndAddress(addressId: String): DBResource<List<UserAndAddress>>

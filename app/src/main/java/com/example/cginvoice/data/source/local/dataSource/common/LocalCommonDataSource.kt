@@ -5,9 +5,9 @@ import com.example.cginvoice.data.source.local.entitiy.common.AddressEntity
 import com.example.cginvoice.data.source.local.entitiy.common.ContactEntity
 
 interface LocalCommonDataSource {
-    suspend fun insertContactEntity(contactEntity: ContactEntity) : DBResource<Unit>
+    suspend fun insertContactEntity(contactEntity: ContactEntity) : DBResource<Long>
 
-    suspend fun insertAddressEntity(addressEntity: AddressEntity) : DBResource<Unit>
+    suspend fun insertAddressEntity(addressEntity: AddressEntity) : DBResource<Long>
 
     suspend fun deleteContactEntity() : DBResource<Unit>
 

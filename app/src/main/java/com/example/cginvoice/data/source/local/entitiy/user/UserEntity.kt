@@ -43,14 +43,14 @@ fun User.toUserEntity(): UserEntity {
     )
 }
 
-fun UserInfoResponse.toUserEntity(): UserEntity {
+fun UserInfoResponse.toUserEntity(addressId: Int,contactId: Int): UserEntity {
     return UserEntity(
-        userId = userId.toIntOrNull() ?: 0,
+        userId = userId,
         businessName = businessName,
         logo = logo,
         signature = signature,
-        addressId = address.addressId,
-        contactId = contact.contactId,
+        addressId = addressId,
+        contactId = contactId,
         objectId = objectId ?: ""
     )
 }

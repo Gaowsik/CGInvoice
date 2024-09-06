@@ -383,7 +383,7 @@ class Back4AppUserManager {
 
             // Create and return the UserInfo data class
             UserInfoResponse(
-                userId = it.objectId,
+                objectId = it.objectId,
                 businessName = it.getString("businessName") ?: "",
                 logo = it.getString("logo") ?: "",
                 signature = it.getString("signature") ?: "",

@@ -4,7 +4,7 @@ import com.example.cginvoice.domain.model.common.Address
 import com.example.cginvoice.domain.model.common.Contact
 
 data class UserInfoResponse(
-    val userId: String,
+    val userId: Int = 0,
     val businessName: String,
     val logo: String,
     val signature: String,

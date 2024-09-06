@@ -16,7 +16,7 @@ import com.example.cginvoice.domain.model.invoice.Invoice
 @Dao
 interface UserDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertUserEntity(userEntity: UserEntity)
+    suspend fun insertUserEntity(userEntity: UserEntity) : Long
 
     @Update
     suspend fun updateUserEntity(userEntity: UserEntity)

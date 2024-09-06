@@ -28,10 +28,10 @@ class CGInvoiceModule {
         @Singleton
         @Provides
         fun provideUserRepository(
-            localUserDataSource: LocalUserDataSource, remoteUserDataSource: RemoteUserDataSource
+            localUserDataSource: LocalUserDataSource, remoteUserDataSource: RemoteUserDataSource,localCommonDataSource: LocalCommonDataSource
         ): UserRepository {
             return UserRepositoryImpl(
-                localUserDataSource, remoteUserDataSource
+                localUserDataSource, remoteUserDataSource,localCommonDataSource
             )
         }
     }

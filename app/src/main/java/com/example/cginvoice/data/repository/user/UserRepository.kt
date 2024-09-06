@@ -10,6 +10,7 @@ import com.example.cginvoice.domain.model.user.User
 interface UserRepository {
     suspend fun insertUserInfoResponseToDB(userInfoResponse: UserInfoResponse)
     suspend fun getUserInfo(): DBResource<UserInfoResponse>
+    suspend fun getUserInfoRemote(objectId : String): APIResource<UserInfoResponse>
     suspend fun createUserInfo(user: User, contact: Contact, address: Address)
     suspend fun updateUserInfoDB(user: UserInfoResponse)
     suspend fun userInfoSync(user: UserInfoResponse)

@@ -30,13 +30,12 @@ object Constants {
         businessName = "Sample Business boo",
         logo = "https://example.com/logo.png",
         signature = "https://example.com/signature.png",
-        addressId = sampleAddress.addressId.toString(),
-        contactId = sampleContact.contactId.toString(),
-        taxId = "TAX123456789"
+        addressId = sampleAddress.addressId,
+        contactId = sampleContact.contactId,
     )
 
     val sampleUserInfoResponse = UserInfoResponse(
-        userId = "hellonesfwbaby",
+        userId = 57678687,
         businessName = "Hello boo",
         logo = "https://example.com/logo.png",
         signature = "https://example.com/signature.png",
