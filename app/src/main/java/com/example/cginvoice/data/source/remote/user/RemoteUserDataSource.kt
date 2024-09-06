@@ -10,7 +10,7 @@ import com.example.cginvoice.domain.model.user.User
 interface RemoteUserDataSource {
     suspend fun insertUserRemote(user: User, contact: Contact, address : Address)
 
-    suspend fun updateUserRemote(user: UserInfoResponse)
+    suspend fun updateUserRemote(user: UserInfoResponse) : APIResource<Unit>
 
     suspend fun getUserRemote(userId : String): APIResource<UserInfoResponse>
 }

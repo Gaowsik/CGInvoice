@@ -43,3 +43,16 @@ fun parseErrors(failure: APIResource.Error): String {
         }
     }
 }
+
+inline fun <reified T> T.toJson(): String {
+    return Gson().toJson(this, T::class.java)
+}
+
+// Extension function to convert a JSON string to an object
+inline fun <reified T> String.fromJson(): T {
+    return Gson().fromJson(this, T::class.java)
+}
+
+enum class SyncType(val type: String) {
+    USER("user")
+}

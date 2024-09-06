@@ -13,5 +13,5 @@ interface UserRepository {
     suspend fun getUserInfoRemote(objectId : String): APIResource<UserInfoResponse>
     suspend fun createUserInfo(user: User, contact: Contact, address: Address)
     suspend fun updateUserInfoDB(user: UserInfoResponse)
-    suspend fun userInfoSync(user: UserInfoResponse)
+    suspend fun userInfoSync(user: UserInfoResponse) : APIResource<Unit>
 }

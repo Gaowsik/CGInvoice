@@ -14,8 +14,10 @@ class RemoteUserDataSourceImpl @Inject constructor(private val back4AppUserManag
     override suspend fun insertUserRemote(user: User, contact: Contact, adress: Address) =
         back4AppUserManager.insertUserInfo(user, adress, contact)
 
-    override suspend fun updateUserRemote(user: UserInfoResponse) =
-      back4AppUserManager.saveOrUpdateUserInfo(user)
+    override suspend fun updateUserRemote(user: UserInfoResponse) = safeApiCall {
+        back4AppUserManager.saveOrUpdateUserInfo(user)
+    }
+
 
 
     override suspend fun getUserRemote(userId : String) = safeApiCall {

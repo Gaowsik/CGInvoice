@@ -6,6 +6,10 @@ import com.example.cginvoice.domain.model.common.Contact
 import com.example.cginvoice.domain.model.user.User
 
 object Constants {
+
+    const val KEY_SYNC_DATA_REQUEST = "key_sync_data_request"
+    const val KEY_SYNC_TYPE = "key_sync_type"
+
     val sampleAddress = Address(
         objectId = "lgFOYxNNqA",
         country = "USA",

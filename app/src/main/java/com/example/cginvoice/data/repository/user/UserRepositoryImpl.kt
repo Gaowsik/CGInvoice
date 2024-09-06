@@ -33,7 +33,10 @@ class UserRepositoryImpl @Inject constructor(
                 responseAddress.value.toInt(),
                 responseContact.value.toInt()
             )
-            localUserDataSource.insertUserEntity(userEntity)
+            val responseUser = localUserDataSource.insertUserEntity(userEntity)
+            if (responseUser is DBResource.Success){
+                TODO("startWorker to sync data")
+            }
         }
     }
 
@@ -83,9 +86,9 @@ class UserRepositoryImpl @Inject constructor(
         remoteUserDataSource.updateUserRemote(user)
     }
 
-    override suspend fun userInfoSync(user: UserInfoResponse) {
+    override suspend fun userInfoSync(user: UserInfoResponse) =
         remoteUserDataSource.updateUserRemote(user)
-    }
+
 
     suspend fun getUerRemote(userId: String) = remoteUserDataSource.getUserRemote(userId)
 

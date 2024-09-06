@@ -2,6 +2,10 @@ package com.example.cginvoice.di
 
 import android.content.Context
 import androidx.room.Room
+import androidx.work.Configuration
+import androidx.work.DelegatingWorkerFactory
+import androidx.work.WorkManager
+import com.example.cginvoice.data.CustomWorkerFactory
 import com.example.cginvoice.data.repository.user.UserRepository
 import com.example.cginvoice.data.repository.user.UserRepositoryImpl
 import com.example.cginvoice.data.source.local.CGInvoiceDatabase
@@ -28,10 +32,12 @@ class CGInvoiceModule {
         @Singleton
         @Provides
         fun provideUserRepository(
-            localUserDataSource: LocalUserDataSource, remoteUserDataSource: RemoteUserDataSource,localCommonDataSource: LocalCommonDataSource
+            localUserDataSource: LocalUserDataSource,
+            remoteUserDataSource: RemoteUserDataSource,
+            localCommonDataSource: LocalCommonDataSource
         ): UserRepository {
             return UserRepositoryImpl(
-                localUserDataSource, remoteUserDataSource,localCommonDataSource
+                localUserDataSource, remoteUserDataSource, localCommonDataSource
             )
         }
     }
@@ -87,6 +93,24 @@ class CGInvoiceModule {
             return Room.databaseBuilder(
                 context.applicationContext, CGInvoiceDatabase::class.java, "WMS.db"
             ).build()
+        }
+    }
+
+    @Module
+    @InstallIn(SingletonComponent::class)
+    object WorkerModule {
+        @Provides
+        fun provideWorkManager(
+            @ApplicationContext appContext: Context, workerFactory: CustomWorkerFactory
+        ): WorkManager {
+            val configuration =
+                Configuration.Builder().setWorkerFactory(object : DelegatingWorkerFactory() {
+                    init {
+                        addFactory(workerFactory)
+                    }
+                }).build()
+            WorkManager.initialize(appContext, configuration)
+            return WorkManager.getInstance(appContext)
         }
     }
 
