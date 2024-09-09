@@ -11,11 +11,13 @@ import com.example.cginvoice.data.source.local.entitiy.common.toAddressEntity
 import com.example.cginvoice.data.source.local.entitiy.common.toContactEntity
 import com.example.cginvoice.data.source.local.entitiy.user.UserEntity
 import com.example.cginvoice.data.source.local.entitiy.user.toUserEntity
+import com.example.cginvoice.data.source.remote.model.IdInfoResponse
 import com.example.cginvoice.data.source.remote.model.UserInfoResponse
 import com.example.cginvoice.data.source.remote.user.RemoteUserDataSource
 import com.example.cginvoice.domain.model.common.Address
 import com.example.cginvoice.domain.model.common.Contact
 import com.example.cginvoice.domain.model.user.User
+import com.example.cginvoice.utills.SyncType
 import javax.inject.Inject
 
 class UserRepositoryImpl @Inject constructor(
@@ -33,10 +35,10 @@ class UserRepositoryImpl @Inject constructor(
                 responseAddress.value.toInt(),
                 responseContact.value.toInt()
             )
-            val responseUser = localUserDataSource.insertUserEntity(userEntity)
-            if (responseUser is DBResource.Success){
+           val responseUser = localUserDataSource.insertUserEntity(userEntity)
+           /* if (responseUser is DBResource.Success) {
                 TODO("startWorker to sync data")
-            }
+            }*/
         }
     }
 
@@ -83,11 +85,37 @@ class UserRepositoryImpl @Inject constructor(
     }
 
     override suspend fun updateUserInfoDB(user: UserInfoResponse) {
-        remoteUserDataSource.updateUserRemote(user)
+        val response = remoteUserDataSource.updateUserRemote(user)
     }
 
-    override suspend fun userInfoSync(user: UserInfoResponse) =
-        remoteUserDataSource.updateUserRemote(user)
+    override suspend fun userInfoSync(user: UserInfoResponse): APIResource<List<IdInfoResponse>> {
+        return if (user.objectId.isNullOrEmpty()) {
+            val response = remoteUserDataSource.insertUserRemote(user)
+            if (response is APIResource.Success) {
+                updateObjectId(response.value)
+            }
+            return response
+        } else {
+            remoteUserDataSource.updateUserRemote(user)
+        }
+    }
+
+    suspend fun updateObjectId(value: List<IdInfoResponse>) {
+        value.forEach {
+            when (it.table) {
+                SyncType.USER.type -> localUserDataSource.updateUserObjectId(it.id, it.objectId)
+                SyncType.CONTACT.type -> localCommonDataSource.updateContactObjectId(
+                    it.id,
+                    it.objectId
+                )
+
+                SyncType.ADDRESS.type -> localCommonDataSource.updateAddressObjectId(
+                    it.id,
+                    it.objectId
+                )
+            }
+        }
+    }
 
 
     suspend fun getUerRemote(userId: String) = remoteUserDataSource.getUserRemote(userId)

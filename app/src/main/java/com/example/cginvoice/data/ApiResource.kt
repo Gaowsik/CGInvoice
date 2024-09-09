@@ -10,5 +10,11 @@ sealed class APIResource<out T> {
         val errorBody: ResponseBody?
     ) : APIResource<Nothing>()
 
+    data class ErrorString(
+        val isNetworkError: Boolean,
+        val errorCode: Int?,
+        val errorBody: String?
+    ) : APIResource<Nothing>()
+
     object Loading : APIResource<Nothing>()
 }

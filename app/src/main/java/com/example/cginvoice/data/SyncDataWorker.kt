@@ -6,6 +6,7 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.example.cginvoice.data.repository.user.UserRepository
+import com.example.cginvoice.data.source.remote.model.IdInfoResponse
 import com.example.cginvoice.data.source.remote.model.UserInfoResponse
 import com.example.cginvoice.utills.Constants.KEY_SYNC_DATA_REQUEST
 import com.example.cginvoice.utills.Constants.KEY_SYNC_TYPE
@@ -37,7 +38,7 @@ class SyncDataWorker @AssistedInject constructor(
         } ?: Result.failure()
     }
 
-    private fun manageResponse(response: APIResource<Unit>?): Result {
+    private fun manageResponse(response: APIResource<List<IdInfoResponse>>?): Result {
         return when (response) {
             is APIResource.Success -> {
                 Log.d("WorkManager", "Successful!")
@@ -56,6 +57,8 @@ class SyncDataWorker @AssistedInject constructor(
             null -> {
                 Result.failure()
             }
+
+            is APIResource.ErrorString -> TODO()
         }
     }
 

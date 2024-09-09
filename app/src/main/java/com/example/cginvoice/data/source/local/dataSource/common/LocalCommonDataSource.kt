@@ -9,6 +9,10 @@ interface LocalCommonDataSource {
 
     suspend fun insertAddressEntity(addressEntity: AddressEntity) : DBResource<Long>
 
+    suspend fun updateContactObjectId(contactId: Int, newObjectId: String) : DBResource<Unit>
+
+    suspend fun updateAddressObjectId(addressId: Int, newObjectId: String) : DBResource<Unit>
+
     suspend fun deleteContactEntity() : DBResource<Unit>
 
     suspend fun deleteAddressEntity() : DBResource<Unit>

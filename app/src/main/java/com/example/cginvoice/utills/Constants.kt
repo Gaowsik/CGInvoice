@@ -11,7 +11,7 @@ object Constants {
     const val KEY_SYNC_TYPE = "key_sync_type"
 
     val sampleAddress = Address(
-        objectId = "lgFOYxNNqA",
+        objectId = "",
         country = "USA",
         street = "456 Elm St",
         aptSuite = "Suite 12",
@@ -45,5 +45,32 @@ object Constants {
         signature = "https://example.com/signature.png",
         address =  sampleAddress,
         contact = sampleContact
+    )
+
+    val sampleUserResponse = UserInfoResponse(
+        userId = 123,
+        businessName = "Acme Corpa sync",
+        logo = "https://example.com/logo.png",
+        signature = "John Doe",
+        objectId = "",
+        address = Address(
+            addressId = 1,
+            country = "United Stata sync",
+            street = "123 Main Street",
+            aptSuite = "Suite 100",
+            postalCode = "12345",
+            city = "New York",
+            objectId = ""
+        ),
+        contact = Contact(
+            contactId = 1,
+            name = "John Doa sync",
+            phone = 1234567890,
+            cell = 9876543210,
+            email = "john.doe@example.com",
+            fax = "123-456-7891",
+            website = "https://example.com",
+            objectId = ""
+        )
     )
 }

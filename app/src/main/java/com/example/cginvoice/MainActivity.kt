@@ -30,7 +30,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
        // userViewModel.insertUserRemote(sampleUser, sampleContact, sampleAddress)
-       userViewModel.getUserInfo("a4mjPevSTW")
+       userViewModel.updateOrSaveUserInfo()
       //  userViewModel.updateUserInfo(sampleUserInfoResponse)
         setContent {
             CGInvoiceTheme {

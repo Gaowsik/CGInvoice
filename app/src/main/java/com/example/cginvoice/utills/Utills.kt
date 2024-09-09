@@ -54,5 +54,7 @@ inline fun <reified T> String.fromJson(): T {
 }
 
 enum class SyncType(val type: String) {
-    USER("user")
+    USER("user"),
+    ADDRESS("address"),
+    CONTACT("contact")
 }

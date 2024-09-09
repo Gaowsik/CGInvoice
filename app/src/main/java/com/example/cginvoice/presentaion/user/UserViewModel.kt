@@ -9,6 +9,7 @@ import com.example.cginvoice.data.source.remote.user.RemoteUserDataSource
 import com.example.cginvoice.domain.model.common.Address
 import com.example.cginvoice.domain.model.common.Contact
 import com.example.cginvoice.domain.model.user.User
+import com.example.cginvoice.utills.Constants.sampleUserResponse
 import com.example.cginvoice.utills.parseErrors
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -58,6 +59,16 @@ class UserViewModel @Inject constructor(
 
         }
 
+    }
+
+
+    fun updateOrSaveUserInfo(){
+        viewModelScope.launch {
+           val response = userRepository.userInfoSync(sampleUserResponse)
+            if (response!=null){
+
+            }
+        }
     }
 
     /*    fun updateUserInfo(userInfoResponse: UserInfoResponse){

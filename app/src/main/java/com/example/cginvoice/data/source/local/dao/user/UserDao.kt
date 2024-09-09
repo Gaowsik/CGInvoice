@@ -39,4 +39,8 @@ interface UserDao {
 
     @Query("DELETE FROM UserEntity")
     suspend fun deleteUserEntity()
+
+    @Query("UPDATE UserEntity SET objectId = :newObjectId WHERE userId = :userId")
+    suspend fun updateUserObjectId(userId: Int, newObjectId: String)
+
 }

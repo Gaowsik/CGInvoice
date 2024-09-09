@@ -48,5 +48,9 @@ class LocalUserDataSourceImpl(private val userDao: UserDao) : LocalUserDataSourc
         userDao.deleteUserEntity()
     }
 
+    override suspend fun updateUserObjectId(userId: Int, newObjectId: String) = safeDbCall{
+        userDao.updateUserObjectId(userId,newObjectId)
+    }
+
 
 }
