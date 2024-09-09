@@ -371,5 +371,71 @@ class Back4AppUserManager {
 
     }
 
+    suspend fun getUserInfoR(userId: String): APIResource<UserInfoResponse> =
+        withContext(Dispatchers.IO) {
+            try {
+                // Query to fetch the UserInfo object by userId
+                val query = ParseQuery.getQuery<ParseObject>("UserInfo")
+                query.whereEqualTo("objectId", userId)
+                query.include("address") // Include related Address object
+                query.include("contact") // Include related Contact object
+
+                // Fetch the first matching UserInfo object
+                val userInfoObject = query.first
+
+                // If UserInfo object is found, map it to a UserInfoResponse data class
+                val userInfoResponse = userInfoObject.let {
+                    // Extract Address and Contact objects
+                    val addressObject = it.getParseObject("address")
+                    val contactObject = it.getParseObject("contact")
+
+                    // Create Address data class from the ParseObject
+                    val addressData = addressObject?.let { addr ->
+                        Address(
+                            objectId = addr.objectId,
+                            country = addr.getString("country") ?: "",
+                            street = addr.getString("street") ?: "",
+                            aptSuite = addr.getString("aptSuite") ?: "",
+                            postalCode = addr.getString("postalCode") ?: "",
+                            city = addr.getString("city") ?: ""
+                        )
+                    }
+
+                    // Create Contact data class from the ParseObject
+                    val contactData = contactObject?.let { contact ->
+                        Contact(
+                            objectId = contact.objectId,
+                            name = contact.getString("name") ?: "",
+                            phone = contact.getLong("phone"),
+                            cell = contact.getLong("cell"),
+                            email = contact.getString("email") ?: "",
+                            fax = contact.getString("fax") ?: "",
+                            website = contact.getString("website") ?: ""
+                        )
+                    }
+
+                    // Create and return the UserInfoResponse data class
+                    UserInfoResponse(
+                        objectId = it.objectId,
+                        businessName = it.getString("businessName") ?: "",
+                        logo = it.getString("logo") ?: "",
+                        signature = it.getString("signature") ?: "",
+                        address = addressData!!,
+                        contact = contactData!!
+                    )
+                }
+
+                // If successful, wrap in APIResource.Success
+                APIResource.Success(userInfoResponse)
+            } catch (e: Exception) {
+                // Handle exceptions and return an error resource
+                APIResource.ErrorString(
+                    isNetworkError = e is java.net.UnknownHostException,
+                    errorCode = (e as? ParseException)?.code,
+                    errorBody = e.message
+                )
+            }
+        }
+
 
 }
