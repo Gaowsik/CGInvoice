@@ -20,7 +20,7 @@ object Constants {
     )
 
     val sampleContact = Contact(
-        objectId = "mARTUCkKGu",
+        objectId = "",
         name = "Jane Smooth boo",
         phone = 9876543210,
         cell = 1234567890,
@@ -40,7 +40,7 @@ object Constants {
 
     val sampleUserInfoResponse = UserInfoResponse(
         userId = 57678687,
-        businessName = "Hello boo",
+        businessName = "Hello new",
         logo = "https://example.com/logo.png",
         signature = "https://example.com/signature.png",
         address =  sampleAddress,
@@ -48,13 +48,11 @@ object Constants {
     )
 
     val sampleUserResponse = UserInfoResponse(
-        userId = 123,
-        businessName = "Acme Corpa sync",
+        businessName = "Acme Corpa new",
         logo = "https://example.com/logo.png",
         signature = "John Doe",
         objectId = "",
         address = Address(
-            addressId = 1,
             country = "United Stata sync",
             street = "123 Main Street",
             aptSuite = "Suite 100",
@@ -63,8 +61,7 @@ object Constants {
             objectId = ""
         ),
         contact = Contact(
-            contactId = 1,
-            name = "John Doa sync",
+            name = "John Doa new",
             phone = 1234567890,
             cell = 9876543210,
             email = "john.doe@example.com",

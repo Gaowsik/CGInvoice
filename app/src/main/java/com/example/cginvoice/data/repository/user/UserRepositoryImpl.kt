@@ -2,16 +2,14 @@ package com.example.cginvoice.data.repository.user
 
 import com.example.cginvoice.data.APIResource
 import com.example.cginvoice.data.DBResource
-import com.example.cginvoice.data.repository.common.CommonRepository
 import com.example.cginvoice.data.source.local.dataSource.common.LocalCommonDataSource
 import com.example.cginvoice.data.source.local.dataSource.user.LocalUserDataSource
 import com.example.cginvoice.data.source.local.entitiy.common.AddressEntity
 import com.example.cginvoice.data.source.local.entitiy.common.ContactEntity
 import com.example.cginvoice.data.source.local.entitiy.common.toAddressEntity
 import com.example.cginvoice.data.source.local.entitiy.common.toContactEntity
-import com.example.cginvoice.data.source.local.entitiy.user.UserEntity
 import com.example.cginvoice.data.source.local.entitiy.user.toUserEntity
-import com.example.cginvoice.data.source.remote.model.IdInfoResponse
+import com.example.cginvoice.data.source.remote.model.IdInfoRemoteResponse
 import com.example.cginvoice.data.source.remote.model.UserInfoResponse
 import com.example.cginvoice.data.source.remote.user.RemoteUserDataSource
 import com.example.cginvoice.domain.model.common.Address
@@ -25,20 +23,37 @@ class UserRepositoryImpl @Inject constructor(
     private val remoteUserDataSource: RemoteUserDataSource,
     private val localCommonDataSource: LocalCommonDataSource
 ) : UserRepository {
-    override suspend fun insertUserInfoResponseToDB(userInfoResponse: UserInfoResponse) {
-        val (addressEntity, contactEntity) = userInfoResponse.toEntities()
-        val responseAddress = localCommonDataSource.insertAddressEntity(addressEntity)
-        val responseContact = localCommonDataSource.insertContactEntity(contactEntity)
-        if (responseAddress is DBResource.Success && responseContact is DBResource.Success) {
 
-            val userEntity = userInfoResponse.toUserEntity(
-                responseAddress.value.toInt(),
-                responseContact.value.toInt()
-            )
-           val responseUser = localUserDataSource.insertUserEntity(userEntity)
-           /* if (responseUser is DBResource.Success) {
-                TODO("startWorker to sync data")
-            }*/
+    override suspend fun insertUserInfoResponseToDB(userInfoResponse: UserInfoResponse): DBResource<Unit> {
+        return try {
+            val (addressEntity, contactEntity) = userInfoResponse.toEntities()
+            val responseAddress = localCommonDataSource.insertAddressEntity(addressEntity)
+            val responseContact = localCommonDataSource.insertContactEntity(contactEntity)
+
+            if (responseAddress is DBResource.Success && responseContact is DBResource.Success) {
+
+                val userEntity = userInfoResponse.toUserEntity(
+                    responseAddress.value.toInt(),
+                    responseContact.value.toInt()
+                )
+
+                val responseUser = localUserDataSource.insertUserEntity(userEntity)
+
+                if (responseUser is DBResource.Success) {
+                    DBResource.Success(Unit)
+                } else {
+                    DBResource.Error((responseUser as DBResource.Error).exception)
+                }
+            } else {
+                val exception = when {
+                    responseAddress is DBResource.Error -> responseAddress.exception
+                    responseContact is DBResource.Error -> responseContact.exception
+                    else -> Exception("Unknown error during insertion")
+                }
+                DBResource.Error(exception)
+            }
+        } catch (e: Exception) {
+            DBResource.Error(e)
         }
     }
 
@@ -88,7 +103,7 @@ class UserRepositoryImpl @Inject constructor(
         val response = remoteUserDataSource.updateUserRemote(user)
     }
 
-    override suspend fun userInfoSync(user: UserInfoResponse): APIResource<List<IdInfoResponse>> {
+    override suspend fun userInfoSync(user: UserInfoResponse): APIResource<List<IdInfoRemoteResponse>> {
         return if (user.objectId.isNullOrEmpty()) {
             val response = remoteUserDataSource.insertUserRemote(user)
             if (response is APIResource.Success) {
@@ -100,7 +115,7 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
-    suspend fun updateObjectId(value: List<IdInfoResponse>) {
+    suspend fun updateObjectId(value: List<IdInfoRemoteResponse>) {
         value.forEach {
             when (it.table) {
                 SyncType.USER.type -> localUserDataSource.updateUserObjectId(it.id, it.objectId)
@@ -112,7 +127,13 @@ class UserRepositoryImpl @Inject constructor(
                 SyncType.ADDRESS.type -> localCommonDataSource.updateAddressObjectId(
                     it.id,
                     it.objectId
+
                 )
+
+                else -> {
+
+                }
+
             }
         }
     }
@@ -140,7 +161,6 @@ class UserRepositoryImpl @Inject constructor(
             address = address,
             contact = contact
         )
-
 
 }
 

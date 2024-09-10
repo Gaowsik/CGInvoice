@@ -2,7 +2,7 @@ package com.example.cginvoice.data.source.remote.user
 
 import android.util.Log
 import com.example.cginvoice.data.APIResource
-import com.example.cginvoice.data.source.remote.model.IdInfoResponse
+import com.example.cginvoice.data.source.remote.model.IdInfoRemoteResponse
 import com.example.cginvoice.data.source.remote.model.UserInfoResponse
 import com.example.cginvoice.domain.model.common.Address
 import com.example.cginvoice.domain.model.common.Contact
@@ -79,7 +79,7 @@ class Back4AppUserManager {
             }
         }
 
-    fun insertUserInfo(userInfoResponse: UserInfoResponse): APIResource<List<IdInfoResponse>> {
+    fun insertUserInfo(userInfoResponse: UserInfoResponse): APIResource<List<IdInfoRemoteResponse>> {
         return try {
             // Save Address object
             val addressData = userInfoResponse.address
@@ -121,23 +121,23 @@ class Back4AppUserManager {
             userInfoObject.save()
 
             // Create a list of IdInfoResponse with provided IDs and server-generated objectIds
-            val idInfoResponses = listOf(
-                IdInfoResponse(
+            val idInfoRemoteRespons = listOf(
+                IdInfoRemoteResponse(
                     id = userInfoResponse.userId,
                     table = SyncType.USER.type,
                     objectId = userInfoObject.objectId
-                ), IdInfoResponse(
+                ), IdInfoRemoteResponse(
                     id = userInfoResponse.address.addressId,
                     table = SyncType.ADDRESS.type,
                     objectId = addressObject.objectId
-                ), IdInfoResponse(
+                ), IdInfoRemoteResponse(
                     id = userInfoResponse.contact.contactId,
                     table = SyncType.CONTACT.type,
                     objectId = contactObject.objectId
                 )
             )
 
-            APIResource.Success(idInfoResponses)
+            APIResource.Success(idInfoRemoteRespons)
         } catch (e: Exception) {
             // Return an error in case of an exception
             APIResource.ErrorString(
@@ -235,7 +235,7 @@ class Back4AppUserManager {
     }
 
 
-    suspend fun updateUserInfo(userInfoResponse: UserInfoResponse): APIResource<List<IdInfoResponse>> =
+    suspend fun updateUserInfo(userInfoResponse: UserInfoResponse): APIResource<List<IdInfoRemoteResponse>> =
         withContext(Dispatchers.IO) {
             try {
 
@@ -290,23 +290,23 @@ class Back4AppUserManager {
                 // Save UserInfo object
                 userInfoObject.save()
 
-                val idInfoResponses = listOf(
-                    IdInfoResponse(
+                val idInfoRemoteRespons = listOf(
+                    IdInfoRemoteResponse(
                         id = userInfoResponse.userId,
                         table = SyncType.USER.type,
                         objectId = userInfoObject.objectId
-                    ), IdInfoResponse(
+                    ), IdInfoRemoteResponse(
                         id = userInfoResponse.address.addressId,
                         table = SyncType.ADDRESS.type,
                         objectId = addressObject.objectId
-                    ), IdInfoResponse(
+                    ), IdInfoRemoteResponse(
                         id = userInfoResponse.contact.contactId,
                         table = SyncType.CONTACT.type,
                         objectId = contactObject.objectId
                     )
                 )
                 // If all operations succeed, return Success with the list of IdInfoResponse
-                APIResource.Success(idInfoResponses)
+                APIResource.Success(idInfoRemoteRespons)
             } catch (e: Exception) {
                 // Handle exceptions and return an Error
                 APIResource.ErrorString(
