@@ -6,6 +6,8 @@ import androidx.work.Configuration
 import androidx.work.DelegatingWorkerFactory
 import androidx.work.WorkManager
 import com.example.cginvoice.data.CustomWorkerFactory
+import com.example.cginvoice.data.repository.client.ClientRepository
+import com.example.cginvoice.data.repository.client.ClientRepositoryImpl
 import com.example.cginvoice.data.repository.user.UserRepository
 import com.example.cginvoice.data.repository.user.UserRepositoryImpl
 import com.example.cginvoice.data.source.local.CGInvoiceDatabase
@@ -15,9 +17,12 @@ import com.example.cginvoice.data.source.local.dataSource.invoice.LocalInvoiceDa
 import com.example.cginvoice.data.source.local.dataSource.invoice.LocalInvoiceDataSourceImpl
 import com.example.cginvoice.data.source.local.dataSource.user.LocalUserDataSource
 import com.example.cginvoice.data.source.local.dataSource.user.LocalUserDataSourceImpl
-import com.example.cginvoice.data.source.remote.user.Back4AppUserManager
-import com.example.cginvoice.data.source.remote.user.RemoteUserDataSource
-import com.example.cginvoice.data.source.remote.user.RemoteUserDataSourceImpl
+import com.example.cginvoice.data.source.remote.back4AppClientManager.client.Back4AppClientManager
+import com.example.cginvoice.data.source.remote.back4AppClientManager.user.Back4AppUserManager
+import com.example.cginvoice.data.source.remote.dataSource.client.RemoteClientDataSource
+import com.example.cginvoice.data.source.remote.dataSource.client.RemoteClientDataSourceImpl
+import com.example.cginvoice.data.source.remote.dataSource.user.RemoteUserDataSource
+import com.example.cginvoice.data.source.remote.dataSource.user.RemoteUserDataSourceImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -40,6 +45,14 @@ class CGInvoiceModule {
                 localUserDataSource, remoteUserDataSource, localCommonDataSource
             )
         }
+
+        @Singleton
+        @Provides
+        fun provideClientRepository(
+            remoteClientDataSource: RemoteClientDataSource,
+        ): ClientRepository {
+            return ClientRepositoryImpl(remoteClientDataSource)
+        }
     }
 
     @Module
@@ -50,6 +63,12 @@ class CGInvoiceModule {
         @Provides
         fun provideRemoteUserDataSource(back4AppUserManager: Back4AppUserManager): RemoteUserDataSource {
             return RemoteUserDataSourceImpl(back4AppUserManager)
+        }
+
+        @Singleton
+        @Provides
+        fun provideRemoteClientDataSource(back4AppClientManager: Back4AppClientManager): RemoteClientDataSource {
+            return RemoteClientDataSourceImpl(back4AppClientManager)
         }
 
         @Singleton
@@ -80,6 +99,12 @@ class CGInvoiceModule {
         @Singleton
         fun provideBack4AppUserManager(): Back4AppUserManager {
             return Back4AppUserManager()
+        }
+
+        @Provides
+        @Singleton
+        fun provideBack4AppClientManager(): Back4AppClientManager {
+            return Back4AppClientManager()
         }
 
     }

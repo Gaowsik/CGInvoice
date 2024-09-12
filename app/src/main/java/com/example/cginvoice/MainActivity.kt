@@ -14,9 +14,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.cginvoice.presentaion.client.ClientViewModel
 import com.example.cginvoice.presentaion.user.UserViewModel
 import com.example.cginvoice.ui.theme.CGInvoiceTheme
 import com.example.cginvoice.utills.Constants.sampleAddress
+import com.example.cginvoice.utills.Constants.sampleClientInfoResponse
 import com.example.cginvoice.utills.Constants.sampleContact
 import com.example.cginvoice.utills.Constants.sampleUser
 import com.example.cginvoice.utills.Constants.sampleUserInfoResponse
@@ -27,6 +29,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     val userViewModel: UserViewModel by viewModels()
+    val clientViewModel: ClientViewModel by viewModels()
 
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -34,7 +37,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
        // userViewModel.insertUserRemote(sampleUser, sampleContact, sampleAddress)
-       userViewModel.updateOrSaveUserInfo(sampleUserResponse)
+       clientViewModel.getClientInfo("bRiGW9mMIn")
       //  userViewModel.updateUserInfo(sampleUserInfoResponse)
         setContent {
             CGInvoiceTheme {

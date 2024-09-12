@@ -2,8 +2,7 @@ package com.example.cginvoice.data.source.local.entitiy.common
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.cginvoice.data.source.local.entitiy.user.UserEntity
-import com.example.cginvoice.data.source.remote.model.UserInfoResponse
+import com.example.cginvoice.data.source.remote.model.user.UserInfoResponse
 import com.example.cginvoice.domain.model.common.Address
 
 @Entity

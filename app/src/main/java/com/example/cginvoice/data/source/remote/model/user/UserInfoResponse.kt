@@ -1,4 +1,4 @@
-package com.example.cginvoice.data.source.remote.model
+package com.example.cginvoice.data.source.remote.model.user
 
 import com.example.cginvoice.domain.model.common.Address
 import com.example.cginvoice.domain.model.common.Contact

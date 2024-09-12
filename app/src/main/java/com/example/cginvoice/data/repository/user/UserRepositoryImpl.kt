@@ -9,9 +9,9 @@ import com.example.cginvoice.data.source.local.entitiy.common.ContactEntity
 import com.example.cginvoice.data.source.local.entitiy.common.toAddressEntity
 import com.example.cginvoice.data.source.local.entitiy.common.toContactEntity
 import com.example.cginvoice.data.source.local.entitiy.user.toUserEntity
-import com.example.cginvoice.data.source.remote.model.IdInfoRemoteResponse
-import com.example.cginvoice.data.source.remote.model.UserInfoResponse
-import com.example.cginvoice.data.source.remote.user.RemoteUserDataSource
+import com.example.cginvoice.data.source.remote.model.common.IdInfoRemoteResponse
+import com.example.cginvoice.data.source.remote.model.user.UserInfoResponse
+import com.example.cginvoice.data.source.remote.dataSource.user.RemoteUserDataSource
 import com.example.cginvoice.domain.model.common.Address
 import com.example.cginvoice.domain.model.common.Contact
 import com.example.cginvoice.domain.model.user.User
@@ -113,6 +113,12 @@ class UserRepositoryImpl @Inject constructor(
         } else {
             remoteUserDataSource.updateUserRemote(user)
         }
+    }
+
+    override suspend fun deleteUserInfo() {
+        localUserDataSource.deleteUserEntity()
+        localCommonDataSource.deleteAddressEntity()
+        localCommonDataSource.deleteContactEntity()
     }
 
     suspend fun updateObjectId(value: List<IdInfoRemoteResponse>) {

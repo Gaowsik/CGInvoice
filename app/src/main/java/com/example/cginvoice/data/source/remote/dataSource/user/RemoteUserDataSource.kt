@@ -1,8 +1,8 @@
-package com.example.cginvoice.data.source.remote.user
+package com.example.cginvoice.data.source.remote.dataSource.user
 
 import com.example.cginvoice.data.APIResource
-import com.example.cginvoice.data.source.remote.model.IdInfoRemoteResponse
-import com.example.cginvoice.data.source.remote.model.UserInfoResponse
+import com.example.cginvoice.data.source.remote.model.common.IdInfoRemoteResponse
+import com.example.cginvoice.data.source.remote.model.user.UserInfoResponse
 import com.example.cginvoice.domain.model.common.Address
 import com.example.cginvoice.domain.model.common.Contact
 import com.example.cginvoice.domain.model.user.User

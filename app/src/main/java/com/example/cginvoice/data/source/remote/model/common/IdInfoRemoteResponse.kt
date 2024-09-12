@@ -1,4 +1,4 @@
-package com.example.cginvoice.data.source.remote.model
+package com.example.cginvoice.data.source.remote.model.common
 
 data class IdInfoRemoteResponse(
     val id: Int,

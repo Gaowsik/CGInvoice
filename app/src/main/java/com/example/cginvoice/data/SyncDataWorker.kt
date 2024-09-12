@@ -6,8 +6,8 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.example.cginvoice.data.repository.user.UserRepository
-import com.example.cginvoice.data.source.remote.model.IdInfoRemoteResponse
-import com.example.cginvoice.data.source.remote.model.UserInfoResponse
+import com.example.cginvoice.data.source.remote.model.common.IdInfoRemoteResponse
+import com.example.cginvoice.data.source.remote.model.user.UserInfoResponse
 import com.example.cginvoice.utills.Constants.KEY_SYNC_DATA_REQUEST
 import com.example.cginvoice.utills.Constants.KEY_SYNC_TYPE
 import com.example.cginvoice.utills.SyncType

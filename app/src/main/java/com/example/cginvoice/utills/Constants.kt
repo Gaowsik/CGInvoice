@@ -1,6 +1,7 @@
 package com.example.cginvoice.utills
 
-import com.example.cginvoice.data.source.remote.model.UserInfoResponse
+import com.example.cginvoice.data.source.remote.model.client.ClientInfoResponse
+import com.example.cginvoice.data.source.remote.model.user.UserInfoResponse
 import com.example.cginvoice.domain.model.common.Address
 import com.example.cginvoice.domain.model.common.Contact
 import com.example.cginvoice.domain.model.user.User
@@ -67,6 +68,33 @@ object Constants {
             email = "john.doe@example.com",
             fax = "123-456-7891",
             website = "https://example.com",
+            objectId = ""
+        )
+    )
+
+
+    val sampleClientInfoResponse = ClientInfoResponse(
+        clientId = 101,
+        name = "hello coporation",
+        userInfoObjectId = "bRiGW9mMIn",
+        objectId = "",
+        address = Address(
+            addressId = 201,
+            country = "Sri edited",
+            street = "123 Elm Street",
+            aptSuite = "Apt 4B",
+            postalCode = "90210",
+            city = "Beverly Hills",
+            objectId = ""
+        ),
+        contact = Contact(
+            contactId = 301,
+            name = "Gaowsik",
+            phone = 1234567890L,
+            cell = 9876543210L,
+            email = "john.doe@example.com",
+            fax = "123-456-7890",
+            website = "https://acme-corp.com",
             objectId = ""
         )
     )

@@ -13,14 +13,9 @@ import com.example.cginvoice.data.APIResource
 import com.example.cginvoice.data.DBResource
 import com.example.cginvoice.data.SyncDataWorker
 import com.example.cginvoice.data.repository.user.UserRepository
-import com.example.cginvoice.data.source.remote.model.UserInfoResponse
-import com.example.cginvoice.data.source.remote.user.RemoteUserDataSource
-import com.example.cginvoice.domain.model.common.Address
-import com.example.cginvoice.domain.model.common.Contact
-import com.example.cginvoice.domain.model.user.User
+import com.example.cginvoice.data.source.remote.model.user.UserInfoResponse
 import com.example.cginvoice.utills.Constants.KEY_SYNC_DATA_REQUEST
 import com.example.cginvoice.utills.Constants.KEY_SYNC_TYPE
-import com.example.cginvoice.utills.Constants.sampleUserResponse
 import com.example.cginvoice.utills.SyncType
 import com.example.cginvoice.utills.parseErrors
 import com.example.cginvoice.utills.toJson
