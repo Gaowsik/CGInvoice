@@ -1,9 +1,11 @@
 package com.example.cginvoice.domain.model.client
 
 data class Client(
-    val clientId: Long,
+    val clientId: Int,
     val clientName: String,
-    val addressId: Long,
-    val contactId: Long,
-    val userId: Long
+    val addressId: Int,
+    val contactId: Int,
+    val userId: Int,
+    val objectId: String
 )
+

@@ -15,8 +15,6 @@ data class UserEntity(
     val contactId: Int,
     val objectId: String
 ) {
-
-    // Method to convert UserEntity to User
     fun toUser(): User {
         return User(
             userId = userId,
@@ -28,7 +26,6 @@ data class UserEntity(
             objectId = objectId
         )
     }
-
 }
 
 fun User.toUserEntity(): UserEntity {

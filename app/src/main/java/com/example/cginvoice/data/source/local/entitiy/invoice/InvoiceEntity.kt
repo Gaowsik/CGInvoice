@@ -29,20 +29,18 @@ data class InvoiceEntity(
             note = note
         )
     }
+}
 
     // Extension function to convert Invoice to InvoiceEntity
-    companion object {
-        fun Invoice.toInvoiceEntity(): InvoiceEntity {
-            return InvoiceEntity(
-                invoiceId = invoiceId,
-                invoiceData = invoiceData,
-                dueDate = dueDate,
-                totalAmount = totalAmount,
-                userId = userId,
-                clientId = clientId,
-                imageId = imageId,
-                note = note
-            )
-        }
+    fun Invoice.toInvoiceEntity(): InvoiceEntity {
+        return InvoiceEntity(
+            invoiceId = invoiceId,
+            invoiceData = invoiceData,
+            dueDate = dueDate,
+            totalAmount = totalAmount,
+            userId = userId,
+            clientId = clientId,
+            imageId = imageId,
+            note = note
+        )
     }
-}
