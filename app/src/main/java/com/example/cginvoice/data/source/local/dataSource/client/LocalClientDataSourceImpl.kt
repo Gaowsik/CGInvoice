@@ -9,12 +9,17 @@ import com.example.cginvoice.data.source.local.entitiy.client.ClientEntity
 import com.example.cginvoice.data.source.local.relation.client.ClientEntityAndAddressEntity
 import com.example.cginvoice.data.source.local.relation.client.ClientEntityAndContactEntity
 import com.example.cginvoice.data.source.local.relation.client.ClientEntityWithInvoicesEntity
+import com.example.cginvoice.domain.model.client.Client
 import com.example.cginvoice.domain.model.client.ClientAndAddress
 import com.example.cginvoice.domain.model.client.ClientAndContact
 import com.example.cginvoice.domain.model.client.ClientWithInvoices
 
 class LocalClientDataSourceImpl(private val clientDao: ClientDao) : LocalClientDataSource,
     BaseRepo() {
+    override suspend fun insertClientEntity(clientEntity: ClientEntity) =safeDbCall {
+        clientDao.insertClientEntity(clientEntity)
+    }
+
     override suspend fun updateClientEntity(clientEntity: ClientEntity) = safeDbCall {
         clientDao.updateClientEntity(clientEntity)
     }
@@ -43,5 +48,9 @@ class LocalClientDataSourceImpl(private val clientDao: ClientDao) : LocalClientD
         newObjectId: String
     ) = safeDbCall {
         clientDao.updateClientObjectId(clientId, newObjectId)
+    }
+
+    override suspend fun getClientEntityById(clientId: Int) = safeDbCall{
+        clientDao.getClientEntityById(clientId).toClient()
     }
 }

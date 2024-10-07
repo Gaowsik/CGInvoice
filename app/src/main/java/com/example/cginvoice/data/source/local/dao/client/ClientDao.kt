@@ -40,4 +40,7 @@ interface ClientDao {
 
     @Query("UPDATE ClientEntity SET objectId = :newObjectId WHERE clientId = :clientId")
     suspend fun updateClientObjectId(clientId: Int, newObjectId: String)
+
+    @Query("SELECT * FROM ClientEntity WHERE clientId = :clientId LIMIT 1")
+    suspend fun getClientEntityById(clientId: Int): ClientEntity
 }
