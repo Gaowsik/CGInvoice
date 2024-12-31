@@ -4,6 +4,9 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.example.cginvoice.data.source.remote.model.client.ClientInfoResponse
 import com.example.cginvoice.domain.model.client.Client
+import com.example.cginvoice.domain.model.client.ClientData
+import com.example.cginvoice.domain.model.common.Address
+import com.example.cginvoice.domain.model.common.Contact
 
 @Entity
 data class ClientEntity(
@@ -12,7 +15,8 @@ data class ClientEntity(
     val addressId: Int,
     val contactId: Int,
     val userId: Int,
-    val objectId: String
+    val objectId: String,
+    val status: String
 ) {
     fun toClient(): Client {
         return Client(
@@ -21,7 +25,8 @@ data class ClientEntity(
             addressId = addressId,
             contactId = contactId,
             userId = userId,
-            objectId = objectId
+            objectId = objectId,
+            status = status
         )
     }
 }
@@ -33,18 +38,20 @@ fun Client.toClientEntity(): ClientEntity {
         addressId = addressId,
         contactId = contactId,
         userId = userId,
-        objectId = objectId
+        objectId = objectId,
+        status = status
     )
 }
 
-fun ClientInfoResponse.toClientEntity(addressId: Int, contactId: Int, userId: Int): ClientEntity {
-    return ClientEntity(
+fun ClientEntity.toClientData(address: Address = Address(), contact: Contact = Contact()): ClientData {
+    return ClientData(
         clientId = clientId,
-        clientName = name,
-        addressId = addressId,
-        contactId = contactId,
-        userId = userId,
-        objectId = objectId ?: ""
+        name = clientName,
+        userInfoObjectId = objectId,
+        objectId = objectId,
+        address = address,
+        contact = contact,
+        syncStatus = status
     )
 }
 

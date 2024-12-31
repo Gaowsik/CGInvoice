@@ -11,7 +11,7 @@ import com.example.cginvoice.domain.model.client.ClientWithInvoices
 data class ClientEntityWithInvoicesEntity(
     @Embedded val clientEntity: ClientEntity,
     @Relation(
-        parentColumn = "userId", entityColumn = "userId"
+        parentColumn = "clientId", entityColumn = "clientId"
     )
     val invoiceEntityList: List<InvoiceEntity>
 ) {

@@ -6,6 +6,8 @@ import com.example.cginvoice.data.source.local.dao.client.ClientDao
 import com.example.cginvoice.data.source.local.dao.user.UserDao
 import com.example.cginvoice.data.source.local.dataSource.user.LocalUserDataSource
 import com.example.cginvoice.data.source.local.entitiy.client.ClientEntity
+import com.example.cginvoice.data.source.local.entitiy.client.toClientData
+import com.example.cginvoice.data.source.local.entitiy.client.toClientEntity
 import com.example.cginvoice.data.source.local.relation.client.ClientEntityAndAddressEntity
 import com.example.cginvoice.data.source.local.relation.client.ClientEntityAndContactEntity
 import com.example.cginvoice.data.source.local.relation.client.ClientEntityWithInvoicesEntity
@@ -16,7 +18,7 @@ import com.example.cginvoice.domain.model.client.ClientWithInvoices
 
 class LocalClientDataSourceImpl(private val clientDao: ClientDao) : LocalClientDataSource,
     BaseRepo() {
-    override suspend fun insertClientEntity(clientEntity: ClientEntity) =safeDbCall {
+    override suspend fun insertClientEntity(clientEntity: ClientEntity) = safeDbCall {
         clientDao.insertClientEntity(clientEntity)
     }
 
@@ -24,8 +26,8 @@ class LocalClientDataSourceImpl(private val clientDao: ClientDao) : LocalClientD
         clientDao.updateClientEntity(clientEntity)
     }
 
-    override suspend fun getClientEntityAndAddressEntity(contactId: String) = safeDbCall {
-        clientDao.getClientEntityAndAddressEntity(contactId).map { it.toUserAndAddress() }
+    override suspend fun getClientEntityAndAddressEntity(addressId: String) = safeDbCall {
+        clientDao.getClientEntityAndAddressEntity(addressId).map { it.toUserAndAddress() }
     }
 
     override suspend fun getClientEntityAndContactEntity(addressId: String) = safeDbCall {
@@ -39,8 +41,12 @@ class LocalClientDataSourceImpl(private val clientDao: ClientDao) : LocalClientD
     }
 
 
-    override suspend fun deleteUserEntity() = safeDbCall {
-        clientDao.deleteUserEntity()
+    override suspend fun deleteClient(client: Client) = safeDbCall {
+        clientDao.deleteClient(client.toClientEntity())
+    }
+
+    override suspend fun deleteClientById(clientId: Int) = safeDbCall {
+      clientDao.deleteClientById(clientId)
     }
 
     override suspend fun updateClientObjectId(
@@ -50,7 +56,13 @@ class LocalClientDataSourceImpl(private val clientDao: ClientDao) : LocalClientD
         clientDao.updateClientObjectId(clientId, newObjectId)
     }
 
-    override suspend fun getClientEntityById(clientId: Int) = safeDbCall{
+    override suspend fun getClientEntityById(clientId: Int) = safeDbCall {
         clientDao.getClientEntityById(clientId).toClient()
+    }
+
+    override suspend fun getClients() = safeDbCall {
+        clientDao.getClients().map {
+            it.toClient()
+        }
     }
 }

@@ -6,6 +6,7 @@ data class Client(
     val addressId: Int,
     val contactId: Int,
     val userId: Int,
-    val objectId: String
+    val objectId: String,
+    val status : String
 )
 

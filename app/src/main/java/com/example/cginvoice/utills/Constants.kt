@@ -2,6 +2,7 @@ package com.example.cginvoice.utills
 
 import com.example.cginvoice.data.source.remote.model.client.ClientInfoResponse
 import com.example.cginvoice.data.source.remote.model.user.UserInfoResponse
+import com.example.cginvoice.domain.model.client.ClientData
 import com.example.cginvoice.domain.model.common.Address
 import com.example.cginvoice.domain.model.common.Contact
 import com.example.cginvoice.domain.model.user.User
@@ -98,4 +99,57 @@ object Constants {
             objectId = ""
         )
     )
+
+    fun getSampleClientData(): List<ClientData> {
+        return listOf(
+            ClientData(
+                clientId = 1,
+                name = "Client One",
+                address = Address(
+                    addressId = 101,
+                    country = "USA",
+                    street = "123 Main St",
+                    aptSuite = "Apt 4B",
+                    postalCode = "10001",
+                    city = "New York",
+                    objectId = ""
+                ),
+                contact = Contact(
+                    contactId = 201,
+                    name = "John Doe",
+                    phone = 1234567890L,
+                    cell = 9876543210L,
+                    email = "john.doe@example.com",
+                    fax = "123-456-789",
+                    website = "https://clientone.com",
+                    objectId = ""
+                ),
+                syncStatus = SyncStatus.PENDING.status
+            ),
+            ClientData(
+                clientId = 2,
+                name = "Client Two",
+                address = Address(
+                    addressId = 102,
+                    country = "Canada",
+                    street = "456 Maple St",
+                    aptSuite = "Suite 200",
+                    postalCode = "A1B 2C3",
+                    city = "Toronto",
+                    objectId = ""
+                ),
+                contact = Contact(
+                    contactId = 202,
+                    name = "Jane Smith",
+                    phone = 1122334455L,
+                    cell = 9988776655L,
+                    email = "jane.smith@example.ca",
+                    fax = "987-654-321",
+                    website = "https://clienttwo.ca",
+                    objectId = ""
+                ),
+                syncStatus = SyncStatus.PENDING.status
+            )
+        )
+    }
 }

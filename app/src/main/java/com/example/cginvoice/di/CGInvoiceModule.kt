@@ -11,6 +11,8 @@ import com.example.cginvoice.data.repository.client.ClientRepositoryImpl
 import com.example.cginvoice.data.repository.user.UserRepository
 import com.example.cginvoice.data.repository.user.UserRepositoryImpl
 import com.example.cginvoice.data.source.local.CGInvoiceDatabase
+import com.example.cginvoice.data.source.local.dataSource.client.LocalClientDataSource
+import com.example.cginvoice.data.source.local.dataSource.client.LocalClientDataSourceImpl
 import com.example.cginvoice.data.source.local.dataSource.common.LocalCommonDataSource
 import com.example.cginvoice.data.source.local.dataSource.common.LocalCommonDataSourceImpl
 import com.example.cginvoice.data.source.local.dataSource.invoice.LocalInvoiceDataSource
@@ -50,8 +52,14 @@ class CGInvoiceModule {
         @Provides
         fun provideClientRepository(
             remoteClientDataSource: RemoteClientDataSource,
+            localClientDataSource: LocalClientDataSource,
+            localCommonDataSource: LocalCommonDataSource
         ): ClientRepository {
-            return ClientRepositoryImpl(remoteClientDataSource)
+            return ClientRepositoryImpl(
+                remoteClientDataSource,
+                localClientDataSource,
+                localCommonDataSource
+            )
         }
     }
 
@@ -77,6 +85,13 @@ class CGInvoiceModule {
             database: CGInvoiceDatabase
         ): LocalUserDataSource {
             return LocalUserDataSourceImpl(database.userDao())
+        }
+
+        @Provides
+        fun provideLocalClientDataSource(
+            database: CGInvoiceDatabase
+        ): LocalClientDataSource {
+            return LocalClientDataSourceImpl(database.clientDao())
         }
 
         @Singleton

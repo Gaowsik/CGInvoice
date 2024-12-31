@@ -1,9 +1,7 @@
 package com.example.cginvoice.data.source.local.dataSource.common
 
 import com.example.cginvoice.data.BaseRepo
-import com.example.cginvoice.data.DBResource
 import com.example.cginvoice.data.source.local.dao.common.CommonDao
-import com.example.cginvoice.data.source.local.dao.invoice.InvoiceDao
 import com.example.cginvoice.data.source.local.entitiy.common.AddressEntity
 import com.example.cginvoice.data.source.local.entitiy.common.ContactEntity
 
@@ -15,6 +13,14 @@ class LocalCommonDataSourceImpl(private val commonDao: CommonDao) : LocalCommonD
 
     override suspend fun insertAddressEntity(addressEntity: AddressEntity) = safeDbCall {
         commonDao.insertAddressEntity(addressEntity)
+    }
+
+    override suspend fun updateContactEntity(contactEntity: ContactEntity) = safeDbCall {
+        commonDao.updateContactEntity(contactEntity)
+    }
+
+    override suspend fun updateAddressEntity(addressEntity: AddressEntity) = safeDbCall {
+        commonDao.updateAddressEntity(addressEntity)
     }
 
     override suspend fun updateContactObjectId(

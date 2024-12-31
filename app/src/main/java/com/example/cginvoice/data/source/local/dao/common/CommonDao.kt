@@ -19,10 +19,10 @@ interface CommonDao {
     suspend fun insertAddressEntity(addressEntity: AddressEntity): Long
 
     @Update
-    suspend fun updateAddressEntity(addressEntity: AddressEntity)
+    suspend fun updateAddressEntity(addressEntity: AddressEntity) : Int
 
     @Update
-    suspend fun updateContactEntity(contactEntity: ContactEntity)
+    suspend fun updateContactEntity(contactEntity: ContactEntity) : Int
 
     @Query("UPDATE ContactEntity SET objectId = :newObjectId WHERE contactId = :contactId")
     suspend fun updateContactObjectId(contactId: Int, newObjectId: String)

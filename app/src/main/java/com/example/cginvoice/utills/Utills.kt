@@ -57,5 +57,9 @@ enum class SyncType(val type: String) {
     USER("user"),
     ADDRESS("address"),
     CONTACT("contact"),
-    CLIENT("contact")
+    CLIENT("client")
+}
+
+enum class SyncStatus(val status: String) {
+    PENDING("pending"), COMPLETED("completed")
 }

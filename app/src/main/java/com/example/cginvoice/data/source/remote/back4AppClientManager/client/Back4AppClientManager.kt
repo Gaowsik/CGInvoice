@@ -11,7 +11,10 @@ import com.parse.ParseException
 import com.parse.ParseObject
 import com.parse.ParseQuery
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 class Back4AppClientManager {
     suspend fun insertClientInfo(clientInfo: ClientInfoResponse): APIResource<List<IdInfoRemoteResponse>> =
@@ -249,7 +252,7 @@ class Back4AppClientManager {
             }
         }
 
-    suspend fun getClientsByUserId(userId: String): APIResource<List<ClientInfoResponse>> =
+/*    suspend fun getClientsByUserId(userId: String): APIResource<List<ClientInfoResponse>> =
         withContext(Dispatchers.IO) {
             try {
                 // Query to fetch all Client objects by userId
@@ -315,5 +318,68 @@ class Back4AppClientManager {
                     errorBody = e.message
                 )
             }
+        }*/
+
+    suspend fun getClientsByUserId(userId: String): List<ClientInfoResponse> {
+        return suspendCancellableCoroutine { continuation ->
+            try {
+                val query = ParseQuery.getQuery<ParseObject>("Client")
+                query.whereEqualTo("userId", ParseObject.createWithoutData("UserInfo", userId))
+                query.include("userId")
+                query.include("addressId")
+                query.include("contactID")
+
+                query.findInBackground { clientObjects, e ->
+                    if (e != null) {
+                        continuation.resumeWithException(e)
+                    } else {
+                        try {
+                            val clientInfoResponses = clientObjects.map { clientObject ->
+                                val userInfoObject = clientObject.getParseObject("userId")
+                                val addressObject = clientObject.getParseObject("addressId")
+                                val contactObject = clientObject.getParseObject("contactID")
+
+                                val addressData = addressObject?.let { addr ->
+                                    Address(
+                                        objectId = addr.objectId,
+                                        country = addr.getString("country") ?: "",
+                                        street = addr.getString("street") ?: "",
+                                        aptSuite = addr.getString("aptSuite") ?: "",
+                                        postalCode = addr.getString("postalCode") ?: "",
+                                        city = addr.getString("city") ?: ""
+                                    )
+                                } ?: throw IllegalArgumentException("Address data is missing")
+
+                                val contactData = contactObject?.let { contact ->
+                                    Contact(
+                                        objectId = contact.objectId,
+                                        name = contact.getString("name") ?: "",
+                                        phone = contact.getLong("phone"),
+                                        cell = contact.getLong("cell"),
+                                        email = contact.getString("email") ?: "",
+                                        fax = contact.getString("fax") ?: "",
+                                        website = contact.getString("website") ?: ""
+                                    )
+                                } ?: throw IllegalArgumentException("Contact data is missing")
+
+                                ClientInfoResponse(
+                                    clientId = clientObject.objectId.toIntOrNull() ?: 0,
+                                    name = clientObject.getString("name") ?: "",
+                                    userInfoObjectId = userInfoObject?.objectId ?: "",
+                                    objectId = clientObject.objectId,
+                                    address = addressData,
+                                    contact = contactData
+                                )
+                            }
+                            continuation.resume(clientInfoResponses)
+                        } catch (ex: Exception) {
+                            continuation.resumeWithException(ex)
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                continuation.resumeWithException(e)
+            }
         }
+    }
 }
