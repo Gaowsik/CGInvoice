@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     id(libs.plugins.kotlin.kapt.get().pluginId)
     id(libs.plugins.dagger.hilt.android.get().pluginId)
+    alias(libs.plugins.jetbrains.kotlin.serialization)
 }
 
 android {
@@ -66,6 +67,7 @@ dependencies {
     implementation(libs.androidx.room.common)
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.hilt.common)
+    implementation(libs.androidx.navigation.runtime.ktx)
     kapt(libs.dagger.hild.android.compiler)
     kapt(libs.persistence.room.compiler)
 
@@ -80,6 +82,8 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.parse.sdk.android)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.kotlinx.serialization.json)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
