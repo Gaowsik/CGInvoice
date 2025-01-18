@@ -45,7 +45,7 @@ object Constants {
         businessName = "Hello new",
         logo = "https://example.com/logo.png",
         signature = "https://example.com/signature.png",
-        address =  sampleAddress,
+        address = sampleAddress,
         contact = sampleContact
     )
 
@@ -152,4 +152,11 @@ object Constants {
             )
         )
     }
+}
+
+object NavTitle {
+    const val INVOICE = "Invoice"
+    const val CLIENT = "Client"
+    const val MORE = "More"
+    const val USER = "User"
 }

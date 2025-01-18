@@ -66,6 +66,7 @@ dependencies {
     implementation(libs.androidx.room.common)
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.hilt.common)
+    implementation(libs.androidx.foundation.layout.android)
     kapt(libs.dagger.hild.android.compiler)
     kapt(libs.persistence.room.compiler)
 
@@ -80,6 +81,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.parse.sdk.android)
+    implementation(libs.navigation.compose)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

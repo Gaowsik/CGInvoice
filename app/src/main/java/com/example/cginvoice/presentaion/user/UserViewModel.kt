@@ -43,6 +43,17 @@ class UserViewModel @Inject constructor(
     private val _workStatus = MutableStateFlow<WorkInfo.State?>(null)
     val workStatus = _workStatus.asStateFlow()
 
+    private val _currentUserState = MutableStateFlow<UserInfoResponse?>(null)
+    val currentUserState = _currentUserState.asStateFlow()
+
+    private val _userDetailState = MutableStateFlow(UserDetailState())
+    val userDetailState = _userDetailState.asStateFlow()
+
+    fun updateField(field: (UserDetailState) -> UserDetailState) {
+        _userDetailState.value = field(_userDetailState.value)
+    }
+
+
     /*    fun insertUserRemote(user: User, contact: Contact, address: Address) {
             viewModelScope.launch {
                 userRepository.insertUserRemote(user, contact, address)
@@ -55,7 +66,7 @@ class UserViewModel @Inject constructor(
             val response = userRepository.getUserInfoRemote(objectId)
             when (response) {
                 is APIResource.Success -> {
-                    _getUserInfo.emit(response.value)
+                    _currentUserState.emit(response.value)
                     userRepository.insertUserInfoResponseToDB(response.value)
                 }
 
@@ -126,3 +137,18 @@ class UserViewModel @Inject constructor(
 
 
 }
+
+data class UserDetailState(
+    val name: String = "",
+    val country: String = "",
+    val street: String = "",
+    val suite: String = "",
+    val postalCode: String = "",
+    val city: String = "",
+    val businessId : String = "",
+    val cell :String ="",
+    val contactPerson: String = "",
+    val phone: String = "",
+    val email: String = "",
+    val website: String = ""
+)

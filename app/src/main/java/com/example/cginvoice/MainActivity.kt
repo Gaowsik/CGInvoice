@@ -10,11 +10,15 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
+import com.example.cginvoice.presentaion.MainScreen
 import com.example.cginvoice.presentaion.client.ClientViewModel
+import com.example.cginvoice.presentaion.nav.NavigationScreens
 import com.example.cginvoice.presentaion.user.UserViewModel
 import com.example.cginvoice.ui.theme.CGInvoiceTheme
 import com.example.cginvoice.utills.Constants.sampleAddress
@@ -41,7 +45,10 @@ class MainActivity : ComponentActivity() {
       //  userViewModel.updateUserInfo(sampleUserInfoResponse)
         setContent {
             CGInvoiceTheme {
-
+                val navController = rememberNavController()
+                Surface(modifier = Modifier.fillMaxSize()) {
+                    MainScreen(navController = navController)
+                }
             }
         }
     }

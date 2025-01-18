@@ -33,6 +33,21 @@ private val LightColorScheme = lightColorScheme(
     */
 )
 
+private val DarkColorSchemeCustom = darkColorScheme(
+    primary = ThemeColors.Night.primary,
+    onPrimary = ThemeColors.Night.text,
+    surface = ThemeColors.Night.surafce,
+    background = ThemeColors.Night.bacground
+)
+
+private val LightColorSchemeCustom = lightColorScheme(
+    primary = ThemeColors.Day.primary,
+    onPrimary = ThemeColors.Day.text,
+    surface = ThemeColors.Day.surafce,
+    background = ThemeColors.Day.bacground
+)
+
+
 @Composable
 fun CGInvoiceTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -46,8 +61,8 @@ fun CGInvoiceTheme(
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
 
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
+        darkTheme -> DarkColorSchemeCustom
+        else -> LightColorSchemeCustom
     }
 
     MaterialTheme(
