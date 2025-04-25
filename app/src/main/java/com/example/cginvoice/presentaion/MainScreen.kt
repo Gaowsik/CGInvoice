@@ -1,6 +1,7 @@
 package com.example.cginvoice.presentaion
 
-import android.annotation.SuppressLint
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.BottomAppBar
@@ -14,7 +15,7 @@ import com.example.cginvoice.R
 import com.example.cginvoice.presentaion.nav.NavItem
 import com.example.cginvoice.presentaion.nav.NavigationScreens
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MainScreen(navController: NavHostController) {
     Scaffold(bottomBar = {
@@ -24,5 +25,7 @@ fun MainScreen(navController: NavHostController) {
         FloatingActionButton(onClick = {navController.navigate(NavItem.User.path)}) {
             Icon(imageVector = Icons.Default.Add, contentDescription = stringResource(R.string.action_add))
         }
-    }) { NavigationScreens(navController = navController) }
+    }) { padding ->
+        NavigationScreens(navController = navController, paddingValues = padding)
+    }
 }

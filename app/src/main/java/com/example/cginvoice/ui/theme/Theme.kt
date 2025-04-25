@@ -48,6 +48,7 @@ private val LightColorSchemeCustom = lightColorScheme(
 )
 
 
+/*
 @Composable
 fun CGInvoiceTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -62,6 +63,27 @@ fun CGInvoiceTheme(
         }
 
         darkTheme -> DarkColorSchemeCustom
+        else -> LightColorSchemeCustom
+    }
+
+    MaterialTheme(
+        colorScheme = colorScheme,
+        typography = Typography,
+        content = content
+    )
+}*/
+@Composable
+fun CGInvoiceTheme(
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    // Dynamic color is available on Android 12+
+    dynamicColor: Boolean = true,
+    content: @Composable () -> Unit
+) {
+    val colorScheme = when {
+        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+            val context = LocalContext.current
+           dynamicLightColorScheme(context)
+        }
         else -> LightColorSchemeCustom
     }
 

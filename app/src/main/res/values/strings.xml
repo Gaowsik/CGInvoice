@@ -6,5 +6,7 @@
     <string name="title_invoice">Invoice</string>
     <string name="title_clients">Clients</string>
     <string name="title_more">More</string>
+    <string name="title_alert">Alert</string>
     <string name="action_add">Add</string>
+    <string name="action_confirm">Confirm</string>
 </resources>

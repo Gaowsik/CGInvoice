@@ -42,34 +42,34 @@ fun Contact.toContactEntity(): ContactEntity {
         email = email,
         fax = fax,
         website = website,
-        objectId = objectId
+        objectId = objectId?:""
     )
 }
 
 fun UserInfoResponse.toContactEntity(): ContactEntity {
     return ContactEntity(
-        contactId = contact?.contactId ?: 0,  // Assuming Contact has an 'id' field as a String
-        name = contact?.name ?: "",
-        phone = contact?.phone ?: 0L,
-        cell = contact?.cell ?: 0L,
-        email = contact?.email ?: "",
-        fax = contact?.fax ?: "",
-        website = contact?.website ?: "",
-        objectId = objectId ?: ""
+        contactId = contact.contactId,  // Assuming Contact has an 'id' field as a String
+        name = contact.name,
+        phone = contact.phone,
+        cell = contact.cell,
+        email = contact.email,
+        fax = contact.fax,
+        website = contact.website,
+        objectId = contact.objectId?:""
     )
 
 }
 
 fun ClientInfoResponse.toContactEntity(): ContactEntity {
     return ContactEntity(
-        contactId = contact?.contactId ?: 0,  // Assuming Contact has an 'id' field as a String
-        name = contact?.name ?: "",
-        phone = contact?.phone ?: 0L,
-        cell = contact?.cell ?: 0L,
-        email = contact?.email ?: "",
-        fax = contact?.fax ?: "",
-        website = contact?.website ?: "",
-        objectId = objectId ?: ""
+        contactId = contact.contactId,  // Assuming Contact has an 'id' field as a String
+        name = contact.name,
+        phone = contact.phone,
+        cell = contact.cell,
+        email = contact.email,
+        fax = contact.fax,
+        website = contact.website,
+        objectId = contact.objectId?:""
     )
 
 }

@@ -14,7 +14,7 @@ import com.example.cginvoice.presentaion.nav.NavItem
 
 @Composable
 fun BottomNavigationBar(navController: NavHostController) {
-    val navItems = listOf(NavItem.Invoice, NavItem.Client, NavItem.More)
+    val navItems = listOf(NavItem.Invoice, NavItem.Client, NavItem.More,NavItem.User)
     var selectedItem by rememberSaveable { mutableStateOf(0) }
 
     NavigationBar {

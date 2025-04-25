@@ -4,13 +4,6 @@ import com.example.cginvoice.data.BaseRepo
 import com.example.cginvoice.data.DBResource
 import com.example.cginvoice.data.source.local.dao.user.UserDao
 import com.example.cginvoice.data.source.local.entitiy.user.UserEntity
-import com.example.cginvoice.data.source.local.relation.user.UserEntityAndAddressEntity
-import com.example.cginvoice.data.source.local.relation.user.UserEntityAndContactEntity
-import com.example.cginvoice.data.source.local.relation.user.UserEntityWithInvoiceEntities
-import com.example.cginvoice.domain.model.user.User
-import com.example.cginvoice.domain.model.user.UserAndAddress
-import com.example.cginvoice.domain.model.user.UserAndContact
-import com.example.cginvoice.domain.model.user.UserWithInvoices
 
 class LocalUserDataSourceImpl(private val userDao: UserDao) : LocalUserDataSource, BaseRepo() {
     override suspend fun insertUserEntity(userEntity: UserEntity) = safeDbCall {
@@ -49,6 +42,10 @@ class LocalUserDataSourceImpl(private val userDao: UserDao) : LocalUserDataSourc
 
     override suspend fun updateUserObjectId(userId: Int, newObjectId: String) = safeDbCall {
         userDao.updateUserObjectId(userId, newObjectId)
+    }
+
+    override suspend fun updateStatusByUserID(userId: Int, status: String) = safeDbCall {
+        userDao.updateStatusByUserID(userId, status)
     }
 
 }

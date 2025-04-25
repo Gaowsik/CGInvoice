@@ -20,4 +20,5 @@ interface LocalUserDataSource {
     suspend fun getUser(): DBResource<User>
     suspend fun deleteUserEntity(): DBResource<Unit>
     suspend fun updateUserObjectId(userId: Int, newObjectId: String): DBResource<Unit>
+    suspend fun updateStatusByUserID(userId: Int, status: String): DBResource<Unit>
 }

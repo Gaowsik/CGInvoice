@@ -11,6 +11,7 @@ object Constants {
 
     const val KEY_SYNC_DATA_REQUEST = "key_sync_data_request"
     const val KEY_SYNC_TYPE = "key_sync_type"
+    const val KEY_WORK_MANAGER_RESPONSE = "key_work_manager_response"
 
     val sampleAddress = Address(
         objectId = "",
@@ -38,6 +39,7 @@ object Constants {
         signature = "https://example.com/signature.png",
         addressId = sampleAddress.addressId,
         contactId = sampleContact.contactId,
+        status = SyncStatus.PENDING.status
     )
 
     val sampleUserInfoResponse = UserInfoResponse(
@@ -50,7 +52,7 @@ object Constants {
     )
 
     val sampleUserResponse = UserInfoResponse(
-        businessName = "Acme Corpa new",
+        businessName = "Acme Corpa new po",
         logo = "https://example.com/logo.png",
         signature = "John Doe",
         objectId = "",

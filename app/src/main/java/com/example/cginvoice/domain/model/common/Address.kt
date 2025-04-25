@@ -7,5 +7,5 @@ data class Address(
     val aptSuite: String = "",
     val postalCode: String = "",
     val city: String = "",
-    val objectId: String = ""
+    val objectId: String? = ""
 )

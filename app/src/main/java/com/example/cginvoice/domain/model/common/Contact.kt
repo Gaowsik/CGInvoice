@@ -8,5 +8,5 @@ data class Contact(
     val email: String = "",
     val fax: String = "",
     val website: String = "",
-    val objectId: String = ""
+    val objectId: String? = ""
 )

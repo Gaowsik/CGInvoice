@@ -39,19 +39,19 @@ fun Address.toAddressEntity(): AddressEntity {
         aptSuite = aptSuite,
         postalCode = postalCode,
         city = city,
-        objectId = objectId
+        objectId = objectId?:""
     )
 }
 
 fun UserInfoResponse.toAddressEntity(): AddressEntity {
     return AddressEntity(
-        addressId = address?.addressId ?: 0,  // Assuming Address has an 'id' field as a String
-        country = address?.country ?: "",
-        street = address?.street ?: "",
-        aptSuite = address?.aptSuite ?: "",
-        postalCode = address?.postalCode ?: "",
-        city = address?.city ?: "",
-        objectId = objectId ?: ""
+        addressId = address.addressId,  // Assuming Address has an 'id' field as a String
+        country = address.country,
+        street = address.street,
+        aptSuite = address.aptSuite,
+        postalCode = address.postalCode,
+        city = address.city,
+        objectId = address.objectId?:""
     )
 }
 
@@ -64,7 +64,7 @@ fun ClientInfoResponse.toAddressEntity(): AddressEntity {
         aptSuite = address?.aptSuite ?: "",
         postalCode = address?.postalCode ?: "",
         city = address?.city ?: "",
-        objectId = objectId ?: ""
+        objectId = address.objectId ?: ""
     )
 }
 

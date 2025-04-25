@@ -371,6 +371,53 @@ class Back4AppUserManager {
 
     }
 
+    suspend fun getFirstUserInfo(): UserInfoResponse = withContext(Dispatchers.IO) {
+        // Query to fetch the first UserInfo object
+        val query = ParseQuery.getQuery<ParseObject>("UserInfo")
+        query.include("address") // Include related Address object
+        query.include("contact") // Include related Contact object
+        query.limit = 1 // Ensure only one result is fetched
+
+        val userInfoObject = query.first // Fetch the first available UserInfo object
+
+        userInfoObject?.let {
+            val addressObject = it.getParseObject("address")
+            val contactObject = it.getParseObject("contact")
+
+            val addressData = addressObject?.let { addr ->
+                Address(
+                    objectId = addr.objectId,
+                    country = addr.getString("country") ?: "",
+                    street = addr.getString("street") ?: "",
+                    aptSuite = addr.getString("aptSuite") ?: "",
+                    postalCode = addr.getString("postalCode") ?: "",
+                    city = addr.getString("city") ?: ""
+                )
+            }
+
+            val contactData = contactObject?.let { contact ->
+                Contact(
+                    objectId = contact.objectId,
+                    name = contact.getString("name") ?: "",
+                    phone = contact.getLong("phone"),
+                    cell = contact.getLong("cell"),
+                    email = contact.getString("email") ?: "",
+                    fax = contact.getString("fax") ?: "",
+                    website = contact.getString("website") ?: ""
+                )
+            }
+
+            UserInfoResponse(
+                objectId = it.objectId,
+                businessName = it.getString("businessName") ?: "",
+                logo = it.getString("logo") ?: "",
+                signature = it.getString("signature") ?: "",
+                address = addressData!!,
+                contact = contactData!!
+            )
+        } ?: throw NoSuchElementException("No UserInfo found")
+    }
+
     suspend fun getUserInfoR(userId: String): APIResource<UserInfoResponse> =
         withContext(Dispatchers.IO) {
             try {

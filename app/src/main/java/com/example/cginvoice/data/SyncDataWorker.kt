@@ -5,13 +5,18 @@ import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import androidx.work.workDataOf
 import com.example.cginvoice.data.repository.user.UserRepository
 import com.example.cginvoice.data.source.remote.model.common.IdInfoRemoteResponse
 import com.example.cginvoice.data.source.remote.model.user.UserInfoResponse
+import com.example.cginvoice.data.source.remote.model.user.toUserData
+import com.example.cginvoice.domain.model.user.UserData
 import com.example.cginvoice.utills.Constants.KEY_SYNC_DATA_REQUEST
 import com.example.cginvoice.utills.Constants.KEY_SYNC_TYPE
+import com.example.cginvoice.utills.Constants.KEY_WORK_MANAGER_RESPONSE
 import com.example.cginvoice.utills.SyncType
 import com.example.cginvoice.utills.fromJson
+import com.example.cginvoice.utills.toJson
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
@@ -31,7 +36,7 @@ class SyncDataWorker @AssistedInject constructor(
     }
 
     private suspend fun handleUserSync(requestBodyJson: String?): Result {
-        val requestBody = requestBodyJson?.fromJson<UserInfoResponse>()
+        val requestBody = requestBodyJson?.fromJson<UserData>()
         return requestBody?.let {
             val response = userRepository.userInfoSync(requestBody)
             manageResponse(response)
@@ -42,7 +47,8 @@ class SyncDataWorker @AssistedInject constructor(
         return when (response) {
             is APIResource.Success -> {
                 Log.d("WorkManager", "Successful!")
-                Result.success()
+                val resultData = workDataOf(KEY_WORK_MANAGER_RESPONSE to response.value.toJson())
+                Result.success(resultData)
             }
 
             is APIResource.Error -> {
@@ -61,5 +67,4 @@ class SyncDataWorker @AssistedInject constructor(
             is APIResource.ErrorString -> TODO()
         }
     }
-
 }

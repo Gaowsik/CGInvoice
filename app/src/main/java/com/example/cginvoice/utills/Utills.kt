@@ -3,6 +3,7 @@ package com.example.cginvoice.utills
 import com.example.cginvoice.data.APIResource
 import com.google.gson.Gson
 import com.google.gson.JsonObject
+import com.google.gson.reflect.TypeToken
 
 fun parseErrors(failure: APIResource.Error): String {
     return when {
@@ -62,4 +63,8 @@ enum class SyncType(val type: String) {
 
 enum class SyncStatus(val status: String) {
     PENDING("pending"), COMPLETED("completed")
+}
+
+inline fun <reified T> String.fromJsonList(): List<T> {
+    return Gson().fromJson(this, object : TypeToken<List<T>>() {}.type)
 }

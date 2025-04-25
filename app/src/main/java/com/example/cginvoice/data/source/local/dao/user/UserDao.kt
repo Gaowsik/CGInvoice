@@ -6,12 +6,10 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
-import com.example.cginvoice.data.source.local.entitiy.invoice.InvoiceEntity
 import com.example.cginvoice.data.source.local.entitiy.user.UserEntity
 import com.example.cginvoice.data.source.local.relation.user.UserEntityAndAddressEntity
 import com.example.cginvoice.data.source.local.relation.user.UserEntityAndContactEntity
 import com.example.cginvoice.data.source.local.relation.user.UserEntityWithInvoiceEntities
-import com.example.cginvoice.domain.model.invoice.Invoice
 
 @Dao
 interface UserDao {
@@ -42,5 +40,10 @@ interface UserDao {
 
     @Query("UPDATE UserEntity SET objectId = :newObjectId WHERE userId = :userId")
     suspend fun updateUserObjectId(userId: Int, newObjectId: String)
+
+
+    @Transaction
+    @Query("UPDATE UserEntity SET status = :status WHERE userId = :userId")
+    suspend fun updateStatusByUserID(userId: Int, status: String)
 
 }

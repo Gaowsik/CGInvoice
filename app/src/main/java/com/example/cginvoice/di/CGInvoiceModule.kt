@@ -3,7 +3,6 @@ package com.example.cginvoice.di
 import android.content.Context
 import androidx.room.Room
 import androidx.work.Configuration
-import androidx.work.DelegatingWorkerFactory
 import androidx.work.WorkManager
 import com.example.cginvoice.data.CustomWorkerFactory
 import com.example.cginvoice.data.repository.client.ClientRepository
@@ -20,9 +19,12 @@ import com.example.cginvoice.data.source.local.dataSource.invoice.LocalInvoiceDa
 import com.example.cginvoice.data.source.local.dataSource.user.LocalUserDataSource
 import com.example.cginvoice.data.source.local.dataSource.user.LocalUserDataSourceImpl
 import com.example.cginvoice.data.source.remote.back4AppClientManager.client.Back4AppClientManager
+import com.example.cginvoice.data.source.remote.back4AppClientManager.core.Back4AppImageHandler
 import com.example.cginvoice.data.source.remote.back4AppClientManager.user.Back4AppUserManager
 import com.example.cginvoice.data.source.remote.dataSource.client.RemoteClientDataSource
 import com.example.cginvoice.data.source.remote.dataSource.client.RemoteClientDataSourceImpl
+import com.example.cginvoice.data.source.remote.dataSource.common.RemoteCommonDataSource
+import com.example.cginvoice.data.source.remote.dataSource.common.RemoteCommonDataSourceImpl
 import com.example.cginvoice.data.source.remote.dataSource.user.RemoteUserDataSource
 import com.example.cginvoice.data.source.remote.dataSource.user.RemoteUserDataSourceImpl
 import dagger.Module
@@ -41,10 +43,11 @@ class CGInvoiceModule {
         fun provideUserRepository(
             localUserDataSource: LocalUserDataSource,
             remoteUserDataSource: RemoteUserDataSource,
-            localCommonDataSource: LocalCommonDataSource
+            localCommonDataSource: LocalCommonDataSource,
+            remoteCommonDataSource: RemoteCommonDataSource
         ): UserRepository {
             return UserRepositoryImpl(
-                localUserDataSource, remoteUserDataSource, localCommonDataSource
+                localUserDataSource, remoteUserDataSource, localCommonDataSource,remoteCommonDataSource
             )
         }
 
@@ -104,6 +107,14 @@ class CGInvoiceModule {
 
         @Singleton
         @Provides
+        fun provideRemoteCommonDataSource(
+            back4AppImageHandler: Back4AppImageHandler
+        ): RemoteCommonDataSource {
+            return RemoteCommonDataSourceImpl(back4AppImageHandler)
+        }
+
+        @Singleton
+        @Provides
         fun provideLocalInvoiceDataSource(
             database: CGInvoiceDatabase
         ): LocalInvoiceDataSource {
@@ -122,6 +133,12 @@ class CGInvoiceModule {
             return Back4AppClientManager()
         }
 
+        @Provides
+        @Singleton
+        fun provideBack4AppImageHandler(): Back4AppImageHandler {
+            return Back4AppImageHandler()
+        }
+
     }
 
     @Module
@@ -136,6 +153,24 @@ class CGInvoiceModule {
         }
     }
 
+    /*   @Module
+       @InstallIn(SingletonComponent::class)
+       object WorkerModule {
+           @Provides
+           fun provideWorkManager(
+               @ApplicationContext appContext: Context, workerFactory: CustomWorkerFactory
+           ): WorkManager {
+               val configuration =
+                   Configuration.Builder().setWorkerFactory(object : DelegatingWorkerFactory() {
+                       init {
+                           addFactory(workerFactory)
+                       }
+                   }).build()
+               WorkManager.initialize(appContext, configuration)
+               return WorkManager.getInstance(appContext)
+           }
+       }*/
+
     @Module
     @InstallIn(SingletonComponent::class)
     object WorkerModule {
@@ -144,12 +179,8 @@ class CGInvoiceModule {
             @ApplicationContext appContext: Context, workerFactory: CustomWorkerFactory
         ): WorkManager {
             val configuration =
-                Configuration.Builder().setWorkerFactory(object : DelegatingWorkerFactory() {
-                    init {
-                        addFactory(workerFactory)
-                    }
-                }).build()
-            WorkManager.initialize(appContext, configuration)
+                Configuration.Builder().setWorkerFactory(workerFactory).build()
+            // WorkManager.initialize(appContext, configuration) // Remove this line
             return WorkManager.getInstance(appContext)
         }
     }
