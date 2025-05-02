@@ -30,6 +30,20 @@ class ClientRepositoryImpl @Inject constructor(
     override suspend fun getClientRemoteByUserId(userId: String) =
         remoteClientDataSource.getClientRemoteByUserId(userId)
 
+    override suspend fun getClientList(): DBResource<List<ClientData>> {
+        val response = getClientsWithContactAndAddress()
+        if (response is DBResource.Success) {
+            return response
+        } else if (response is DBResource.Error) {
+            val responseRemote = getAndSaveClientListRemote()
+            if (responseRemote is DBResource.Success) {
+                return getClientsWithContactAndAddress()
+            }
+        }
+        return DBResource.Error(Exception())
+
+    }
+
 
     override suspend fun clientInfoSync(client: ClientData): APIResource<List<IdInfoRemoteResponse>> {
         return if (client.objectId.isNullOrEmpty()) {
@@ -188,7 +202,9 @@ class ClientRepositoryImpl @Inject constructor(
                 }
 
             }
-
+            if (clientList.isEmpty()) {
+                return DBResource.Error(Exception("No clients found"))
+            }
             return DBResource.Success(clientList)
 
         } else if (clientListResponse is DBResource.Error) {
@@ -262,5 +278,19 @@ class ClientRepositoryImpl @Inject constructor(
         }
     }
 
-
+    suspend fun getAndSaveClientListRemote(): DBResource<Unit> {
+        val response = remoteClientDataSource.getAllClients()
+        if (response is APIResource.Success) {
+            response.value.forEach {
+                val responseInsert = insertClientInfoResponseToDB(it.toClientInfoResponse())
+                if (responseInsert is DBResource.Error) {
+                    return DBResource.Error(responseInsert.exception)
+                }
+            }
+            return DBResource.Success(Unit)
+        } else if (response is APIResource.Error) {
+            return DBResource.Error(Exception(response.errorBody.toString()))
+        }
+        return DBResource.Error(Exception("Unknown error"))
+    }
 }

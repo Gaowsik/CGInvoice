@@ -21,4 +21,9 @@ class RemoteClientDataSourceImpl @Inject constructor(private val back4AppClientM
         safeApiCall {
             back4AppClientManager.getClientsByUserId(userId).map { it.toClientData() }
         }
+
+    override suspend fun getAllClients() = safeApiCall {
+        back4AppClientManager.getAllClients().map { it.toClientData() }
+
+    }
 }

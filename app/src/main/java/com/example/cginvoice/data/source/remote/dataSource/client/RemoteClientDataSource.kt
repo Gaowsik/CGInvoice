@@ -11,4 +11,6 @@ interface RemoteClientDataSource {
     suspend fun insertClientRemote(client: ClientData): APIResource<List<IdInfoRemoteResponse>>
 
     suspend fun getClientRemoteByUserId(userId: String): APIResource<List<ClientData>>
+
+    suspend fun getAllClients(): APIResource<List<ClientData>>
 }

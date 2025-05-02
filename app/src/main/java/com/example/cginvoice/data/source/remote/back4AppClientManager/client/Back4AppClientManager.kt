@@ -382,4 +382,67 @@ class Back4AppClientManager {
             }
         }
     }
+
+    suspend fun getAllClients(): List<ClientInfoResponse> {
+        return suspendCancellableCoroutine { continuation ->
+            try {
+                val query = ParseQuery.getQuery<ParseObject>("Client")
+                query.include("userId")
+                query.include("addressId")
+                query.include("contactID")
+
+                query.findInBackground { clientObjects, e ->
+                    if (e != null) {
+                        continuation.resumeWithException(e)
+                    } else {
+                        try {
+                            val clientInfoResponses = clientObjects.map { clientObject ->
+                                val userInfoObject = clientObject.getParseObject("userId")
+                                val addressObject = clientObject.getParseObject("addressId")
+                                val contactObject = clientObject.getParseObject("contactID")
+
+                                val addressData = addressObject?.let { addr ->
+                                    Address(
+                                        objectId = addr.objectId,
+                                        country = addr.getString("country") ?: "",
+                                        street = addr.getString("street") ?: "",
+                                        aptSuite = addr.getString("aptSuite") ?: "",
+                                        postalCode = addr.getString("postalCode") ?: "",
+                                        city = addr.getString("city") ?: ""
+                                    )
+                                } ?: throw IllegalArgumentException("Address data is missing")
+
+                                val contactData = contactObject?.let { contact ->
+                                    Contact(
+                                        objectId = contact.objectId,
+                                        name = contact.getString("name") ?: "",
+                                        phone = contact.getLong("phone"),
+                                        cell = contact.getLong("cell"),
+                                        email = contact.getString("email") ?: "",
+                                        fax = contact.getString("fax") ?: "",
+                                        website = contact.getString("website") ?: ""
+                                    )
+                                } ?: throw IllegalArgumentException("Contact data is missing")
+
+                                ClientInfoResponse(
+                                    clientId = clientObject.objectId.toIntOrNull() ?: 0,
+                                    name = clientObject.getString("name") ?: "",
+                                    userInfoObjectId = userInfoObject?.objectId ?: "",
+                                    objectId = clientObject.objectId,
+                                    address = addressData,
+                                    contact = contactData
+                                )
+                            }
+                            continuation.resume(clientInfoResponses)
+                        } catch (ex: Exception) {
+                            continuation.resumeWithException(ex)
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                continuation.resumeWithException(e)
+            }
+        }
+    }
+
 }

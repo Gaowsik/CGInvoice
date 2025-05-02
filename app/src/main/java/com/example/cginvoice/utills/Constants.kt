@@ -154,6 +154,20 @@ object Constants {
             )
         )
     }
+
+    val clients = listOf(
+        "John Doe",
+        "Jane Smith",
+        "Michael Johnson",
+        "Emily Davis",
+        "Chris Brown",
+        "Olivia Wilson",
+        "Daniel Martinez",
+        "Sophia Anderson",
+        "David Taylor",
+        "Emma Thomas"
+    )
+
 }
 
 object NavTitle {
@@ -161,4 +175,5 @@ object NavTitle {
     const val CLIENT = "Client"
     const val MORE = "More"
     const val USER = "User"
+    const val ADD_CLIENT = "add_client"
 }

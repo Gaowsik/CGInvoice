@@ -60,6 +60,9 @@ import coil.compose.AsyncImage
 import com.example.cginvoice.R
 import com.example.cginvoice.presentaion.nav.NavItem
 import com.example.cginvoice.presentaion.nav.navigateToScreen
+import com.example.cginvoice.utills.MyAlertDialog
+import com.example.cginvoice.utills.TextFieldWithIconLabel
+import com.example.cginvoice.utills.TextFieldWithLabel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview
@@ -291,147 +294,11 @@ fun SectionTitle(title: String) {
     )
 }
 
-@Composable
-fun TextFieldWithLabel(
-    label: String,
-    value: String,
-    onValueChange: (String) -> Unit
-) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .drawWithContent {
-                // Draw top stroke
-                drawLine(
-                    color = Color.Gray,
-                    start = Offset(0f, 0f),
-                    end = Offset(size.width, 0f),
-                    strokeWidth = 0.5.dp.toPx()
-                )
-                // Draw bottom stroke
-                drawLine(
-                    color = Color.Gray,
-                    start = Offset(0f, size.height),
-                    end = Offset(size.width, size.height),
-                    strokeWidth = 0.5.dp.toPx()
-                )
-                drawContent() // Draw the inner content
-            }
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.White.copy(alpha = 0.8f))
-        ) {
-            Text(
-                text = label,
-                style = MaterialTheme.typography.titleSmall,
-                modifier = Modifier
-                    .padding(8.dp)
-                    .weight(2f)
-            )
-            BasicTextField(
-                value = value,
-                textStyle = MaterialTheme.typography.bodyMedium.copy(
-                    color = LocalContentColor.current
-                ),
-                onValueChange = onValueChange,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-                    .weight(3f)
-            )
-        }
-    }
-}
 
-@Composable
-fun TextFieldWithIconLabel(
-    icon: ImageVector, // Use an ImageVector for the icon
-    imageUrl: String,
-    onClick: () -> Unit
-) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color.White.copy(alpha = 0.8f))
-            .clickable { onClick() }
-            .drawWithContent {
-                // Draw top stroke
-                drawLine(
-                    color = Color.Gray,
-                    start = Offset(0f, 0f),
-                    end = Offset(size.width, 0f),
-                    strokeWidth = 0.5.dp.toPx()
-                )
-                // Draw bottom stroke
-                drawLine(
-                    color = Color.Gray,
-                    start = Offset(0f, size.height),
-                    end = Offset(size.width, size.height),
-                    strokeWidth = 0.5.dp.toPx()
-                )
-                drawContent() // Draw the inner content
-            }
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // Icon Section
-            Icon(
-                imageVector = icon,
-                contentDescription = "Label Icon",
-                modifier = Modifier
-                    .size(40.dp) // Set a fixed size for the icon
-                    .padding(8.dp),
-                tint = Color.Gray // Adjust color if needed
-            )
 
-            AsyncImage(
-                model = imageUrl, // your saved image URL
-                contentDescription = "Logo",
-                modifier = Modifier
-                    .size(100.dp),
-                placeholder = painterResource(R.drawable.ic_launcher_foreground), // optional
-                error = painterResource(R.drawable.ic_launcher_foreground),        // optional fallback
-                contentScale = ContentScale.Fit
-            )
-        }
-    }
-}
 
-@Composable
-fun MyAlertDialog(
-    shouldShowDialog: MutableState<Boolean>,
-    errorMessage: String,
-    onDismiss: () -> Unit
-) {
-    if (shouldShowDialog.value) { // 2
-        AlertDialog( // 3
-            onDismissRequest = { // 4
-                shouldShowDialog.value = false
-            },
-            // 5
-            title = { Text(text = stringResource(id = R.string.title_alert)) },
-            text = { Text(text = errorMessage) },
-            confirmButton = { // 6
-                Button(
-                    onClick = {
-                        onDismiss.invoke()
-                    }
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.action_confirm),
-                        color = Color.White
-                    )
-                }
-            }
-        )
-    }
-}
+
+
 
 
 

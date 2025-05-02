@@ -9,6 +9,7 @@ import com.example.cginvoice.domain.model.client.ClientData
 
 interface ClientRepository {
     suspend fun getClientRemoteByUserId(userId: String): APIResource<List<ClientData>>
+    suspend fun getClientList(): DBResource<List<ClientData>>
     suspend fun clientInfoSync(client: ClientData): APIResource<List<IdInfoRemoteResponse>>
     suspend fun insertClientInfoResponseToDB(clientInfoResponse: ClientInfoResponse): DBResource<Unit>
     suspend fun getClientInfo(clientId: Int): DBResource<ClientData>
