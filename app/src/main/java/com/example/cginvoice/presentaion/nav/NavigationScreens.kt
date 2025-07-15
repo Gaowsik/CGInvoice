@@ -11,21 +11,25 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.cginvoice.presentaion.InvoiceScreen
 import com.example.cginvoice.presentaion.MoreScreen
+import com.example.cginvoice.presentaion.TopBarConfig
 import com.example.cginvoice.presentaion.client.AddClientScreen
 import com.example.cginvoice.presentaion.client.ClientScreen
 import com.example.cginvoice.presentaion.user.UserDetailScreen
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun NavigationScreens(navController: NavHostController, paddingValues: PaddingValues) {
+fun NavigationScreens(
+    navController: NavHostController,
+    paddingValues: PaddingValues,
+    topBarConfig: (TopBarConfig) ->Unit
+) {
     NavHost(navController, startDestination = NavItem.Invoice.path) {
         composable(NavItem.Invoice.path) { InvoiceScreen() }
         composable(NavItem.Client.path) {
-            ClientScreen(
-                navController,
-                paddingValues = paddingValues
-            )
+            ClientScreen(paddingValues = paddingValues)
+   
         }
+
         composable(NavItem.More.path) { MoreScreen() }
         composable(NavItem.User.path) {
             UserDetailScreen(
@@ -41,7 +45,8 @@ fun NavigationScreens(navController: NavHostController, paddingValues: PaddingVa
             AddClientScreen(
                 navController,
                 paddingValues = paddingValues,
-                clientId = clientId
+                clientId = clientId,
+                topBarConfig = topBarConfig
             )
         }
 

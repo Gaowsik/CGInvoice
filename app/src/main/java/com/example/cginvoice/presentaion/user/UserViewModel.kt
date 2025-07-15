@@ -122,7 +122,6 @@ class UserViewModel @Inject constructor(
                 is DBResource.Error -> {
                     setLoading(false)
                     _errorMessage.emit(response.exception.message.toString())
-
                 }
 
                 else -> {
@@ -171,8 +170,6 @@ class UserViewModel @Inject constructor(
                     }
                 }
             }
-
-
         }
     }
 

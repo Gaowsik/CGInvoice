@@ -41,6 +41,9 @@ class ClientViewModel @Inject constructor(
     private val _clientDetailState = MutableStateFlow(ClientDetailState())
     val clientDetailState = _clientDetailState.asStateFlow()
 
+    private val _isSaved = MutableSharedFlow<Boolean>()
+    val isSaved = _isSaved.asSharedFlow()
+
     fun updateField(field: (ClientDetailState) -> ClientDetailState) {
         _clientDetailState.value = field(_clientDetailState.value)
     }
@@ -120,6 +123,32 @@ class ClientViewModel @Inject constructor(
                     _clientDetailState.value = response.value.toClientDetailState()
                     setCurrentClient(response.value)
                 }
+            }
+
+        }
+    }
+
+    fun updateClientData() {
+        viewModelScope.launch {
+            setLoading(true)
+            updateCurrentUserState()
+            val updatedUser = _currentClient.value
+            updatedUser?.let {
+                val response = clientRepository.insertOrUpdateClientInfoDB(it)
+                when (response) {
+                    is DBResource.Error -> {
+                        setLoading(false)
+                        _errorMessage.emit(response.exception.message.toString())
+                    }
+
+                    DBResource.Loading -> TODO()
+                    is DBResource.Success -> {
+                        setLoading(false)
+                        _isSaved.emit(true)
+                    }
+                }
+
+
             }
 
         }

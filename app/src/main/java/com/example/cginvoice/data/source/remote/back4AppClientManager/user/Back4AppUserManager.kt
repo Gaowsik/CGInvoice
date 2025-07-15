@@ -206,7 +206,7 @@ class Back4AppUserManager {
         }
     }
 
-    suspend fun updateUserInfoR(userInfoResponse: UserInfoResponse) = withContext(Dispatchers.IO) {
+    suspend fun updateUserInfoR(userInfoResponse: UserInfoResponse) = withContext(Dispatchers.IO)   {
         val userInfoQuery = ParseQuery.getQuery<ParseObject>("UserInfo")
         userInfoQuery.getInBackground(userInfoResponse.userId.toString()) { userInfoObject, userInfoFetchException ->
             if (userInfoFetchException == null && userInfoObject != null) {

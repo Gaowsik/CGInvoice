@@ -3,6 +3,7 @@ package com.example.cginvoice.utills
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -13,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
@@ -29,6 +31,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.cginvoice.R
@@ -282,3 +286,50 @@ fun IconWithLabel(
         }
     }
 }
+
+
+@Composable
+fun PermissionDialog(
+    shouldShowDialog: MutableState<Boolean>,
+    permission: PermissionTextProvider,
+    isPermanentlyDeclined: Boolean,
+    onDismiss: () -> Unit,
+    onOkClick: () -> Unit,
+    onGoToAppSettingsClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    if (shouldShowDialog.value) {
+        AlertDialog(onDismissRequest = onDismiss, confirmButton = {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                HorizontalDivider()
+                Text(
+                    text = if (isPermanentlyDeclined) "Grant permission" else "OK",
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            if (isPermanentlyDeclined) {
+                                onGoToAppSettingsClick()
+                            } else {
+                                onOkClick()
+                            }
+                        }
+                        .padding(16.dp)
+                )
+            }
+        }, title = {
+            Text("Permission required")
+        }, text = {
+            Text(permission.getDescription(isPermanentlyDeclined))
+
+        }, modifier = modifier)
+    }
+}
+
+
+interface PermissionTextProvider {
+    fun getDescription(isPermanentlyDeclined: Boolean): String
+}
+
+

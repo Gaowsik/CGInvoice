@@ -12,7 +12,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -26,30 +29,24 @@ import com.example.cginvoice.presentaion.nav.NavigationScreens
 fun MainScreen(navController: NavHostController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+    val topBarConfig = remember { mutableStateOf(TopBarConfig(title = "CG Invoice")) }
 
-    val topBarContent: @Composable (() -> Unit) = when (currentRoute) {
-        NavItem.Client.path -> {
-            { TopAppBar(title = { Text("Clients") }) }
-        }
-
-        NavItem.Invoice.path -> {
-            { TopAppBar(title = { Text("Invoices") }) }
-        }
-
-        NavItem.More.path -> {
-            { TopAppBar(title = { Text("More") }) }
-        }
-
-        NavItem.User.path -> {
-            { TopAppBar(title = { Text("User") }) }
-
-        }
-
-        else -> {
-            { TopAppBar(title = { Text("CG Invoice") }) }
+    LaunchedEffect(currentRoute) {
+        // Default config
+        topBarConfig.value = when (currentRoute) {
+            NavItem.Client.path -> TopBarConfig("Clients")
+            NavItem.Invoice.path -> TopBarConfig("Invoices")
+            NavItem.More.path -> TopBarConfig("More")
+            NavItem.User.path -> TopBarConfig("User")
+            else -> TopBarConfig("CG Invoice")
         }
     }
-    Scaffold( bottomBar = {
+    Scaffold(
+        topBar = { TopAppBar(
+            title = { Text(topBarConfig.value.title) },
+            actions = topBarConfig.value.actions
+        )},
+        bottomBar = {
         BottomAppBar { BottomNavigationBar(navController = navController) }
 
     }, floatingActionButton = {
@@ -62,7 +59,9 @@ fun MainScreen(navController: NavHostController) {
             }
         }
     }) { padding ->
-        NavigationScreens(navController = navController, paddingValues = padding)
+        NavigationScreens(navController = navController, paddingValues = padding,topBarConfig = {
+                config -> topBarConfig.value = config
+        })
     }
 
 
@@ -72,11 +71,11 @@ fun MainScreen(navController: NavHostController) {
 fun handleFabClick(currentRoute: String?, navController: NavHostController) {
     when (currentRoute) {
         NavItem.Client.path -> {
-            navController.navigate(NavItem.Invoice.path) // Navigate to Add Client screen
+            navController.navigate(NavItem.AddClient.createRoute(1)) // Navigate to Add Client screen
         }
 
         NavItem.Invoice.path -> {
-            navController.navigate(NavItem.Client.path) // Replace with your actual invoice creation route
+            navController.navigate(NavItem.AddClient.path) // Replace with your actual invoice creation route
         }
 
         else -> {

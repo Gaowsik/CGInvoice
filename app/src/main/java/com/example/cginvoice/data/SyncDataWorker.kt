@@ -6,10 +6,12 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
+import com.example.cginvoice.data.repository.client.ClientRepository
 import com.example.cginvoice.data.repository.user.UserRepository
 import com.example.cginvoice.data.source.remote.model.common.IdInfoRemoteResponse
 import com.example.cginvoice.data.source.remote.model.user.UserInfoResponse
 import com.example.cginvoice.data.source.remote.model.user.toUserData
+import com.example.cginvoice.domain.model.client.ClientData
 import com.example.cginvoice.domain.model.user.UserData
 import com.example.cginvoice.utills.Constants.KEY_SYNC_DATA_REQUEST
 import com.example.cginvoice.utills.Constants.KEY_SYNC_TYPE
@@ -23,6 +25,7 @@ import dagger.assisted.AssistedInject
 @HiltWorker
 class SyncDataWorker @AssistedInject constructor(
     @Assisted private val userRepository: UserRepository,
+    @Assisted private val clientRepository: ClientRepository,
     @Assisted private val context: Context,
     @Assisted private val params: WorkerParameters
 ) : CoroutineWorker(context, params) {
@@ -39,6 +42,14 @@ class SyncDataWorker @AssistedInject constructor(
         val requestBody = requestBodyJson?.fromJson<UserData>()
         return requestBody?.let {
             val response = userRepository.userInfoSync(requestBody)
+            manageResponse(response)
+        } ?: Result.failure()
+    }
+
+    private suspend fun handleClientSync(requestBodyJson: String?): Result {
+        val requestBody = requestBodyJson?.fromJson<List<ClientData>>()
+        return requestBody?.let {
+            val response = clientRepository.syncAllClients(it)
             manageResponse(response)
         } ?: Result.failure()
     }

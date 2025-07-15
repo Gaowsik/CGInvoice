@@ -4,6 +4,7 @@ import com.example.cginvoice.data.source.local.entitiy.client.ClientEntity
 import com.example.cginvoice.data.source.remote.model.client.ClientInfoResponse
 import com.example.cginvoice.domain.model.common.Address
 import com.example.cginvoice.domain.model.common.Contact
+import com.example.cginvoice.domain.model.user.toUserEntity
 import com.example.cginvoice.utills.SyncStatus
 
 data class ClientData(
@@ -25,12 +26,12 @@ data class ClientData(
     )
 }
 
-fun ClientData.toClientEntity(): ClientEntity {
+fun ClientData.toClientEntity(addressId: Int=0, contactId: Int=0): ClientEntity {
     return ClientEntity(
         clientId = clientId,
         clientName = name,
-        addressId = address.addressId,
-        contactId = contact.contactId,
+        addressId = if (addressId == 0) this.address.addressId else addressId,
+        contactId = if (contactId == 0) this.contact.contactId else contactId,
         userId = 0,
         objectId = objectId ?: "",
         status = SyncStatus.PENDING.status

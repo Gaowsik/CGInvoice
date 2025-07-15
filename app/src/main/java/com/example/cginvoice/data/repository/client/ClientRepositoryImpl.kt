@@ -158,6 +158,14 @@ class ClientRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun insertOrUpdateClientInfoDB(clientData: ClientData): DBResource<Unit> {
+        return if (isClientDBNotEmpty()) {
+            updateClientInfoDB(clientData)
+        } else {
+            insertClientDataToDB(clientData)
+        }
+    }
+
     override suspend fun deleteClientById(clientID: Int) {
         localClientDataSource.deleteClientById(clientID)
     }
@@ -230,12 +238,16 @@ class ClientRepositoryImpl @Inject constructor(
         )
 
 
-    override suspend fun syncAllClients(clients: List<ClientData>) {
+    override suspend fun syncAllClients(clients: List<ClientData>) : APIResource<List<IdInfoRemoteResponse>> {
+        val idInfoRemoteResponseList = emptyList<IdInfoRemoteResponse>().toMutableList()
         clients.filter { it.syncStatus == SyncStatus.PENDING.status }.forEach { client ->
             val response = clientInfoSync(client)
             when (response) {
                 is APIResource.Success -> {
                     Log.d("suc", "")
+                    for (item in response.value) {
+                        idInfoRemoteResponseList.add(item)
+                    }
                 }
 
                 is APIResource.Error -> {
@@ -249,6 +261,7 @@ class ClientRepositoryImpl @Inject constructor(
                 }
             }
         }
+       return APIResource.Success(idInfoRemoteResponseList)
     }
 
     suspend fun updateObjectId(value: List<IdInfoRemoteResponse>) {
@@ -267,7 +280,6 @@ class ClientRepositoryImpl @Inject constructor(
                 SyncType.ADDRESS.type -> localCommonDataSource.updateAddressObjectId(
                     it.id,
                     it.objectId
-
                 )
 
                 else -> {
@@ -292,5 +304,48 @@ class ClientRepositoryImpl @Inject constructor(
             return DBResource.Error(Exception(response.errorBody.toString()))
         }
         return DBResource.Error(Exception("Unknown error"))
+    }
+
+    suspend fun isClientDBNotEmpty(): Boolean {
+        val response = localClientDataSource.getClients()
+        return if (response is DBResource.Success) {
+            response.value.isNotEmpty()
+        } else {
+            false
+        }
+    }
+
+    suspend fun insertClientDataToDB(clientData: ClientData): DBResource<Unit> {
+        return try {
+            val responseAddress =
+                localCommonDataSource.insertAddressEntity(clientData.address.toAddressEntity())
+            val responseContact =
+                localCommonDataSource.insertContactEntity(clientData.contact.toContactEntity())
+            if (responseAddress is DBResource.Success && responseContact is DBResource.Success) {
+
+                val clientEntity = clientData.toClientEntity(
+                    responseAddress.value.toInt(),
+                    responseContact.value.toInt()
+                )
+                val responseClient = localClientDataSource.insertClientEntity(clientEntity)
+
+                if (responseClient is DBResource.Success) {
+                    DBResource.Success(Unit)
+                } else {
+                    DBResource.Error((responseClient as DBResource.Error).exception)
+                }
+
+            } else {
+                val exception = when {
+                    responseAddress is DBResource.Error -> responseAddress.exception
+                    responseContact is DBResource.Error -> responseContact.exception
+                    else -> Exception("Unknown error during insertion")
+                }
+                DBResource.Error(exception)
+            }
+
+        } catch (e: Exception) {
+            DBResource.Error(e)
+        }
     }
 }
