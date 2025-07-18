@@ -38,7 +38,7 @@ fun ClientScreen(
     Column(
         modifier = Modifier
             .padding(
-                vertical = paddingValues.calculateBottomPadding()
+                vertical = paddingValues.calculateTopPadding()
             )
     ) {
         SearchBar(

@@ -131,7 +131,9 @@ fun AddClientScreen(
         })
 
     LaunchedEffect(key1 = true, block = {
-        viewModel.getClientByClientId(clientId)
+        if (clientId != -1) {
+            viewModel.getClientByClientId(clientId)
+        }
     })
 
     topBarConfig(
@@ -146,7 +148,8 @@ fun AddClientScreen(
         Column(
             modifier = Modifier
                 .padding(
-                    vertical = paddingValues.calculateBottomPadding()
+                    top = paddingValues.calculateTopPadding(),
+                    bottom = paddingValues.calculateBottomPadding(),
                 )
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
@@ -199,17 +202,6 @@ fun AddClientScreen(
                 viewModel.updateField { it.copy(email = email) }
             }
 
-            if (loadingState) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.Black.copy(alpha = 0.5f))
-                        .clickable(enabled = false) {}, // Prevent interactions
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator(color = Color.White)
-                }
-            }
 
             MyAlertDialog(
                 shouldShowDialog = shouldShowDialog,
@@ -251,6 +243,18 @@ fun AddClientScreen(
 
 
         }
+
+    if (loadingState) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.5f))
+                .clickable(enabled = false) {}, // Prevent interactions
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(color = Color.White)
+        }
+    }
     }
 
 

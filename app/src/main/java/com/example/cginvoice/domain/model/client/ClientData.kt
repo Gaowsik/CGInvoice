@@ -4,16 +4,15 @@ import com.example.cginvoice.data.source.local.entitiy.client.ClientEntity
 import com.example.cginvoice.data.source.remote.model.client.ClientInfoResponse
 import com.example.cginvoice.domain.model.common.Address
 import com.example.cginvoice.domain.model.common.Contact
-import com.example.cginvoice.domain.model.user.toUserEntity
 import com.example.cginvoice.utills.SyncStatus
 
 data class ClientData(
     val clientId: Int = 0,
-    val name: String,
+    val name: String = "",
     val userInfoObjectId: String = "",
     val objectId: String? = "",
-    val address: Address,
-    val contact: Contact,
+    val address: Address = Address(),
+    val contact: Contact = Contact(),
     val syncStatus: String = SyncStatus.PENDING.status
 ) {
     fun toClientInfoResponse() = ClientInfoResponse(

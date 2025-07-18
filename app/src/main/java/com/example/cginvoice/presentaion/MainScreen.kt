@@ -71,7 +71,7 @@ fun MainScreen(navController: NavHostController) {
 fun handleFabClick(currentRoute: String?, navController: NavHostController) {
     when (currentRoute) {
         NavItem.Client.path -> {
-            navController.navigate(NavItem.AddClient.createRoute(1)) // Navigate to Add Client screen
+            navController.navigate(NavItem.AddClient.createRoute(-1)) // Navigate to Add Client screen
         }
 
         NavItem.Invoice.path -> {
@@ -79,7 +79,6 @@ fun handleFabClick(currentRoute: String?, navController: NavHostController) {
         }
 
         else -> {
-
         }
 
         // Add more routes as needed

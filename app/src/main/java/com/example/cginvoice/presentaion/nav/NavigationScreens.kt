@@ -34,7 +34,8 @@ fun NavigationScreens(
         composable(NavItem.User.path) {
             UserDetailScreen(
                 navController,
-                paddingValues = paddingValues
+                paddingValues = paddingValues,
+                topBarConfig = topBarConfig
             )
         }
         composable(

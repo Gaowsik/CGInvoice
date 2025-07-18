@@ -159,7 +159,7 @@ class ClientRepositoryImpl @Inject constructor(
     }
 
     override suspend fun insertOrUpdateClientInfoDB(clientData: ClientData): DBResource<Unit> {
-        return if (isClientDBNotEmpty()) {
+        return if (clientData.clientId!=0) {
             updateClientInfoDB(clientData)
         } else {
             insertClientDataToDB(clientData)

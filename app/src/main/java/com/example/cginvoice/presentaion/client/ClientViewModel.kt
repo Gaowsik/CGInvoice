@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -32,7 +33,7 @@ class ClientViewModel @Inject constructor(
     private val _getClientInfo = MutableSharedFlow<List<ClientData>>()
     val getClientInfo = _getClientInfo.asSharedFlow()
 
-    private val _currentClient = MutableStateFlow<ClientData?>(null)
+    private val _currentClient = MutableStateFlow<ClientData?>(ClientData())
     val currentClient = _currentClient.asStateFlow()
 
     private val _isLoading = MutableStateFlow(false)
@@ -132,7 +133,7 @@ class ClientViewModel @Inject constructor(
         viewModelScope.launch {
             setLoading(true)
             updateCurrentUserState()
-            val updatedUser = _currentClient.value
+            val updatedUser = _currentClient.first()
             updatedUser?.let {
                 val response = clientRepository.insertOrUpdateClientInfoDB(it)
                 when (response) {
@@ -149,7 +150,7 @@ class ClientViewModel @Inject constructor(
                 }
 
 
-            }
+            } ?: setLoading(false)
 
         }
     }
