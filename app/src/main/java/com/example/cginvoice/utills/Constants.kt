@@ -12,6 +12,7 @@ object Constants {
     const val KEY_SYNC_DATA_REQUEST = "key_sync_data_request"
     const val KEY_SYNC_TYPE = "key_sync_type"
     const val KEY_WORK_MANAGER_RESPONSE = "key_work_manager_response"
+    const val KEY_SYNC_CLIENT_DATA = "sync_client_data"
 
     val sampleAddress = Address(
         objectId = "",

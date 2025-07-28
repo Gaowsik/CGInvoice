@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.work.BackoffPolicy
 import androidx.work.Constraints
+import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
@@ -21,6 +22,7 @@ import com.example.cginvoice.data.source.remote.model.client.ClientInfoResponse
 import com.example.cginvoice.data.source.remote.model.common.IdInfoRemoteResponse
 import com.example.cginvoice.domain.model.client.ClientData
 import com.example.cginvoice.domain.model.user.UserData
+import com.example.cginvoice.utills.Constants.KEY_SYNC_CLIENT_DATA
 import com.example.cginvoice.utills.Constants.KEY_SYNC_DATA_REQUEST
 import com.example.cginvoice.utills.Constants.KEY_SYNC_TYPE
 import com.example.cginvoice.utills.Constants.KEY_WORK_MANAGER_RESPONSE
@@ -120,6 +122,7 @@ class ClientViewModel @Inject constructor(
                 DBResource.Loading -> {
 
                 }
+
                 is DBResource.Success -> {
                     setLoading(false)
                     val originalList = response.value
@@ -274,7 +277,11 @@ class ClientViewModel @Inject constructor(
             .setBackoffCriteria(BackoffPolicy.LINEAR, Duration.ofSeconds(10))
             .build()
 
-        workManager.enqueue(workRequest)
+        workManager.enqueueUniqueWork(
+            KEY_SYNC_CLIENT_DATA,
+            ExistingWorkPolicy.KEEP,
+            workRequest
+        )
         observeWorkStatus(workRequest.id)
     }
 

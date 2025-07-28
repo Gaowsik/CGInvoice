@@ -1,5 +1,7 @@
 package com.example.cginvoice.presentaion.client
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -22,6 +24,7 @@ import androidx.navigation.NavHostController
 import com.example.cginvoice.presentaion.nav.NavItem
 import com.example.cginvoice.utills.SearchBar
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ClientScreen(
     navController: NavHostController,
