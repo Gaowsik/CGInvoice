@@ -46,12 +46,11 @@ import com.example.cginvoice.utills.TextFieldWithLabel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddClientScreen(
-    navController: NavHostController = NavHostController(context = LocalContext.current),
+    navController: NavHostController,
     viewModel: ClientViewModel = hiltViewModel(),
     paddingValues: PaddingValues = PaddingValues(),
     clientId: Int,
     topBarConfig: (TopBarConfig) -> Unit
-
 ) {
     val clientDetailState by viewModel.clientDetailState.collectAsState()
     val loadingState by viewModel.isLoading.collectAsState()

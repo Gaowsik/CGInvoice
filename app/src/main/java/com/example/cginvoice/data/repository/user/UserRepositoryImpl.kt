@@ -220,6 +220,12 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getUserObjectId(): String? {
+        val response = localUserDataSource.getUser()
+        val objectId = (response as? DBResource.Success)?.value?.objectId
+        return if (!objectId.isNullOrBlank()) objectId else null
+    }
+
     override suspend fun deleteUserInfo() {
         localUserDataSource.deleteUserEntity()
         localCommonDataSource.deleteAddressEntity()

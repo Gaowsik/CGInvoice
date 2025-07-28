@@ -51,7 +51,8 @@ inline fun <reified T> T.toJson(): String {
 
 // Extension function to convert a JSON string to an object
 inline fun <reified T> String.fromJson(): T {
-    return Gson().fromJson(this, T::class.java)
+    val type = object : TypeToken<T>() {}.type
+    return Gson().fromJson(this, type)
 }
 
 enum class SyncType(val type: String) {

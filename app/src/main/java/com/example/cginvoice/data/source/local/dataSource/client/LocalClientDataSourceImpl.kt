@@ -46,7 +46,7 @@ class LocalClientDataSourceImpl(private val clientDao: ClientDao) : LocalClientD
     }
 
     override suspend fun deleteClientById(clientId: Int) = safeDbCall {
-      clientDao.deleteClientById(clientId)
+        clientDao.deleteClientById(clientId)
     }
 
     override suspend fun updateClientObjectId(
@@ -58,6 +58,10 @@ class LocalClientDataSourceImpl(private val clientDao: ClientDao) : LocalClientD
 
     override suspend fun getClientEntityById(clientId: Int) = safeDbCall {
         clientDao.getClientEntityById(clientId).toClient()
+    }
+
+    override suspend fun updateStatusByClientID(clientId: Int, status: String) = safeDbCall {
+        clientDao.updateStatusByClientID(clientId, status)
     }
 
     override suspend fun getClients() = safeDbCall {

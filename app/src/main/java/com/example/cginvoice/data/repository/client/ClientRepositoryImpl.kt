@@ -46,6 +46,7 @@ class ClientRepositoryImpl @Inject constructor(
 
 
     override suspend fun clientInfoSync(client: ClientData): APIResource<List<IdInfoRemoteResponse>> {
+
         return if (client.objectId.isNullOrEmpty()) {
             val response = remoteClientDataSource.insertClientRemote(client)
             if (response is APIResource.Success) {
@@ -159,7 +160,7 @@ class ClientRepositoryImpl @Inject constructor(
     }
 
     override suspend fun insertOrUpdateClientInfoDB(clientData: ClientData): DBResource<Unit> {
-        return if (clientData.clientId!=0) {
+        return if (clientData.clientId != 0) {
             updateClientInfoDB(clientData)
         } else {
             insertClientDataToDB(clientData)
@@ -233,12 +234,13 @@ class ClientRepositoryImpl @Inject constructor(
             clientId = client.clientId,
             name = client.clientName,
             objectId = client.objectId,
+            syncStatus = client.status,
             address = address,
             contact = contact
         )
 
 
-    override suspend fun syncAllClients(clients: List<ClientData>) : APIResource<List<IdInfoRemoteResponse>> {
+    override suspend fun syncAllClients(clients: List<ClientData>): APIResource<List<IdInfoRemoteResponse>> {
         val idInfoRemoteResponseList = emptyList<IdInfoRemoteResponse>().toMutableList()
         clients.filter { it.syncStatus == SyncStatus.PENDING.status }.forEach { client ->
             val response = clientInfoSync(client)
@@ -261,16 +263,20 @@ class ClientRepositoryImpl @Inject constructor(
                 }
             }
         }
-       return APIResource.Success(idInfoRemoteResponseList)
+        return APIResource.Success(idInfoRemoteResponseList)
     }
 
     suspend fun updateObjectId(value: List<IdInfoRemoteResponse>) {
         value.forEach {
             when (it.table) {
-                SyncType.CLIENT.type -> localClientDataSource.updateClientObjectId(
-                    it.id,
-                    it.objectId
-                )
+                SyncType.CLIENT.type -> {
+                    localClientDataSource.updateClientObjectId(
+                        it.id,
+                        it.objectId
+                    )
+
+                    localClientDataSource.updateStatusByClientID(it.id, SyncStatus.COMPLETED.status)
+                }
 
                 SyncType.CONTACT.type -> localCommonDataSource.updateContactObjectId(
                     it.id,

@@ -26,7 +26,7 @@ fun NavigationScreens(
     NavHost(navController, startDestination = NavItem.Invoice.path) {
         composable(NavItem.Invoice.path) { InvoiceScreen() }
         composable(NavItem.Client.path) {
-            ClientScreen(paddingValues = paddingValues)
+            ClientScreen(navController = navController, paddingValues = paddingValues)
    
         }
 

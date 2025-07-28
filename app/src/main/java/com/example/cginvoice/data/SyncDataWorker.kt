@@ -34,6 +34,8 @@ class SyncDataWorker @AssistedInject constructor(
         val syncTypeString = params.inputData.getString(KEY_SYNC_TYPE)
         return when (syncTypeString) {
             SyncType.USER.type -> handleUserSync(syncDataRequestBody)
+
+            SyncType.CLIENT.type -> handleClientSync(syncDataRequestBody)
             else -> Result.failure()
         }
     }

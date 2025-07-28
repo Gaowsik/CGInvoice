@@ -24,6 +24,7 @@ interface UserRepository {
     suspend fun insertOrUpdateUserInfoDB(user: UserData): DBResource<Unit>
     suspend fun updateStatusByUserID(userId: Int, status: String): DBResource<Unit>
     suspend fun userInfoSync(user: UserData): APIResource<List<IdInfoRemoteResponse>>
+    suspend fun getUserObjectId(): String?
     suspend fun deleteUserInfo()
     suspend fun isUserDBNotEmpty(): Boolean
     suspend fun uploadImage(

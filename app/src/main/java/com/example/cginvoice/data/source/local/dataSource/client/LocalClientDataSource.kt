@@ -18,5 +18,6 @@ interface LocalClientDataSource {
     suspend fun deleteClientById(clientId: Int): DBResource<Unit>
     suspend fun updateClientObjectId(clientId: Int, newObjectId: String): DBResource<Unit>
     suspend fun getClientEntityById(clientId: Int): DBResource<Client>
+    suspend fun updateStatusByClientID(clientId: Int, status: String): DBResource<Unit>
     suspend fun getClients(): DBResource<List<Client>>
 }

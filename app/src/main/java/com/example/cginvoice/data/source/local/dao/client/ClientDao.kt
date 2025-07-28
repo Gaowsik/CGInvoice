@@ -50,4 +50,7 @@ interface ClientDao {
 
     @Query("SELECT * FROM ClientEntity")
     suspend fun getClients(): List<ClientEntity>
+
+    @Query("UPDATE ClientEntity SET status = :status WHERE clientId = :clientId")
+    suspend fun updateStatusByClientID(clientId: Int, status: String)
 }

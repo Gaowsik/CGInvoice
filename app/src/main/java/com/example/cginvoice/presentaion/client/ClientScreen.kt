@@ -24,7 +24,7 @@ import com.example.cginvoice.utills.SearchBar
 
 @Composable
 fun ClientScreen(
-    navController: NavHostController = NavHostController(context = LocalContext.current),
+    navController: NavHostController,
     viewModel: ClientViewModel = hiltViewModel(),
     paddingValues: PaddingValues = PaddingValues()
 ) {
