@@ -59,7 +59,9 @@ enum class SyncType(val type: String) {
     USER("user"),
     ADDRESS("address"),
     CONTACT("contact"),
-    CLIENT("client")
+    CLIENT("client"),
+    ITEM("item"),
+
 }
 
 enum class SyncStatus(val status: String) {
