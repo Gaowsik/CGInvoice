@@ -18,9 +18,9 @@ import com.example.cginvoice.data.source.local.dataSource.invoice.LocalInvoiceDa
 import com.example.cginvoice.data.source.local.dataSource.invoice.LocalInvoiceDataSourceImpl
 import com.example.cginvoice.data.source.local.dataSource.user.LocalUserDataSource
 import com.example.cginvoice.data.source.local.dataSource.user.LocalUserDataSourceImpl
-import com.example.cginvoice.data.source.remote.back4AppClientManager.client.Back4AppClientManager
-import com.example.cginvoice.data.source.remote.back4AppClientManager.core.Back4AppImageHandler
-import com.example.cginvoice.data.source.remote.back4AppClientManager.user.Back4AppUserManager
+import com.example.cginvoice.data.source.remote.back4AppManager.client.Back4AppClientManager
+import com.example.cginvoice.data.source.remote.back4AppManager.core.Back4AppImageHandler
+import com.example.cginvoice.data.source.remote.back4AppManager.user.Back4AppUserManager
 import com.example.cginvoice.data.source.remote.dataSource.client.RemoteClientDataSource
 import com.example.cginvoice.data.source.remote.dataSource.client.RemoteClientDataSourceImpl
 import com.example.cginvoice.data.source.remote.dataSource.common.RemoteCommonDataSource

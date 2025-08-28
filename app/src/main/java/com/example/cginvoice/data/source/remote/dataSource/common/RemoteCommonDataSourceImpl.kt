@@ -4,7 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
 import com.example.cginvoice.data.BaseRepo
-import com.example.cginvoice.data.source.remote.back4AppClientManager.core.Back4AppImageHandler
+import com.example.cginvoice.data.source.remote.back4AppManager.core.Back4AppImageHandler
 import javax.inject.Inject
 
 class RemoteCommonDataSourceImpl @Inject constructor(private val back4AppImageHandler: Back4AppImageHandler) :

@@ -1,7 +1,6 @@
-package com.example.cginvoice.data.source.remote.back4AppClientManager.item
+package com.example.cginvoice.data.source.remote.back4AppManager.item
 
 import com.example.cginvoice.data.APIResource
-import com.example.cginvoice.data.source.remote.model.client.ClientInfoResponse
 import com.example.cginvoice.data.source.remote.model.common.IdInfoRemoteResponse
 import com.example.cginvoice.data.source.remote.model.item.ItemResponse
 import com.example.cginvoice.utills.SyncType
@@ -35,9 +34,7 @@ class Back4AppItemManager {
                 itemObject.save()
 
                 val response = IdInfoRemoteResponse(
-                    id = item.itemId,
-                    table = SyncType.ITEM.type,
-                    objectId = itemObject.objectId
+                    id = item.itemId, table = SyncType.ITEM.type, objectId = itemObject.objectId
                 )
 
                 APIResource.Success(response)
@@ -72,9 +69,7 @@ class Back4AppItemManager {
                 itemObject.save()
 
                 val response = IdInfoRemoteResponse(
-                    id = item.itemId,
-                    table = SyncType.ITEM.type,
-                    objectId = itemObject.objectId
+                    id = item.itemId, table = SyncType.ITEM.type, objectId = itemObject.objectId
                 )
 
                 APIResource.Success(response)
@@ -111,7 +106,8 @@ class Back4AppItemManager {
                                     defaultUnitPrice = itemObject.getDouble("defaultUnitPrice"),
                                     defaultTax = itemObject.getDouble("defaultTax"),
                                     defaultDiscount = itemObject.getDouble("defaultDiscount"),
-                                    userObjectId = itemObject.getParseObject("userObjectID")?.objectId ?: ""
+                                    userObjectId = itemObject.getParseObject("userObjectID")?.objectId
+                                        ?: ""
                                 )
                             }
                             continuation.resume(itemResponses)
@@ -123,6 +119,23 @@ class Back4AppItemManager {
             } catch (e: Exception) {
                 continuation.resumeWithException(e)
             }
+        }
+    }
+
+    suspend fun deleteItem(itemObjectId: String): APIResource<Unit> = withContext(Dispatchers.IO) {
+        try {
+            val itemQuery = ParseQuery.getQuery<ParseObject>("Item")
+            val itemObject = itemQuery.get(itemObjectId)
+
+            itemObject.delete()
+
+            APIResource.Success(Unit)
+        } catch (e: Exception) {
+            APIResource.ErrorString(
+                isNetworkError = e is java.net.UnknownHostException,
+                errorCode = (e as? ParseException)?.code,
+                errorBody = e.message.toString()
+            )
         }
     }
 

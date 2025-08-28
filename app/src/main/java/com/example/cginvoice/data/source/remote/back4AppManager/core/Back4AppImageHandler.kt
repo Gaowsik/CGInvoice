@@ -1,4 +1,4 @@
-package com.example.cginvoice.data.source.remote.back4AppClientManager.core
+package com.example.cginvoice.data.source.remote.back4AppManager.core
 
 import android.content.Context
 import android.graphics.Bitmap

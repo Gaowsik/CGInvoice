@@ -1,7 +1,7 @@
 package com.example.cginvoice.data.source.remote.dataSource.item
 
 import com.example.cginvoice.data.BaseRepo
-import com.example.cginvoice.data.source.remote.back4AppClientManager.item.Back4AppItemManager
+import com.example.cginvoice.data.source.remote.back4AppManager.item.Back4AppItemManager
 import com.example.cginvoice.data.source.remote.model.item.toItemData
 import com.example.cginvoice.domain.model.item.ItemData
 import javax.inject.Inject

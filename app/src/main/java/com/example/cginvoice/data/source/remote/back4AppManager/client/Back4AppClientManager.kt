@@ -1,9 +1,8 @@
-package com.example.cginvoice.data.source.remote.back4AppClientManager.client
+package com.example.cginvoice.data.source.remote.back4AppManager.client
 
 import com.example.cginvoice.data.APIResource
 import com.example.cginvoice.data.source.remote.model.client.ClientInfoResponse
 import com.example.cginvoice.data.source.remote.model.common.IdInfoRemoteResponse
-import com.example.cginvoice.data.source.remote.model.user.UserInfoResponse
 import com.example.cginvoice.domain.model.common.Address
 import com.example.cginvoice.domain.model.common.Contact
 import com.example.cginvoice.utills.SyncType

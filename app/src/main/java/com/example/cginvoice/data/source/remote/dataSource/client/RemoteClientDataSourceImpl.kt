@@ -2,7 +2,7 @@ package com.example.cginvoice.data.source.remote.dataSource.client
 
 import com.example.cginvoice.data.APIResource
 import com.example.cginvoice.data.BaseRepo
-import com.example.cginvoice.data.source.remote.back4AppClientManager.client.Back4AppClientManager
+import com.example.cginvoice.data.source.remote.back4AppManager.client.Back4AppClientManager
 import com.example.cginvoice.data.source.remote.model.client.toClientData
 import com.example.cginvoice.data.source.remote.model.common.IdInfoRemoteResponse
 import com.example.cginvoice.domain.model.client.ClientData

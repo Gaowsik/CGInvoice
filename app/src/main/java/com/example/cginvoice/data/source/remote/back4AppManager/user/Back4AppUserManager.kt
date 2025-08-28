@@ -1,4 +1,4 @@
-package com.example.cginvoice.data.source.remote.back4AppClientManager.user
+package com.example.cginvoice.data.source.remote.back4AppManager.user
 
 import android.util.Log
 import com.example.cginvoice.data.APIResource
