@@ -50,7 +50,7 @@ fun MainScreen(navController: NavHostController) {
         BottomAppBar { BottomNavigationBar(navController = navController) }
 
     }, floatingActionButton = {
-        if (currentRoute == NavItem.Client.path || currentRoute == NavItem.Invoice.path) {
+        if (currentRoute == NavItem.Client.path || currentRoute == NavItem.Invoice.path || currentRoute == NavItem.Items.path) {
             FloatingActionButton(onClick = { handleFabClick(currentRoute, navController) }) {
                 Icon(
                     imageVector = Icons.Default.Add,
