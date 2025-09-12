@@ -122,14 +122,18 @@ class Back4AppItemManager {
         }
     }
 
-    suspend fun deleteItem(itemObjectId: String): APIResource<Unit> = withContext(Dispatchers.IO) {
+    suspend fun deleteItem(itemObjectId: String,itemId: Int): APIResource<IdInfoRemoteResponse> = withContext(Dispatchers.IO) {
         try {
             val itemQuery = ParseQuery.getQuery<ParseObject>("Item")
             val itemObject = itemQuery.get(itemObjectId)
 
             itemObject.delete()
 
-            APIResource.Success(Unit)
+            val response = IdInfoRemoteResponse(
+                id = itemId, table = SyncType.ITEM.type, objectId = itemObject.objectId
+            )
+
+            APIResource.Success(response)
         } catch (e: Exception) {
             APIResource.ErrorString(
                 isNetworkError = e is java.net.UnknownHostException,

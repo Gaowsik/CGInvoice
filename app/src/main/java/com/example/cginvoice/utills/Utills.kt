@@ -65,7 +65,7 @@ enum class SyncType(val type: String) {
 }
 
 enum class SyncStatus(val status: String) {
-    PENDING("pending"), COMPLETED("completed")
+    PENDING("pending"), COMPLETED("completed"),DELETE("delete")
 }
 
 inline fun <reified T> String.fromJsonList(): List<T> {

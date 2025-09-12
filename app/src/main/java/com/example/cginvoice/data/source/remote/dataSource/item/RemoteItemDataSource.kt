@@ -12,4 +12,6 @@ interface RemoteItemDataSource {
 
     suspend fun getItemsRemoteByUserId(userId: String): APIResource<List<ItemData>>
 
+    suspend fun deleteItemRemote(itemObjectId: String,itemId : Int): APIResource<IdInfoRemoteResponse>
+
 }

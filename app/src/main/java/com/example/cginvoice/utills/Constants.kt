@@ -13,6 +13,7 @@ object Constants {
     const val KEY_SYNC_TYPE = "key_sync_type"
     const val KEY_WORK_MANAGER_RESPONSE = "key_work_manager_response"
     const val KEY_SYNC_CLIENT_DATA = "sync_client_data"
+    const val KEY_SYNC_ITEM_DATA = "sync_item_data"
 
     val sampleAddress = Address(
         objectId = "",
@@ -174,7 +175,8 @@ object Constants {
 object NavTitle {
     const val INVOICE = "Invoice"
     const val CLIENT = "Client"
-    const val MORE = "More"
+    const val ITEM = "Item"
     const val USER = "User"
     const val ADD_CLIENT = "add_client"
+    const val ADD_ITEM = "add_item"
 }

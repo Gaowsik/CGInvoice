@@ -7,6 +7,8 @@ import androidx.work.WorkManager
 import com.example.cginvoice.data.CustomWorkerFactory
 import com.example.cginvoice.data.repository.client.ClientRepository
 import com.example.cginvoice.data.repository.client.ClientRepositoryImpl
+import com.example.cginvoice.data.repository.item.ItemRepository
+import com.example.cginvoice.data.repository.item.ItemRepositoryImpl
 import com.example.cginvoice.data.repository.user.UserRepository
 import com.example.cginvoice.data.repository.user.UserRepositoryImpl
 import com.example.cginvoice.data.source.local.CGInvoiceDatabase
@@ -16,15 +18,20 @@ import com.example.cginvoice.data.source.local.dataSource.common.LocalCommonData
 import com.example.cginvoice.data.source.local.dataSource.common.LocalCommonDataSourceImpl
 import com.example.cginvoice.data.source.local.dataSource.invoice.LocalInvoiceDataSource
 import com.example.cginvoice.data.source.local.dataSource.invoice.LocalInvoiceDataSourceImpl
+import com.example.cginvoice.data.source.local.dataSource.item.LocalItemDataSource
+import com.example.cginvoice.data.source.local.dataSource.item.LocalItemDataSourceImpl
 import com.example.cginvoice.data.source.local.dataSource.user.LocalUserDataSource
 import com.example.cginvoice.data.source.local.dataSource.user.LocalUserDataSourceImpl
 import com.example.cginvoice.data.source.remote.back4AppManager.client.Back4AppClientManager
 import com.example.cginvoice.data.source.remote.back4AppManager.core.Back4AppImageHandler
+import com.example.cginvoice.data.source.remote.back4AppManager.item.Back4AppItemManager
 import com.example.cginvoice.data.source.remote.back4AppManager.user.Back4AppUserManager
 import com.example.cginvoice.data.source.remote.dataSource.client.RemoteClientDataSource
 import com.example.cginvoice.data.source.remote.dataSource.client.RemoteClientDataSourceImpl
 import com.example.cginvoice.data.source.remote.dataSource.common.RemoteCommonDataSource
 import com.example.cginvoice.data.source.remote.dataSource.common.RemoteCommonDataSourceImpl
+import com.example.cginvoice.data.source.remote.dataSource.item.RemoteItemDataSource
+import com.example.cginvoice.data.source.remote.dataSource.item.RemoteItemDataSourceImpl
 import com.example.cginvoice.data.source.remote.dataSource.user.RemoteUserDataSource
 import com.example.cginvoice.data.source.remote.dataSource.user.RemoteUserDataSourceImpl
 import dagger.Module
@@ -64,6 +71,20 @@ class CGInvoiceModule {
                 localCommonDataSource
             )
         }
+
+        @Singleton
+        @Provides
+        fun provideItemRepository(
+            remoteItemDataSource: RemoteItemDataSource,
+            localItemDataSource: LocalItemDataSource,
+            userRepository: UserRepository
+        ): ItemRepository {
+            return ItemRepositoryImpl(
+                remoteItemDataSource,
+                localItemDataSource,
+                userRepository
+            )
+        }
     }
 
     @Module
@@ -84,6 +105,12 @@ class CGInvoiceModule {
 
         @Singleton
         @Provides
+        fun provideRemoteItemDataSource(back4AppItemManager: Back4AppItemManager): RemoteItemDataSource {
+            return RemoteItemDataSourceImpl(back4AppItemManager)
+        }
+
+        @Singleton
+        @Provides
         fun provideLocalUserDataSource(
             database: CGInvoiceDatabase
         ): LocalUserDataSource {
@@ -95,6 +122,13 @@ class CGInvoiceModule {
             database: CGInvoiceDatabase
         ): LocalClientDataSource {
             return LocalClientDataSourceImpl(database.clientDao())
+        }
+
+        @Provides
+        fun provideLocalItemDataSource(
+            database: CGInvoiceDatabase
+        ): LocalItemDataSource {
+            return LocalItemDataSourceImpl(database.itemDao())
         }
 
         @Singleton
@@ -131,6 +165,12 @@ class CGInvoiceModule {
         @Singleton
         fun provideBack4AppClientManager(): Back4AppClientManager {
             return Back4AppClientManager()
+        }
+
+        @Provides
+        @Singleton
+        fun provideBack4AppItemManager(): Back4AppItemManager {
+            return Back4AppItemManager()
         }
 
         @Provides

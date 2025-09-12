@@ -6,8 +6,8 @@ import com.example.cginvoice.utills.SyncStatus
 data class ItemData(
     val itemId: Int = 0,
     val itemObjectId: String? = null,
-    val itemName: String,
-    val userObjectId: String?,
+    val itemName: String="",
+    val userObjectId: String? =  null,
     val description: String? = null,
     val defaultUnitPrice: Double = 0.0,
     val defaultTax: Double = 0.0,

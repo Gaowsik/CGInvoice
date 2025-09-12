@@ -14,6 +14,7 @@ import com.example.cginvoice.presentaion.MoreScreen
 import com.example.cginvoice.presentaion.TopBarConfig
 import com.example.cginvoice.presentaion.client.AddClientScreen
 import com.example.cginvoice.presentaion.client.ClientScreen
+import com.example.cginvoice.presentaion.item.ItemScreen
 import com.example.cginvoice.presentaion.user.UserDetailScreen
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -30,7 +31,7 @@ fun NavigationScreens(
    
         }
 
-        composable(NavItem.More.path) { MoreScreen() }
+        composable(NavItem.Items.path) { ItemScreen(navController=navController,paddingValues = paddingValues) }
         composable(NavItem.User.path) {
             UserDetailScreen(
                 navController,

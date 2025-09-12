@@ -21,4 +21,8 @@ class RemoteItemDataSourceImpl @Inject constructor(private val back4AppItemManag
         }
     }
 
+    override suspend fun deleteItemRemote(itemObjectId: String, itemId: Int) =
+        back4AppItemManager.deleteItem(itemObjectId, itemId)
+
+
 }

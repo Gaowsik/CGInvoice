@@ -36,7 +36,7 @@ fun MainScreen(navController: NavHostController) {
         topBarConfig.value = when (currentRoute) {
             NavItem.Client.path -> TopBarConfig("Clients")
             NavItem.Invoice.path -> TopBarConfig("Invoices")
-            NavItem.More.path -> TopBarConfig("More")
+            NavItem.Items.path -> TopBarConfig("Items")
             NavItem.User.path -> TopBarConfig("User")
             else -> TopBarConfig("CG Invoice")
         }
@@ -76,6 +76,10 @@ fun handleFabClick(currentRoute: String?, navController: NavHostController) {
 
         NavItem.Invoice.path -> {
             navController.navigate(NavItem.AddClient.path) // Replace with your actual invoice creation route
+        }
+
+        NavItem.Items.path->{
+            navController.navigate(NavItem.AddItem.path)
         }
 
         else -> {

@@ -1,5 +1,5 @@
 package com.example.cginvoice.presentaion.nav
 
 enum class NavPath {
-    INVOICE,CLIENT,MORE,USER,ADD_CLIENT
+    INVOICE,CLIENT,ITEM,USER,ADD_CLIENT,ADD_ITEM
 }

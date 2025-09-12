@@ -11,6 +11,8 @@ interface LocalItemDataSource {
 
     suspend fun deleteItem(itemData: ItemData): DBResource<Unit>
 
+    suspend fun deleteItem(itemId: Int): DBResource<Unit>
+
     suspend fun getItem(itemId: Int): DBResource<ItemData>
 
     suspend fun getItems(): DBResource<List<ItemData>>

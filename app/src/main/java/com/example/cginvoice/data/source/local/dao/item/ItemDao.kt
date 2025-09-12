@@ -1,18 +1,14 @@
 package com.example.cginvoice.data.source.local.dao.item
 
+import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Transaction
 import androidx.room.Update
-import com.example.cginvoice.data.source.local.entitiy.client.ClientEntity
 import com.example.cginvoice.data.source.local.entitiy.item.ItemEntity
-import com.example.cginvoice.data.source.local.relation.client.ClientEntityAndAddressEntity
-import com.example.cginvoice.data.source.local.relation.client.ClientEntityAndContactEntity
-import com.example.cginvoice.data.source.local.relation.client.ClientEntityWithInvoicesEntity
-import com.example.cginvoice.presentaion.nav.Item
 
+@Dao
 interface ItemDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -23,6 +19,9 @@ interface ItemDao {
 
     @Delete
     suspend fun deleteItem(itemEntity: ItemEntity)
+
+    @Query("DELETE FROM ItemEntity WHERE itemId = :itemId")
+    suspend fun deleteItemByItemId(itemId: Int)
 
     @Query("SELECT * FROM ItemEntity WHERE itemId = :itemId LIMIT 1")
     suspend fun getItem(itemId: Int): ItemEntity

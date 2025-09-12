@@ -19,6 +19,10 @@ class LocalItemDataSourceImpl(private val itemDao: ItemDao) : LocalItemDataSourc
         itemDao.deleteItem(itemData.toItemEntity())
     }
 
+    override suspend fun deleteItem(itemId: Int) = safeDbCall {
+       itemDao.deleteItemByItemId(itemId)
+    }
+
     override suspend fun getItem(itemId: Int) = safeDbCall {
         itemDao.getItem(itemId).toItemData()
     }

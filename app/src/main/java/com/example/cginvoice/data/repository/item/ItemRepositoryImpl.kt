@@ -102,17 +102,48 @@ class ItemRepositoryImpl @Inject constructor(
     private suspend fun insertClientInfoResponseToDB(itemData: ItemData) =
         localItemDataSource.insertItemEntity(itemData)
 
-
-    suspend fun itemInfoSync(itemData: ItemData): APIResource<IdInfoRemoteResponse> {
-
-        return if (itemData.itemObjectId.isNullOrEmpty()) {
-            val response = remoteItemDataSource.insertItemRemote(itemData)
-            if (response is APIResource.Success) {
-                updateObjectId(response.value)
+    private suspend fun itemInfoSync(itemData: ItemData): APIResource<IdInfoRemoteResponse> {
+        return when (itemData.syncStatus) {
+            SyncStatus.PENDING.status -> {
+                if (itemData.itemObjectId.isNullOrEmpty()) {
+                    val response = remoteItemDataSource.insertItemRemote(itemData)
+                    if (response is APIResource.Success) {
+                        updateObjectId(response.value)
+                    }
+                    response
+                } else {
+                    remoteItemDataSource.updateItemRemote(itemData)
+                }
             }
-            return response
-        } else {
-            remoteItemDataSource.updateItemRemote(itemData)
+
+            SyncStatus.DELETE.status -> {
+                if (!itemData.itemObjectId.isNullOrEmpty()) {
+                    val response = remoteItemDataSource.deleteItemRemote(
+                        itemData.itemObjectId,
+                        itemData.itemId
+                    )
+                    if (response is APIResource.Success) {
+                        localItemDataSource.deleteItem(response.value.id)
+                    }
+                    return response
+                } else {
+                    // Decide what to return if there's nothing to delete
+                    APIResource.ErrorString(
+                        false,
+                        null,
+                        "Unsupported sync status: ${itemData.syncStatus}"
+                    )
+                }
+            }
+
+            else -> {
+                // Handle unknown status explicitly
+                APIResource.ErrorString(
+                    false,
+                    null,
+                    "Unsupported sync status: ${itemData.syncStatus}"
+                )
+            }
         }
     }
 
@@ -124,6 +155,20 @@ class ItemRepositoryImpl @Inject constructor(
         localItemDataSource.updateStatusByItemId(it.id, SyncStatus.COMPLETED.status)
 
     }
+
+    private suspend fun deleteItem(itemData: ItemData) {
+        if (itemData.itemObjectId.isNullOrEmpty()) {
+            localItemDataSource.deleteItem(itemData.itemId)
+        } else {
+
+            updateStatusDelete(itemData.itemId)
+        }
+    }
+
+    private suspend fun updateStatusDelete(itemId: Int) {
+        localItemDataSource.updateStatusByItemId(itemId, SyncStatus.DELETE.status)
+    }
+
 
 }
 
