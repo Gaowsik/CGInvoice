@@ -49,6 +49,9 @@ class ItemViewModel @Inject constructor(
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
+    private val _isSaved = MutableSharedFlow<Boolean>()
+    val isSaved = _isSaved.asSharedFlow()
+
 
     private val _errorMessage = MutableSharedFlow<String>()
     val errorMessage = _errorMessage.asSharedFlow()
@@ -149,11 +152,11 @@ class ItemViewModel @Inject constructor(
         }
     }
 
-    fun updateUserDataDB() {
+    fun updateItemDataDB() {
         viewModelScope.launch {
             setLoading(true)
-            val updatedUser = _currentItemData.first()
-            updatedUser.let {
+            val updatedItem = _currentItemData.first()
+            updatedItem.let {
                 val response = itemRepository.insertOrUpdateItemInfoDB(it)
                 when (response) {
                     is DBResource.Error -> {
@@ -164,7 +167,7 @@ class ItemViewModel @Inject constructor(
                     DBResource.Loading -> TODO()
                     is DBResource.Success -> {
                         setLoading(false)
-                        //  _isSaved.emit(true)
+                          _isSaved.emit(true)
                     }
                 }
             }

@@ -14,6 +14,7 @@ import com.example.cginvoice.presentaion.MoreScreen
 import com.example.cginvoice.presentaion.TopBarConfig
 import com.example.cginvoice.presentaion.client.AddClientScreen
 import com.example.cginvoice.presentaion.client.ClientScreen
+import com.example.cginvoice.presentaion.item.AddItemScreen
 import com.example.cginvoice.presentaion.item.ItemScreen
 import com.example.cginvoice.presentaion.user.UserDetailScreen
 
@@ -48,6 +49,19 @@ fun NavigationScreens(
                 navController,
                 paddingValues = paddingValues,
                 clientId = clientId,
+                topBarConfig = topBarConfig
+            )
+        }
+
+        composable(
+            route = NavItem.AddItem.path + "/{itemId}",
+            arguments = listOf(navArgument("itemId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val itemId = backStackEntry.arguments?.getInt("itemId") ?: -1
+            AddItemScreen (
+                navController,
+                paddingValues = paddingValues,
+                itemId = itemId,
                 topBarConfig = topBarConfig
             )
         }

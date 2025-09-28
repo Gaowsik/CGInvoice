@@ -20,10 +20,10 @@ data class ItemData(
             itemObjectId = itemObjectId,
             itemName = itemName,
             description = description,
-            defaultUnitPrice = defaultUnitPrice,
-            defaultTax = defaultTax,
+            defaultUnitPrice = defaultUnitPrice.toString(),
+            defaultTax = defaultTax.toString(),
             userObjectId = userObjectId,
-            defaultDiscount = defaultDiscount
+            defaultDiscount = defaultDiscount.toString()
         )
     }
 

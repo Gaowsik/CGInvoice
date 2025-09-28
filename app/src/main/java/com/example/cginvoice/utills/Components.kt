@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
@@ -32,6 +33,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -52,7 +54,12 @@ fun SearchBar(
     ) {
         Row(
             modifier = Modifier
-                .padding(start = 24.dp, top = 8.dp, bottom = 8.dp, end = 8.dp) // Space for the search icon
+                .padding(
+                    start = 24.dp,
+                    top = 8.dp,
+                    bottom = 8.dp,
+                    end = 8.dp
+                ) // Space for the search icon
         ) {
             Icon(
                 imageVector = Icons.Default.Search,
@@ -91,6 +98,8 @@ fun SearchBar(
 fun TextFieldWithLabel(
     label: String,
     value: String,
+    keyboardType: KeyboardType = KeyboardType.Text,
+    placeholder: String="",
     onValueChange: (String) -> Unit
 ) {
     Box(
@@ -126,6 +135,66 @@ fun TextFieldWithLabel(
                     .padding(8.dp)
                     .weight(2f)
             )
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+                    .weight(3f)
+            ) {
+                BasicTextField(
+                    value = value,
+                    textStyle = MaterialTheme.typography.bodyMedium.copy(
+                        color = LocalContentColor.current
+                    ),
+                    onValueChange = onValueChange,
+                    keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+
+                    )
+                if (value.isEmpty()) {
+                    Text(
+                        text = placeholder,
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            color = Color.Gray.copy(alpha = 0.5f)
+                        )
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun TextInputWithLabel(
+    label: String,
+    value: String,
+    onValueChange: (String) -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .drawWithContent {
+                // Draw top stroke
+                drawLine(
+                    color = Color.Gray,
+                    start = Offset(0f, 0f),
+                    end = Offset(size.width, 0f),
+                    strokeWidth = 0.5.dp.toPx()
+                )
+                // Draw bottom stroke
+                drawLine(
+                    color = Color.Gray,
+                    start = Offset(0f, size.height),
+                    end = Offset(size.width, size.height),
+                    strokeWidth = 0.5.dp.toPx()
+                )
+                drawContent() // Draw the inner content
+            }
+    ) {
+        Box(
+            modifier = Modifier
+                .background(Color.White.copy(alpha = 0.8f))
+        ) {
             BasicTextField(
                 value = value,
                 textStyle = MaterialTheme.typography.bodyMedium.copy(
@@ -135,8 +204,17 @@ fun TextFieldWithLabel(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp)
-                    .weight(3f)
             )
+
+            if (value.isEmpty()) {
+                Text(
+                    text = label,
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        color = Color.Gray.copy(alpha = 0.5f)
+                    ),
+                    modifier = Modifier.padding(8.dp)
+                )
+            }
         }
     }
 }
@@ -286,6 +364,8 @@ fun IconWithLabel(
         }
     }
 }
+
+
 
 
 @Composable

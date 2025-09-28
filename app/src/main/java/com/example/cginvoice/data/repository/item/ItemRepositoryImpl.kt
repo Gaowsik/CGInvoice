@@ -18,9 +18,9 @@ class ItemRepositoryImpl @Inject constructor(
 ) : ItemRepository {
     override suspend fun getItemList(): DBResource<List<ItemData>> {
         val response = getItemsFromDb()
-        if (response is DBResource.Success) {
+        if (response is DBResource.Success && response.value.isNotEmpty()) {
             return response
-        } else if (response is DBResource.Error) {
+        } else {
             val responseRemote = getAndSaveItemListFromRemote()
             if (responseRemote is DBResource.Success) {
                 return getItemsFromDb()
@@ -86,7 +86,7 @@ class ItemRepositoryImpl @Inject constructor(
                 }
 
                 is APIResource.Error -> {
-                    Log.d("suc", "")
+                    Log.d("Error", response.errorBody.toString())
 
                 }
 

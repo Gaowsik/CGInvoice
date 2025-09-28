@@ -103,9 +103,9 @@ class Back4AppItemManager {
                                     itemObjectId = itemObject.objectId,
                                     itemName = itemObject.getString("itemName") ?: "",
                                     description = itemObject.getString("description"),
-                                    defaultUnitPrice = itemObject.getDouble("defaultUnitPrice"),
-                                    defaultTax = itemObject.getDouble("defaultTax"),
-                                    defaultDiscount = itemObject.getDouble("defaultDiscount"),
+                                    defaultUnitPrice = itemObject.getString("defaultUnitPrice")?:"",
+                                    defaultTax = itemObject.getString("defaultTax")?:"",
+                                    defaultDiscount = itemObject.getString("defaultDiscount")?:"",
                                     userObjectId = itemObject.getParseObject("userObjectID")?.objectId
                                         ?: ""
                                 )

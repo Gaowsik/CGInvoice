@@ -30,6 +30,11 @@ fun MainScreen(navController: NavHostController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
     val topBarConfig = remember { mutableStateOf(TopBarConfig(title = "CG Invoice")) }
+    val showFab = remember(currentRoute) {
+        currentRoute == NavItem.Client.path ||
+                currentRoute == NavItem.Invoice.path ||
+                currentRoute == NavItem.Items.path
+    }
 
     LaunchedEffect(currentRoute) {
         // Default config
@@ -50,7 +55,7 @@ fun MainScreen(navController: NavHostController) {
         BottomAppBar { BottomNavigationBar(navController = navController) }
 
     }, floatingActionButton = {
-        if (currentRoute == NavItem.Client.path || currentRoute == NavItem.Invoice.path || currentRoute == NavItem.Items.path) {
+        if (showFab) {
             FloatingActionButton(onClick = { handleFabClick(currentRoute, navController) }) {
                 Icon(
                     imageVector = Icons.Default.Add,
@@ -75,11 +80,11 @@ fun handleFabClick(currentRoute: String?, navController: NavHostController) {
         }
 
         NavItem.Invoice.path -> {
-            navController.navigate(NavItem.AddClient.path) // Replace with your actual invoice creation route
+            navController.navigate(NavItem.AddItem.createRoute(-1)) // Replace with your actual invoice creation route
         }
 
         NavItem.Items.path->{
-            navController.navigate(NavItem.AddItem.path)
+            navController.navigate(NavItem.AddItem.createRoute(-1))
         }
 
         else -> {

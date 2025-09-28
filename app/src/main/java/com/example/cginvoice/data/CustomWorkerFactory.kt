@@ -5,14 +5,15 @@ import androidx.work.ListenableWorker
 import androidx.work.WorkerFactory
 import androidx.work.WorkerParameters
 import com.example.cginvoice.data.repository.client.ClientRepository
+import com.example.cginvoice.data.repository.item.ItemRepository
 import com.example.cginvoice.data.repository.user.UserRepository
 import javax.inject.Inject
 
-class CustomWorkerFactory @Inject constructor(private val userRepository: UserRepository,private val clientRepository: ClientRepository) :
+class CustomWorkerFactory @Inject constructor(private val userRepository: UserRepository,private val clientRepository: ClientRepository,private val itemRepository: ItemRepository) :
     WorkerFactory() {
     override fun createWorker(
         appContext: Context,
         workerClassName: String,
         workerParameters: WorkerParameters
-    ): ListenableWorker? = SyncDataWorker(userRepository, clientRepository,appContext, workerParameters)
+    ): ListenableWorker? = SyncDataWorker(userRepository, clientRepository,itemRepository,appContext, workerParameters)
 }

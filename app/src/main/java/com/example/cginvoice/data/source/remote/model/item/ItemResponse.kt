@@ -14,9 +14,9 @@ data class ItemResponse(
     val itemName: String,
     val userObjectId:String?,
     val description: String?,
-    val defaultUnitPrice: Double,
-    val defaultTax: Double,
-    val defaultDiscount: Double
+    val defaultUnitPrice: String,
+    val defaultTax: String,
+    val defaultDiscount: String
 )
 
 fun ItemResponse.toItemData(): ItemData {
@@ -26,9 +26,9 @@ fun ItemResponse.toItemData(): ItemData {
         itemName = itemName,
         userObjectId = userObjectId,
         description = description,
-        defaultUnitPrice = defaultUnitPrice,
-        defaultTax = defaultTax,
-        defaultDiscount = defaultDiscount,
+        defaultUnitPrice = defaultUnitPrice.toDouble(),
+        defaultTax = defaultTax.toDouble(),
+        defaultDiscount = defaultDiscount.toDouble(),
         syncStatus = SyncStatus.COMPLETED.status
 
     )
