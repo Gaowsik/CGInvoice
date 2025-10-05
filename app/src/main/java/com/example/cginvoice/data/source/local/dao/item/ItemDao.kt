@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.example.cginvoice.data.source.local.entitiy.item.ItemEntity
+import com.example.cginvoice.utills.SyncStatus
 
 @Dao
 interface ItemDao {
@@ -26,8 +27,9 @@ interface ItemDao {
     @Query("SELECT * FROM ItemEntity WHERE itemId = :itemId LIMIT 1")
     suspend fun getItem(itemId: Int): ItemEntity
 
-    @Query("SELECT * FROM ItemEntity")
-    suspend fun getItems(): List<ItemEntity>
+    @Query("SELECT * FROM ItemEntity WHERE syncStatus != :deleteStatus")
+    suspend fun getItems(deleteStatus: String = SyncStatus.DELETE.status): List<ItemEntity>
+
 
     @Query("UPDATE ItemEntity SET syncStatus = :syncStatus WHERE itemId = :itemId")
     suspend fun updateStatusByItemId(itemId: Int, syncStatus: String)

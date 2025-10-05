@@ -167,6 +167,7 @@ class ItemViewModel @Inject constructor(
                     DBResource.Loading -> TODO()
                     is DBResource.Success -> {
                         setLoading(false)
+
                           _isSaved.emit(true)
                     }
                 }
@@ -175,9 +176,9 @@ class ItemViewModel @Inject constructor(
     }
 
 
-    fun deleteItem(itemId: Int) {
+    fun deleteItem(itemData: ItemData) {
         viewModelScope.launch {
-            itemRepository.deleteItemByItemId(itemId)
+            itemRepository.deleteItem(itemData)
         }
     }
 

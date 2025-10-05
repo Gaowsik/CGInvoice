@@ -37,7 +37,7 @@ fun ItemScreen(
     LaunchedEffect(key1 = true, block = {
         viewModel.getItems()
     })
-    Column(modifier = Modifier.padding(vertical = paddingValues.calculateTopPadding() )) {
+    Column(modifier = Modifier.padding(vertical = paddingValues.calculateTopPadding())) {
         SearchBar(
             searchQuery,
             onValueChange = { searchQuery = it },
@@ -49,8 +49,10 @@ fun ItemScreen(
         LazyColumn(
         ) {
             items(getItems.size) { number ->
-                ItemsItem(getItems[number]) {
+                ItemsItem(getItems[number], onClickListener = {
                     navController.navigate(NavItem.AddClient.createRoute(clientId = it))
+                }) {
+                    viewModel.deleteItem(it)
                 }
             }
         }

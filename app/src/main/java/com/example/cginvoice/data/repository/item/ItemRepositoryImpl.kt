@@ -1,5 +1,6 @@
 package com.example.cginvoice.data.repository.item
 
+import android.net.http.UrlRequest.Status
 import android.util.Log
 import com.example.cginvoice.data.APIResource
 import com.example.cginvoice.data.DBResource
@@ -71,9 +72,7 @@ class ItemRepositoryImpl @Inject constructor(
     private suspend fun updateItemInfoDB(itemData: ItemData) =
         localItemDataSource.updateItemEntity(itemData)
 
-    override suspend fun deleteItemByItemId(itemId: Int) {
 
-    }
 
     override suspend fun syncAllItems(items: List<ItemData>): APIResource<List<IdInfoRemoteResponse>> {
         val idInfoRemoteResponseList = emptyList<IdInfoRemoteResponse>().toMutableList()
@@ -156,7 +155,7 @@ class ItemRepositoryImpl @Inject constructor(
 
     }
 
-    private suspend fun deleteItem(itemData: ItemData) {
+     override suspend fun deleteItem(itemData: ItemData) {
         if (itemData.itemObjectId.isNullOrEmpty()) {
             localItemDataSource.deleteItem(itemData.itemId)
         } else {

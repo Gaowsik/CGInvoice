@@ -11,6 +11,6 @@ interface ItemRepository {
     suspend fun getItemList(): DBResource<List<ItemData>>
     suspend fun getItemInfo(itemId: Int): DBResource<ItemData>
     suspend fun insertOrUpdateItemInfoDB(itemData: ItemData): DBResource<Unit>
-    suspend fun deleteItemByItemId(itemId: Int)
+    suspend fun deleteItem(itemData: ItemData)
     suspend fun syncAllItems(itemData: List<ItemData>): APIResource<List<IdInfoRemoteResponse>>
 }
