@@ -13,6 +13,6 @@ class LocalInvoiceDataSourceImpl(private val invoiceDao: InvoiceDao) : LocalInvo
     }
 
     override suspend fun deleteInvoiceEntity() = safeDbCall {
-        invoiceDao.deleteInvoiceEntity()
+        invoiceDao.deleteAllInvoiceEntity()
     }
 }

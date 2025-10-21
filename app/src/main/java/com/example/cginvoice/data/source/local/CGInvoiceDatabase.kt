@@ -10,12 +10,14 @@ import com.example.cginvoice.data.source.local.dao.user.UserDao
 import com.example.cginvoice.data.source.local.entitiy.client.ClientEntity
 import com.example.cginvoice.data.source.local.entitiy.common.AddressEntity
 import com.example.cginvoice.data.source.local.entitiy.common.ContactEntity
+import com.example.cginvoice.data.source.local.entitiy.invoicItem.InvoiceItemEntity
 import com.example.cginvoice.data.source.local.entitiy.invoice.InvoiceEntity
+import com.example.cginvoice.data.source.local.entitiy.invoice.PaymentEntity
 import com.example.cginvoice.data.source.local.entitiy.item.ItemEntity
 import com.example.cginvoice.data.source.local.entitiy.user.UserEntity
 
 @Database(
-    entities = [AddressEntity::class, ContactEntity::class, UserEntity::class, InvoiceEntity::class, ClientEntity::class,ItemEntity::class],
+    entities = [AddressEntity::class, ContactEntity::class, UserEntity::class, InvoiceEntity::class, ClientEntity::class,ItemEntity::class,InvoiceItemEntity::class, PaymentEntity::class],
     version = 1,
     exportSchema = false
 )

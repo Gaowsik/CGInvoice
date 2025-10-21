@@ -1,13 +1,15 @@
 package com.example.cginvoice.domain.model.invoiceItem
 
-data class InvoiceItem(
-    val invoiceItemId: Long,
-    val itemName: String,
-    val description: String,
-    val quantity: Int,
-    val unitPrice: Double,
-    val tax: Double,
-    val discount: Double,
-    val totalPrice: Double,
-    val invoiceId: Long
+import com.example.cginvoice.utills.SyncStatus
+
+data class InvoiceItemData(
+    val invoiceItemId: Int = 0,
+    val itemName: String = "",
+    val invoiceId: Long? = null,
+    val description: String? = null,
+    val defaultUnitPrice: Double = 0.0,
+    val defaultTax: Double = 0.0,
+    val defaultDiscount: Double = 0.0,
+    val quantity: Int = 1,
+    val syncStatus: String = SyncStatus.PENDING.status
 )

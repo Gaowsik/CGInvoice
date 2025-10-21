@@ -41,7 +41,6 @@ interface UserDao {
     @Query("UPDATE UserEntity SET objectId = :newObjectId WHERE userId = :userId")
     suspend fun updateUserObjectId(userId: Int, newObjectId: String)
 
-
     @Transaction
     @Query("UPDATE UserEntity SET status = :status WHERE userId = :userId")
     suspend fun updateStatusByUserID(userId: Int, status: String)

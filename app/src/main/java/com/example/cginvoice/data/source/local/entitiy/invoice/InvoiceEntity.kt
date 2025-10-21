@@ -10,13 +10,14 @@ data class InvoiceEntity(
     val invoiceData: String,
     val dueDate: String,
     val totalAmount: Double,
+    val invoiceObjectId: String,
     val userId: Long,
     val clientId: Long,
     val imageId: String,
-    val note: String
+    val note: String,
+    val syncStatus: String
 ) {
 
-    // Method to convert InvoiceEntity to Invoice
     fun toInvoice(): Invoice {
         return Invoice(
             invoiceId = invoiceId,
@@ -24,23 +25,27 @@ data class InvoiceEntity(
             dueDate = dueDate,
             totalAmount = totalAmount,
             userId = userId,
+            invoiceObjectId = invoiceObjectId,
             clientId = clientId,
             imageId = imageId,
-            note = note
+            note = note,
+            syncStatus = syncStatus
         )
     }
 }
 
-    // Extension function to convert Invoice to InvoiceEntity
-    fun Invoice.toInvoiceEntity(): InvoiceEntity {
-        return InvoiceEntity(
-            invoiceId = invoiceId,
-            invoiceData = invoiceData,
-            dueDate = dueDate,
-            totalAmount = totalAmount,
-            userId = userId,
-            clientId = clientId,
-            imageId = imageId,
-            note = note
-        )
-    }
+// Extension function to convert Invoice to InvoiceEntity
+fun Invoice.toInvoiceEntity(): InvoiceEntity {
+    return InvoiceEntity(
+        invoiceId = invoiceId,
+        invoiceData = invoiceData,
+        dueDate = dueDate,
+        totalAmount = totalAmount,
+        userId = userId,
+        clientId = clientId,
+        imageId = imageId,
+        note = note,
+        invoiceObjectId = invoiceObjectId,
+        syncStatus = syncStatus
+    )
+}
