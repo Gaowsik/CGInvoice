@@ -22,6 +22,7 @@ data class InvoiceItemEntity(
     @PrimaryKey(autoGenerate = true) val invoiceItemId: Int,
     val itemName: String,
     val description: String?,
+    val invoiceItemObjectId: String?,
     val defaultUnitPrice: Double,
     val defaultTax: Double,
     val defaultDiscount: Double,
@@ -33,6 +34,7 @@ data class InvoiceItemEntity(
     fun toInvoiceItemData(): InvoiceItemData {
         return InvoiceItemData(
             invoiceItemId = invoiceItemId,
+            invoiceItemObjectId = invoiceItemObjectId,
             itemName = itemName,
             invoiceId = invoiceId,
             description = description,

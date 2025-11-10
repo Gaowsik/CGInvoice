@@ -2,6 +2,9 @@ package com.example.cginvoice.data
 
 import android.util.Log
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 
@@ -47,6 +50,18 @@ abstract class BaseRepo() {
             }
         }
     }
+
+    fun <T : Any> safeDbFlow(
+        dbFlow: () -> Flow<T>
+    ): Flow<DBResource<T>> {
+        return dbFlow()
+            .map<T, DBResource<T>> { DBResource.Success(it) } // wrap normal data
+            .catch { e ->
+                emit(DBResource.Error(Exception(e.message ?: "Unknown DB error")))
+            }
+    }
+
+
 
     suspend fun <T : Any> safePrefCall(
         prefCall: suspend () -> T,

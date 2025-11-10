@@ -3,6 +3,7 @@ package com.example.cginvoice.domain.model.invoice
 
 data class Payment(
     val paymentId: Long,
+    val paymentObjectId: String?,
     val invoiceId: Long,
     val paymentDate: String,
     val amount: Double,

@@ -11,11 +11,12 @@ import com.example.cginvoice.data.source.local.entitiy.invoicItem.InvoiceItemEnt
 import com.example.cginvoice.data.source.local.entitiy.invoice.InvoiceEntity
 import com.example.cginvoice.data.source.local.entitiy.invoice.PaymentEntity
 import com.example.cginvoice.data.source.local.relation.invoice.InvoiceWithItemsAndPayments
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface InvoiceDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertInvoiceEntity(invoiceEntity: InvoiceEntity)
+    suspend fun insertInvoiceEntity(invoiceEntity: InvoiceEntity) : Long
 
     @Delete
     suspend fun deleteInvoice(invoiceEntity: InvoiceEntity)
@@ -28,7 +29,7 @@ interface InvoiceDao {
     suspend fun updateInvoiceObjectId(invoiceId: Int, newObjectId: String)
 
     @Query("SELECT * FROM InvoiceEntity")
-    suspend fun getInvoices(): List<InvoiceEntity>
+    fun getInvoices(): Flow<List<InvoiceEntity>>
 
     @Query("UPDATE InvoiceEntity SET syncStatus = :syncStatus WHERE invoiceId = :invoiceId")
     suspend fun updateStatusByInvoiceId(invoiceId: Int, syncStatus: String)
@@ -39,6 +40,9 @@ interface InvoiceDao {
     @Update
     suspend fun updateInvoiceItemEntity(invoiceItemEntity: InvoiceItemEntity): Int
 
+    @Query("UPDATE InvoiceItemEntity SET invoiceItemObjectId = :newObjectId WHERE invoiceItemId = :invoiceItemId")
+    suspend fun updateInvoiceItemObjectId(invoiceItemId: Int, newObjectId: String)
+
     @Query("DELETE FROM InvoiceItemEntity")
     suspend fun deleteAllInvoiceEntity()
 
@@ -48,8 +52,12 @@ interface InvoiceDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPaymentEntity(paymentEntity: PaymentEntity): Long
 
+
     @Update
     suspend fun updatePaymentEntity(paymentEntity: PaymentEntity): Int
+
+    @Query("UPDATE PaymentEntity SET paymentObjectId = :newObjectId WHERE paymentId = :paymentId")
+    suspend fun updatePaymentObjectId(paymentId: Int, newObjectId: String)
 
     @Query("DELETE FROM PaymentEntity")
     suspend fun deleteAllPaymentEntity()
