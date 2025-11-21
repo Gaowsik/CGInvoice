@@ -61,6 +61,9 @@ enum class SyncType(val type: String) {
     CONTACT("contact"),
     CLIENT("client"),
     ITEM("item"),
+    INVOICE("invoice"),
+    INVOICE_ITEM("invoice_item"),
+    PAYMENT("payment"),
 
 }
 
