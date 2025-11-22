@@ -5,6 +5,7 @@ import com.example.cginvoice.data.source.local.entitiy.invoicItem.InvoiceItemEnt
 import com.example.cginvoice.data.source.local.entitiy.invoice.InvoiceEntity
 import com.example.cginvoice.data.source.local.entitiy.invoice.PaymentEntity
 import com.example.cginvoice.data.source.local.relation.invoice.InvoiceWithItemsAndPayments
+import com.example.cginvoice.domain.model.invoice.Invoice
 import kotlinx.coroutines.flow.Flow
 
 interface LocalInvoiceDataSource {
@@ -17,7 +18,7 @@ interface LocalInvoiceDataSource {
 
     suspend fun updateInvoiceObjectId(invoiceId: Int, newObjectId: String): DBResource<Unit>
 
-    fun getInvoices(): Flow<DBResource<List<InvoiceEntity>>>
+    suspend fun getInvoices(): DBResource<List<Invoice>>
 
     suspend fun updateStatusByInvoiceId(invoiceId: Int, syncStatus: String): DBResource<Unit>
 
