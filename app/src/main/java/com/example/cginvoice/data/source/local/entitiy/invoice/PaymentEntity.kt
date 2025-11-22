@@ -29,7 +29,15 @@ data class PaymentEntity(
 
 
     fun toPayment(): Payment {
-        return Payment(paymentId,paymentObjectId, invoiceId, paymentDate, amount, paymentMethod, note)
+        return Payment(
+            paymentId = paymentId.toInt(),
+            paymentObjectId = paymentObjectId,
+            invoiceId = invoiceId,
+            paymentDate = paymentDate,
+            amount = amount,
+            paymentMethod = paymentMethod,
+            note = note
+        )
     }
 
 }

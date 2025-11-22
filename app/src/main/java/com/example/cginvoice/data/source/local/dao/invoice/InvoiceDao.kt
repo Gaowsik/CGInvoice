@@ -29,7 +29,7 @@ interface InvoiceDao {
     suspend fun updateInvoiceObjectId(invoiceId: Int, newObjectId: String)
 
     @Query("SELECT * FROM InvoiceEntity")
-    fun getInvoices(): Flow<List<InvoiceEntity>>
+    suspend fun getInvoices(): List<InvoiceEntity>
 
     @Query("UPDATE InvoiceEntity SET syncStatus = :syncStatus WHERE invoiceId = :invoiceId")
     suspend fun updateStatusByInvoiceId(invoiceId: Int, syncStatus: String)

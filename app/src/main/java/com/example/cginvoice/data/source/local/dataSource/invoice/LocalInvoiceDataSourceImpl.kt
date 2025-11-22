@@ -7,7 +7,9 @@ import com.example.cginvoice.data.source.local.entitiy.invoicItem.InvoiceItemEnt
 import com.example.cginvoice.data.source.local.entitiy.invoice.InvoiceEntity
 import com.example.cginvoice.data.source.local.entitiy.invoice.PaymentEntity
 import com.example.cginvoice.data.source.local.relation.invoice.InvoiceWithItemsAndPayments
+import com.example.cginvoice.domain.model.invoice.Invoice
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 class LocalInvoiceDataSourceImpl(private val invoiceDao: InvoiceDao) : LocalInvoiceDataSource,
     BaseRepo() {
@@ -32,8 +34,10 @@ class LocalInvoiceDataSourceImpl(private val invoiceDao: InvoiceDao) : LocalInvo
         invoiceDao.updateInvoiceObjectId(invoiceId, newObjectId)
     }
 
-    override fun getInvoices(): Flow<DBResource<List<InvoiceEntity>>> = safeDbFlow {
-        invoiceDao.getInvoices()
+    override suspend fun getInvoices(): DBResource<List<Invoice>> = safeDbCall {
+        invoiceDao.getInvoices().map {
+            it.toInvoice()
+        }
     }
 
     override suspend fun updateStatusByInvoiceId(

@@ -1,5 +1,6 @@
 package com.example.cginvoice.domain.model.invoiceItem
 
+import com.example.cginvoice.data.source.local.entitiy.invoicItem.InvoiceItemEntity
 import com.example.cginvoice.data.source.remote.model.Invoice.InvoiceItemResponse
 import com.example.cginvoice.utills.SyncStatus
 
@@ -30,3 +31,20 @@ data class InvoiceItemData(
         )
     }
 }
+
+fun InvoiceItemData.toInvoiceItemEntity(invoiceIdGenerated: Long): InvoiceItemEntity {
+    return InvoiceItemEntity(
+        invoiceItemId = this.invoiceItemId,
+        invoiceItemObjectId = this.invoiceItemObjectId,
+        itemName = this.itemName ?: "",
+        invoiceId = this.invoiceId ?: invoiceIdGenerated,
+        description = this.description,
+        defaultUnitPrice = this.defaultUnitPrice,
+        defaultTax = this.defaultTax ?: 0.0,
+        defaultDiscount = this.defaultDiscount ?: 0.0,
+        quantity = this.quantity,
+        syncStatus = this.syncStatus
+    )
+}
+
+
