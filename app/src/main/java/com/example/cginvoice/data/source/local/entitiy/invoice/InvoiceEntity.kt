@@ -6,7 +6,7 @@ import com.example.cginvoice.domain.model.invoice.Invoice
 
 @Entity
 data class InvoiceEntity(
-    @PrimaryKey(autoGenerate = false) val invoiceId: Long,
+    @PrimaryKey(autoGenerate = true) val invoiceId: Long,
     val invoiceData: String,
     val dueDate: String,
     val totalAmount: Double,

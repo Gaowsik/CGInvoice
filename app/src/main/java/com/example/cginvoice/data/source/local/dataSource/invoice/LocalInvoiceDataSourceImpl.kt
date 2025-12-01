@@ -8,8 +8,6 @@ import com.example.cginvoice.data.source.local.entitiy.invoice.InvoiceEntity
 import com.example.cginvoice.data.source.local.entitiy.invoice.PaymentEntity
 import com.example.cginvoice.data.source.local.relation.invoice.InvoiceWithItemsAndPayments
 import com.example.cginvoice.domain.model.invoice.Invoice
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 
 class LocalInvoiceDataSourceImpl(private val invoiceDao: InvoiceDao) : LocalInvoiceDataSource,
     BaseRepo() {
@@ -18,13 +16,23 @@ class LocalInvoiceDataSourceImpl(private val invoiceDao: InvoiceDao) : LocalInvo
             invoiceDao.insertInvoiceEntity(invoiceEntity)
         }
 
+    override suspend fun updateInvoiceEntity(invoiceEntity: InvoiceEntity): DBResource<Long> =
+        safeDbCall {
+            invoiceDao.updateInvoiceEntity(invoiceEntity)
+        }
+
+
     override suspend fun deleteInvoice(invoiceEntity: InvoiceEntity) = safeDbCall {
         invoiceDao.deleteInvoice(invoiceEntity)
     }
 
-    override suspend fun getInvoiceWithItemsAndPayments(invoiceId: Long): DBResource<List<InvoiceWithItemsAndPayments>> =
+    override suspend fun deleteInvoice(invoiceId: Int) = safeDbCall {
+        invoiceDao.deleteInvoiceByInvoiceId(invoiceId)
+    }
+
+    override suspend fun getInvoiceWithItemsAndPayments(invoiceId: Long): DBResource<Invoice> =
         safeDbCall {
-            invoiceDao.getInvoiceWithItemsAndPayments(invoiceId)
+            invoiceDao.getInvoiceWithItemsAndPayments(invoiceId).toInvoice()
         }
 
     override suspend fun updateInvoiceObjectId(
@@ -36,6 +44,12 @@ class LocalInvoiceDataSourceImpl(private val invoiceDao: InvoiceDao) : LocalInvo
 
     override suspend fun getInvoices(): DBResource<List<Invoice>> = safeDbCall {
         invoiceDao.getInvoices().map {
+            it.toInvoice()
+        }
+    }
+
+    override suspend fun getInvoicesListWithItemsAndPayments(): DBResource<List<Invoice>> = safeDbCall{
+        invoiceDao.getInvoicesListWithItemsAndPayments().map {
             it.toInvoice()
         }
     }

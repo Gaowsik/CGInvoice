@@ -1,6 +1,5 @@
 package com.example.cginvoice.data.repository.item
 
-import android.net.http.UrlRequest.Status
 import android.util.Log
 import com.example.cginvoice.data.APIResource
 import com.example.cginvoice.data.DBResource
@@ -73,28 +72,28 @@ class ItemRepositoryImpl @Inject constructor(
         localItemDataSource.updateItemEntity(itemData)
 
 
-
     override suspend fun syncAllItems(items: List<ItemData>): APIResource<List<IdInfoRemoteResponse>> {
         val idInfoRemoteResponseList = emptyList<IdInfoRemoteResponse>().toMutableList()
-        items.filter { it.syncStatus == SyncStatus.PENDING.status }.forEach { item ->
-            val response = itemInfoSync(item)
-            when (response) {
-                is APIResource.Success -> {
-                    Log.d("suc", "")
-                    idInfoRemoteResponseList.add(response.value)
-                }
+        items.filter { it.syncStatus != SyncStatus.COMPLETED.status }
+            .forEach { item ->
+                val response = itemInfoSync(item)
+                when (response) {
+                    is APIResource.Success -> {
+                        Log.d("suc", "")
+                        idInfoRemoteResponseList.add(response.value)
+                    }
 
-                is APIResource.Error -> {
-                    Log.d("Error", response.errorBody.toString())
+                    is APIResource.Error -> {
+                        Log.d("Error", response.errorBody.toString())
 
-                }
+                    }
 
-                APIResource.Loading -> {}
-                is APIResource.ErrorString -> {
-                    Log.d("suc", "")
+                    APIResource.Loading -> {}
+                    is APIResource.ErrorString -> {
+                        Log.d("suc", "")
+                    }
                 }
             }
-        }
         return APIResource.Success(idInfoRemoteResponseList)
     }
 
@@ -155,7 +154,7 @@ class ItemRepositoryImpl @Inject constructor(
 
     }
 
-     override suspend fun deleteItem(itemData: ItemData) {
+    override suspend fun deleteItem(itemData: ItemData) {
         if (itemData.itemObjectId.isNullOrEmpty()) {
             localItemDataSource.deleteItem(itemData.itemId)
         } else {

@@ -11,25 +11,35 @@ import com.example.cginvoice.data.source.local.entitiy.invoicItem.InvoiceItemEnt
 import com.example.cginvoice.data.source.local.entitiy.invoice.InvoiceEntity
 import com.example.cginvoice.data.source.local.entitiy.invoice.PaymentEntity
 import com.example.cginvoice.data.source.local.relation.invoice.InvoiceWithItemsAndPayments
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface InvoiceDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertInvoiceEntity(invoiceEntity: InvoiceEntity) : Long
+    suspend fun insertInvoiceEntity(invoiceEntity: InvoiceEntity): Long
+
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun updateInvoiceEntity(invoiceEntity: InvoiceEntity): Long
 
     @Delete
     suspend fun deleteInvoice(invoiceEntity: InvoiceEntity)
 
+    @Query("DELETE FROM InvoiceEntity WHERE invoiceId = :invoiceId")
+    suspend fun deleteInvoiceByInvoiceId(invoiceId: Int)
+
+    suspend fun getPaidInvoices(invoiceId: Long): List<InvoiceEntity>
+
     @Transaction
-    @Query("SELECT * FROM InvoiceEntity WHERE invoiceId = :invoiceId")
-    suspend fun getInvoiceWithItemsAndPayments(invoiceId: Long): List<InvoiceWithItemsAndPayments>
+    @Query("SELECT * FROM InvoiceEntity WHERE invoiceId = :invoiceId LIMIT 1")
+    suspend fun getInvoiceWithItemsAndPayments(invoiceId: Long): InvoiceWithItemsAndPayments
 
     @Query("UPDATE InvoiceEntity SET invoiceObjectId = :newObjectId WHERE invoiceId = :invoiceId")
     suspend fun updateInvoiceObjectId(invoiceId: Int, newObjectId: String)
 
     @Query("SELECT * FROM InvoiceEntity")
     suspend fun getInvoices(): List<InvoiceEntity>
+
+    @Query("SELECT * FROM InvoiceEntity")
+    suspend fun getInvoicesListWithItemsAndPayments(): List<InvoiceWithItemsAndPayments>
 
     @Query("UPDATE InvoiceEntity SET syncStatus = :syncStatus WHERE invoiceId = :invoiceId")
     suspend fun updateStatusByInvoiceId(invoiceId: Int, syncStatus: String)

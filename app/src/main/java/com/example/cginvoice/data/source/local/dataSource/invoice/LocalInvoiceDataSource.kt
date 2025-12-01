@@ -12,13 +12,19 @@ interface LocalInvoiceDataSource {
 
     suspend fun insertInvoiceEntity(invoiceEntity: InvoiceEntity): DBResource<Long>
 
+    suspend fun updateInvoiceEntity(invoiceEntity: InvoiceEntity): DBResource<Long>
+
     suspend fun deleteInvoice(invoiceEntity: InvoiceEntity): DBResource<Unit>
 
-    suspend fun getInvoiceWithItemsAndPayments(invoiceId: Long): DBResource<List<InvoiceWithItemsAndPayments>>
+    suspend fun deleteInvoice(invoiceId: Int): DBResource<Unit>
+
+    suspend fun getInvoiceWithItemsAndPayments(invoiceId: Long): DBResource<Invoice>
 
     suspend fun updateInvoiceObjectId(invoiceId: Int, newObjectId: String): DBResource<Unit>
 
     suspend fun getInvoices(): DBResource<List<Invoice>>
+
+    suspend fun getInvoicesListWithItemsAndPayments(): DBResource<List<Invoice>>
 
     suspend fun updateStatusByInvoiceId(invoiceId: Int, syncStatus: String): DBResource<Unit>
 

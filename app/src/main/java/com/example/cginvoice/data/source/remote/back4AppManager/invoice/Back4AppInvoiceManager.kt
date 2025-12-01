@@ -149,13 +149,15 @@ class Back4AppInvoiceManager {
 
                     itemObj.save()
 
-                    idMappings.add(
-                        IdInfoRemoteResponse(
-                            id = item.invoiceItemId,
-                            table = SyncType.INVOICE_ITEM.type,
-                            objectId = itemObj.objectId
+                    if (item.invoiceItemObjectId == null) {
+                        idMappings.add(
+                            IdInfoRemoteResponse(
+                                id = item.invoiceItemId,
+                                table = SyncType.INVOICE_ITEM.type,
+                                objectId = itemObj.objectId
+                            )
                         )
-                    )
+                    }
                 }
 
 
@@ -175,14 +177,15 @@ class Back4AppInvoiceManager {
                     }
 
                     paymentObj.save()
-
-                    idMappings.add(
-                        IdInfoRemoteResponse(
-                            id = payment.paymentId ?: 0,
-                            table = SyncType.PAYMENT.type,
-                            objectId = paymentObj.objectId
+                    if (payment.paymentObjectId == null) {
+                        idMappings.add(
+                            IdInfoRemoteResponse(
+                                id = payment.paymentId ?: 0,
+                                table = SyncType.PAYMENT.type,
+                                objectId = paymentObj.objectId
+                            )
                         )
-                    )
+                    }
                 }
 
                 // -----------------------------
