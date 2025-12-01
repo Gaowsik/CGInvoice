@@ -12,6 +12,6 @@ interface InvoiceRepository {
     suspend fun getUnpaidInvoiceList(): DBResource<List<Invoice>>
     suspend fun getInvoiceDetailByInvoiceId(invoiceId: Int): DBResource<Invoice>
     suspend fun insertOrUpdateInvoiceDB(invoice: Invoice): DBResource<Unit>
-    suspend fun deleteItem(invoice: Invoice)
+    suspend fun deleteInvoice(invoice: Invoice)
     suspend fun syncAllInvoices(invoiceList: List<Invoice>): APIResource<List<IdInfoRemoteResponse>>
 }
