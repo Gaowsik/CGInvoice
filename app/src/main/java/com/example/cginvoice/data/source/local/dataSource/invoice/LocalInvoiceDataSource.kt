@@ -12,7 +12,7 @@ interface LocalInvoiceDataSource {
 
     suspend fun insertInvoiceEntity(invoiceEntity: InvoiceEntity): DBResource<Long>
 
-    suspend fun updateInvoiceEntity(invoiceEntity: InvoiceEntity): DBResource<Long>
+    suspend fun updateInvoiceEntity(invoiceEntity: InvoiceEntity): DBResource<Int>
 
     suspend fun deleteInvoice(invoiceEntity: InvoiceEntity): DBResource<Unit>
 

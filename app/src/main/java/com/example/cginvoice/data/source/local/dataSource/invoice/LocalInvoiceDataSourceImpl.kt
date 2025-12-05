@@ -16,7 +16,7 @@ class LocalInvoiceDataSourceImpl(private val invoiceDao: InvoiceDao) : LocalInvo
             invoiceDao.insertInvoiceEntity(invoiceEntity)
         }
 
-    override suspend fun updateInvoiceEntity(invoiceEntity: InvoiceEntity): DBResource<Long> =
+    override suspend fun updateInvoiceEntity(invoiceEntity: InvoiceEntity): DBResource<Int> =
         safeDbCall {
             invoiceDao.updateInvoiceEntity(invoiceEntity)
         }

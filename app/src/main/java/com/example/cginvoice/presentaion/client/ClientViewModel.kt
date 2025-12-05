@@ -21,7 +21,9 @@ import com.example.cginvoice.data.repository.user.UserRepository
 import com.example.cginvoice.data.source.remote.model.client.ClientInfoResponse
 import com.example.cginvoice.data.source.remote.model.common.IdInfoRemoteResponse
 import com.example.cginvoice.domain.model.client.ClientData
+import com.example.cginvoice.domain.model.invoice.Invoice
 import com.example.cginvoice.domain.model.user.UserData
+import com.example.cginvoice.presentaion.invoice.InvoiceViewModel
 import com.example.cginvoice.utills.Constants.KEY_SYNC_CLIENT_DATA
 import com.example.cginvoice.utills.Constants.KEY_SYNC_DATA_REQUEST
 import com.example.cginvoice.utills.Constants.KEY_SYNC_TYPE
@@ -75,6 +77,8 @@ class ClientViewModel @Inject constructor(
     fun updateField(field: (ClientDetailState) -> ClientDetailState) {
         _clientDetailState.value = field(_clientDetailState.value)
     }
+
+
 
 
     fun getClientInfoRemote(userId: String) {

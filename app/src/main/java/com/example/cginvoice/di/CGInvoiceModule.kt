@@ -7,6 +7,8 @@ import androidx.work.WorkManager
 import com.example.cginvoice.data.CustomWorkerFactory
 import com.example.cginvoice.data.repository.client.ClientRepository
 import com.example.cginvoice.data.repository.client.ClientRepositoryImpl
+import com.example.cginvoice.data.repository.invoice.InvoiceRepository
+import com.example.cginvoice.data.repository.invoice.InvoiceRepositoryImpl
 import com.example.cginvoice.data.repository.item.ItemRepository
 import com.example.cginvoice.data.repository.item.ItemRepositoryImpl
 import com.example.cginvoice.data.repository.user.UserRepository
@@ -24,12 +26,15 @@ import com.example.cginvoice.data.source.local.dataSource.user.LocalUserDataSour
 import com.example.cginvoice.data.source.local.dataSource.user.LocalUserDataSourceImpl
 import com.example.cginvoice.data.source.remote.back4AppManager.client.Back4AppClientManager
 import com.example.cginvoice.data.source.remote.back4AppManager.core.Back4AppImageHandler
+import com.example.cginvoice.data.source.remote.back4AppManager.invoice.Back4AppInvoiceManager
 import com.example.cginvoice.data.source.remote.back4AppManager.item.Back4AppItemManager
 import com.example.cginvoice.data.source.remote.back4AppManager.user.Back4AppUserManager
 import com.example.cginvoice.data.source.remote.dataSource.client.RemoteClientDataSource
 import com.example.cginvoice.data.source.remote.dataSource.client.RemoteClientDataSourceImpl
 import com.example.cginvoice.data.source.remote.dataSource.common.RemoteCommonDataSource
 import com.example.cginvoice.data.source.remote.dataSource.common.RemoteCommonDataSourceImpl
+import com.example.cginvoice.data.source.remote.dataSource.invoice.RemoteInvoiceDataSource
+import com.example.cginvoice.data.source.remote.dataSource.invoice.RemoteInvoiceDataSourceImpl
 import com.example.cginvoice.data.source.remote.dataSource.item.RemoteItemDataSource
 import com.example.cginvoice.data.source.remote.dataSource.item.RemoteItemDataSourceImpl
 import com.example.cginvoice.data.source.remote.dataSource.user.RemoteUserDataSource
@@ -85,6 +90,20 @@ class CGInvoiceModule {
                 userRepository
             )
         }
+
+        @Singleton
+        @Provides
+        fun provideInvoiceRepository(
+            remoteInvoiceDataSource: RemoteInvoiceDataSource,
+            localInvoiceDataSource: LocalInvoiceDataSource,
+            userRepository: UserRepository
+        ): InvoiceRepository {
+            return InvoiceRepositoryImpl(
+                remoteInvoiceDataSource,
+                localInvoiceDataSource,
+                userRepository
+            )
+        }
     }
 
     @Module
@@ -107,6 +126,12 @@ class CGInvoiceModule {
         @Provides
         fun provideRemoteItemDataSource(back4AppItemManager: Back4AppItemManager): RemoteItemDataSource {
             return RemoteItemDataSourceImpl(back4AppItemManager)
+        }
+
+        @Singleton
+        @Provides
+        fun provideRemoteInvoiceDataSource(back4AppItemManager: Back4AppInvoiceManager): RemoteInvoiceDataSource {
+            return RemoteInvoiceDataSourceImpl(back4AppItemManager)
         }
 
         @Singleton
@@ -171,6 +196,12 @@ class CGInvoiceModule {
         @Singleton
         fun provideBack4AppItemManager(): Back4AppItemManager {
             return Back4AppItemManager()
+        }
+
+        @Provides
+        @Singleton
+        fun provideBack4AppInvoiceManager(): Back4AppInvoiceManager {
+            return Back4AppInvoiceManager()
         }
 
         @Provides

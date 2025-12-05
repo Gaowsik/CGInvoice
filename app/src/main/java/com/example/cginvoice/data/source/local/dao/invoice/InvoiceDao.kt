@@ -11,6 +11,7 @@ import com.example.cginvoice.data.source.local.entitiy.invoicItem.InvoiceItemEnt
 import com.example.cginvoice.data.source.local.entitiy.invoice.InvoiceEntity
 import com.example.cginvoice.data.source.local.entitiy.invoice.PaymentEntity
 import com.example.cginvoice.data.source.local.relation.invoice.InvoiceWithItemsAndPayments
+import com.example.cginvoice.utills.SyncStatus
 
 @Dao
 interface InvoiceDao {
@@ -18,15 +19,13 @@ interface InvoiceDao {
     suspend fun insertInvoiceEntity(invoiceEntity: InvoiceEntity): Long
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun updateInvoiceEntity(invoiceEntity: InvoiceEntity): Long
+    suspend fun updateInvoiceEntity(invoiceEntity: InvoiceEntity): Int
 
     @Delete
     suspend fun deleteInvoice(invoiceEntity: InvoiceEntity)
 
     @Query("DELETE FROM InvoiceEntity WHERE invoiceId = :invoiceId")
     suspend fun deleteInvoiceByInvoiceId(invoiceId: Int)
-
-    suspend fun getPaidInvoices(invoiceId: Long): List<InvoiceEntity>
 
     @Transaction
     @Query("SELECT * FROM InvoiceEntity WHERE invoiceId = :invoiceId LIMIT 1")
@@ -35,8 +34,8 @@ interface InvoiceDao {
     @Query("UPDATE InvoiceEntity SET invoiceObjectId = :newObjectId WHERE invoiceId = :invoiceId")
     suspend fun updateInvoiceObjectId(invoiceId: Int, newObjectId: String)
 
-    @Query("SELECT * FROM InvoiceEntity")
-    suspend fun getInvoices(): List<InvoiceEntity>
+    @Query("SELECT * FROM InvoiceEntity WHERE syncStatus != :deleteStatus")
+    suspend fun getInvoices(deleteStatus: String = SyncStatus.DELETE.status): List<InvoiceEntity>
 
     @Query("SELECT * FROM InvoiceEntity")
     suspend fun getInvoicesListWithItemsAndPayments(): List<InvoiceWithItemsAndPayments>

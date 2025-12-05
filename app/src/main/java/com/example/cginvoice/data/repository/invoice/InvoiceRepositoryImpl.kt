@@ -182,7 +182,7 @@ class InvoiceRepositoryImpl @Inject constructor(
 
             invoice.invoiceItemList.forEach { item ->
                 val insertItemResponse = localInvoiceDataSource.insertInvoiceItemEntity(
-                    item.toInvoiceItemEntity(invoiceId)
+                    item.toInvoiceItemEntity(invoiceId.toLong())
                 )
                 if (insertItemResponse is DBResource.Error) {
                     return DBResource.Error(insertItemResponse.exception)
@@ -191,7 +191,7 @@ class InvoiceRepositoryImpl @Inject constructor(
 
             invoice.paymentList.forEach { payment ->
                 val insertPaymentResponse = localInvoiceDataSource.insertPaymentEntity(
-                    payment.toPaymentEntity(invoiceId)
+                    payment.toPaymentEntity(invoiceId.toLong())
                 )
                 if (insertPaymentResponse is DBResource.Error) {
                     return DBResource.Error(insertPaymentResponse.exception)

@@ -13,6 +13,7 @@ object Constants {
     const val KEY_SYNC_TYPE = "key_sync_type"
     const val KEY_WORK_MANAGER_RESPONSE = "key_work_manager_response"
     const val KEY_SYNC_CLIENT_DATA = "sync_client_data"
+    const val KEY_SYNC_INVOICE_DATA = "sync_invoice_data"
     const val KEY_SYNC_ITEM_DATA = "sync_item_data"
 
     val sampleAddress = Address(

@@ -4,20 +4,20 @@ import com.example.cginvoice.data.source.remote.model.Invoice.InvoiceResponse
 import com.example.cginvoice.domain.model.invoiceItem.InvoiceItemData
 
 data class Invoice(
-    val invoiceId: Long,
-    val invoiceData: String,
-    val dueDate: String,
-    val invoiceObjectId: String,
-    val totalAmount: Double,
-    val userId: Long,
-    val clientId: Long,
-    val imageId: String,
-    val note: String,
+    val invoiceId: Long = 0,
+    val invoiceData: String = "",
+    val dueDate: String = "",
+    val invoiceObjectId: String = "",
+    val totalAmount: Double = 0.0,
+    val userId: Long = 0,
+    val clientId: Long = 0,
+    val imageId: String = "",
+    val note: String = "",
     val paymentList: List<Payment> = emptyList(),
     val invoiceItemList: List<InvoiceItemData> = emptyList(),
-    val syncStatus: String
-){
-    fun toInvoiceResponse() : InvoiceResponse{
+    val syncStatus: String = ""
+) {
+    fun toInvoiceResponse(): InvoiceResponse {
         return InvoiceResponse(
             invoiceId = invoiceId.toInt(),
             invoiceData = invoiceData,
