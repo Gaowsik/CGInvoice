@@ -17,10 +17,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.example.cginvoice.domain.model.client.Client
+import com.example.cginvoice.domain.model.client.ClientData
 import com.example.cginvoice.presentaion.nav.NavItem
 import com.example.cginvoice.utills.SearchBar
 
@@ -29,7 +30,8 @@ import com.example.cginvoice.utills.SearchBar
 fun ClientScreen(
     navController: NavHostController,
     viewModel: ClientViewModel = hiltViewModel(),
-    paddingValues: PaddingValues = PaddingValues()
+    paddingValues: PaddingValues = PaddingValues(),
+    isSelected: Boolean
 ) {
     var searchQuery by remember { mutableStateOf("") }
     val getClients by viewModel.getClientInfo.collectAsState(emptyList())
@@ -57,7 +59,7 @@ fun ClientScreen(
         ) {
             items(getClients.size) { number ->
                 ClientItem(getClients[number]) {
-                    navController.navigate(NavItem.AddClient.createRoute(clientId = it))
+                    handleIsSelected(isSelected, navController, it)
                 }
             }
         }
@@ -65,5 +67,24 @@ fun ClientScreen(
     }
 
 
+}
+
+private fun handleIsSelected(
+    isSelected: Boolean,
+    navController: NavHostController,
+    client: ClientData
+) {
+    if (isSelected) {
+        navController.previousBackStackEntry
+            ?.savedStateHandle
+            ?.set("selectedClientId", client.clientId)
+
+        navController.previousBackStackEntry
+            ?.savedStateHandle
+            ?.set("selectedClientName", client.name)
+        navController.popBackStack()
+    } else {
+        navController.navigate(NavItem.AddClient.createRoute(clientId = client.clientId))
+    }
 }
 

@@ -18,12 +18,12 @@ import com.example.cginvoice.domain.model.client.ClientData
 
 
 @Composable
-fun ClientItem(clientData: ClientData, onClickListener: (Int) -> Unit) {
+fun ClientItem(clientData: ClientData, onClickListener: (ClientData) -> Unit) {
     Card(
         modifier = Modifier
             .padding(horizontal = 16.dp)
             .fillMaxWidth()
-            .clickable { onClickListener(clientData.clientId) }
+            .clickable { onClickListener(clientData) }
             .padding(top = 8.dp, bottom = 8.dp),
         shape = RoundedCornerShape(4.dp),
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp),

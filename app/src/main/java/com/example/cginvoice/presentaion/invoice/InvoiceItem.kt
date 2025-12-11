@@ -20,10 +20,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.cginvoice.domain.model.invoice.Invoice
-import com.example.cginvoice.domain.model.item.ItemData
 
 @Composable
-fun InvoiceItem(invoice: Invoice, onClickListener: (Int) -> Unit, onDeleteListener: (Invoice) -> Unit) {
+fun InvoiceItem(
+    invoice: Invoice,
+    onClickListener: (Int) -> Unit,
+    onDeleteListener: (Invoice) -> Unit
+) {
     Card(
         modifier = Modifier
             .padding(horizontal = 16.dp)
@@ -35,10 +38,92 @@ fun InvoiceItem(invoice: Invoice, onClickListener: (Int) -> Unit, onDeleteListen
         colors = CardDefaults.cardColors(containerColor = Color.White)
 
     ) {
-        Row(modifier = Modifier.padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp).fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            modifier = Modifier
+                .padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Text(text = invoice.invoiceData, style = MaterialTheme.typography.titleMedium)
 
             IconButton(onClick = { onDeleteListener(invoice) }) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "Delete",
+                    tint = Color.Red
+                )
+            }
+
+        }
+    }
+}
+
+@Composable
+fun InvoiceItemForUIState(
+    invoice: InvoiceDetailViewModel.InvoiceItemState,
+    onDeleteListener: (String) -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .fillMaxWidth()
+            .padding(top = 8.dp, bottom = 8.dp),
+        shape = RoundedCornerShape(4.dp),
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
+
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(text = invoice.itemName, style = MaterialTheme.typography.titleMedium)
+
+            IconButton(onClick = { onDeleteListener(invoice.itemName) }) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "Delete",
+                    tint = Color.Red
+                )
+            }
+
+        }
+    }
+}
+
+
+@Composable
+fun InvoicePaymentUIState(
+    payment: InvoiceDetailViewModel.InvoicePaymentState,
+    onDeleteListener: (String) -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .fillMaxWidth()
+            .padding(top = 8.dp, bottom = 8.dp),
+        shape = RoundedCornerShape(4.dp),
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
+
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "RS." + payment.amount.toString(),
+                style = MaterialTheme.typography.titleMedium
+            )
+
+            IconButton(onClick = { onDeleteListener(payment.paymentDate) }) {
                 Icon(
                     imageVector = Icons.Default.Delete,
                     contentDescription = "Delete",

@@ -91,6 +91,7 @@ class InvoiceDetailViewModel @Inject constructor(
     data class InvoiceDetailState(
         val name: String = "",
         val detail: String = "",
+        val clientName: String = "",
         val invoiceItemList: List<InvoiceItemState> = emptyList(),
         val total: Double = 0.0,
         val note: String = "",
@@ -105,6 +106,7 @@ class InvoiceDetailViewModel @Inject constructor(
     )
 
     data class InvoicePaymentState(
+        val paymentId: Int = 0,
         val amount: Double = 0.0,
         val paymentDate: String = "",
     )
@@ -115,6 +117,7 @@ class InvoiceDetailViewModel @Inject constructor(
             detail = invoice.dueDate,
             total = invoice.totalAmount,
             note = invoice.note,
+            clientName = invoice.clientName,
             invoiceItemList = invoice.invoiceItemList.map {
                 InvoiceItemState(
                     itemName = it.itemName.orEmpty(),
@@ -125,6 +128,7 @@ class InvoiceDetailViewModel @Inject constructor(
             },
             paymentList = invoice.paymentList.map {
                 InvoicePaymentState(
+                    paymentId = it.paymentId ?: 0,
                     amount = it.amount,
                     paymentDate = it.paymentDate
                 )

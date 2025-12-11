@@ -12,7 +12,13 @@ sealed class NavItem {
         Item(path = NavPath.INVOICE.toString(), title = NavTitle.INVOICE, icon = Icons.Default.Home)
 
     object Client :
-        Item(path = NavPath.CLIENT.toString(), title = NavTitle.CLIENT, icon = Icons.Default.Search)
+        Item(
+            path = NavPath.CLIENT.toString(),
+            title = NavTitle.CLIENT,
+            icon = Icons.Default.Search
+        ) {
+        fun createRoute(isSelected: Boolean) = NavPath.CLIENT.toString() + "/$isSelected"
+    }
 
     object AddClient :
         Item(
@@ -30,6 +36,15 @@ sealed class NavItem {
             icon = Icons.Default.Search
         ) {
         fun createRoute(itemId: Int) = NavPath.ADD_ITEM.toString() + "/$itemId"
+    }
+
+    object AddInvoice :
+        Item(
+            path = NavPath.ADD_INVOICE.toString(),
+            title = NavTitle.ADD_INVOICE,
+            icon = Icons.Default.Search
+        ) {
+        fun createRoute(invoiceId: Int) = NavPath.ADD_INVOICE.toString() + "/$invoiceId"
     }
 
     object Items :

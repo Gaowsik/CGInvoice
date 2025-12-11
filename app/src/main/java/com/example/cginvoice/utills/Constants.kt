@@ -180,4 +180,5 @@ object NavTitle {
     const val USER = "User"
     const val ADD_CLIENT = "add_client"
     const val ADD_ITEM = "add_item"
+    const val ADD_INVOICE = "add_invoice"
 }

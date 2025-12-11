@@ -11,6 +11,7 @@ data class Invoice(
     val totalAmount: Double = 0.0,
     val userId: Long = 0,
     val clientId: Long = 0,
+    val clientName: String = "",
     val imageId: String = "",
     val note: String = "",
     val paymentList: List<Payment> = emptyList(),

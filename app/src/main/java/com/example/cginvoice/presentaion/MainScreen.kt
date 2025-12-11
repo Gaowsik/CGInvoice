@@ -47,26 +47,31 @@ fun MainScreen(navController: NavHostController) {
         }
     }
     Scaffold(
-        topBar = { TopAppBar(
-            title = { Text(topBarConfig.value.title) },
-            actions = topBarConfig.value.actions
-        )},
+        topBar = {
+            TopAppBar(
+                title = { Text(topBarConfig.value.title) },
+                actions = topBarConfig.value.actions
+            )
+        },
         bottomBar = {
-        BottomAppBar { BottomNavigationBar(navController = navController) }
+            BottomAppBar { BottomNavigationBar(navController = navController) }
 
-    }, floatingActionButton = {
-        if (showFab) {
-            FloatingActionButton(onClick = { handleFabClick(currentRoute, navController) }) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = stringResource(R.string.action_add)
-                )
+        }, floatingActionButton = {
+            if (showFab) {
+                FloatingActionButton(onClick = { handleFabClick(currentRoute, navController) }) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = stringResource(R.string.action_add)
+                    )
+                }
             }
-        }
-    }) { padding ->
-        NavigationScreens(navController = navController, paddingValues = padding,topBarConfig = {
-                config -> topBarConfig.value = config
-        })
+        }) { padding ->
+        NavigationScreens(
+            navController = navController,
+            paddingValues = padding,
+            topBarConfig = { config ->
+                topBarConfig.value = config
+            })
     }
 
 
@@ -80,10 +85,10 @@ fun handleFabClick(currentRoute: String?, navController: NavHostController) {
         }
 
         NavItem.Invoice.path -> {
-            navController.navigate(NavItem.AddItem.createRoute(-1)) // Replace with your actual invoice creation route
+            navController.navigate(NavItem.AddInvoice.createRoute(-1)) // Replace with your actual invoice creation route
         }
 
-        NavItem.Items.path->{
+        NavItem.Items.path -> {
             navController.navigate(NavItem.AddItem.createRoute(-1))
         }
 

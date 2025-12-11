@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -12,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -99,7 +101,7 @@ fun TextFieldWithLabel(
     label: String,
     value: String,
     keyboardType: KeyboardType = KeyboardType.Text,
-    placeholder: String="",
+    placeholder: String = "",
     onValueChange: (String) -> Unit
 ) {
     Box(
@@ -168,10 +170,11 @@ fun TextFieldWithLabel(
 fun TextInputWithLabel(
     label: String,
     value: String,
+    modifier: Modifier = Modifier,
     onValueChange: (String) -> Unit
 ) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .drawWithContent {
                 // Draw top stroke
@@ -192,7 +195,7 @@ fun TextInputWithLabel(
             }
     ) {
         Box(
-            modifier = Modifier
+            modifier = modifier
                 .background(Color.White.copy(alpha = 0.8f))
         ) {
             BasicTextField(
@@ -365,7 +368,75 @@ fun IconWithLabel(
     }
 }
 
+@Composable
+fun TextWithLabel(
+    label: String,
+    textValue: String,
+    onClick: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White.copy(alpha = 0.8f))
+            .clickable { onClick() }
+            .drawWithContent {
+                // Draw top stroke
+                drawLine(
+                    color = Color.Gray,
+                    start = Offset(0f, 0f),
+                    end = Offset(size.width, 0f),
+                    strokeWidth = 0.5.dp.toPx()
+                )
+                // Draw bottom stroke
+                drawLine(
+                    color = Color.Gray,
+                    start = Offset(0f, size.height),
+                    end = Offset(size.width, size.height),
+                    strokeWidth = 0.5.dp.toPx()
+                )
+                drawContent() // Draw the inner content
+            }
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
 
+            Text(
+                text = label,
+                style = MaterialTheme.typography.titleSmall,
+                modifier = Modifier
+                    .padding(start = 8.dp)
+            )
+
+            Spacer(
+                modifier = Modifier.weight(1f)
+            )
+
+            Text(
+                text = textValue,
+                style = MaterialTheme.typography.titleSmall,
+                modifier = Modifier
+                    .padding(start = 8.dp),
+
+                )
+
+
+            Icon(
+                imageVector = Icons.Default.KeyboardArrowRight,
+                contentDescription = "Label Icon",
+                modifier = Modifier
+                    .size(40.dp) // Set a fixed size for the icon
+                    .padding(8.dp),
+                tint = Color.Gray // Adjust color if needed
+            )
+
+
+        }
+    }
+}
 
 
 @Composable

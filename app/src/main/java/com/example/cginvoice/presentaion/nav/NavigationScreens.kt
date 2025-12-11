@@ -12,6 +12,7 @@ import androidx.navigation.navArgument
 import com.example.cginvoice.presentaion.TopBarConfig
 import com.example.cginvoice.presentaion.client.AddClientScreen
 import com.example.cginvoice.presentaion.client.ClientScreen
+import com.example.cginvoice.presentaion.invoice.AddInvoiceScreen
 import com.example.cginvoice.presentaion.invoice.InvoiceListScreen
 import com.example.cginvoice.presentaion.item.AddItemScreen
 import com.example.cginvoice.presentaion.item.ItemScreen
@@ -31,8 +32,10 @@ fun NavigationScreens(
                 paddingValues = paddingValues
             )
         }
-        composable(NavItem.Client.path) {
-            ClientScreen(navController = navController, paddingValues = paddingValues)
+        composable(route = NavItem.Client.path + "/{isSelected}",
+            arguments = listOf(navArgument("isSelected") { type = NavType.BoolType })) { backStackEntry->
+            val isSelected = backStackEntry.arguments?.getBoolean("isSelected") ?:false
+            ClientScreen(navController = navController, paddingValues = paddingValues,isSelected = isSelected)
 
         }
 
@@ -71,6 +74,20 @@ fun NavigationScreens(
                 navController,
                 paddingValues = paddingValues,
                 itemId = itemId,
+                topBarConfig = topBarConfig
+            )
+        }
+
+
+        composable(
+            route = NavItem.AddInvoice.path + "/{invoiceId}",
+            arguments = listOf(navArgument("invoiceId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val invoiceId = backStackEntry.arguments?.getInt("invoiceId") ?: -1
+            AddInvoiceScreen(
+                navController,
+                paddingValues = paddingValues,
+                invoiceId = invoiceId,
                 topBarConfig = topBarConfig
             )
         }
