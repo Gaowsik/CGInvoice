@@ -32,11 +32,26 @@ fun NavigationScreens(
                 paddingValues = paddingValues
             )
         }
-        composable(route = NavItem.Client.path + "/{isSelected}",
-            arguments = listOf(navArgument("isSelected") { type = NavType.BoolType })) { backStackEntry->
-            val isSelected = backStackEntry.arguments?.getBoolean("isSelected") ?:false
-            ClientScreen(navController = navController, paddingValues = paddingValues,isSelected = isSelected)
+        composable(
+            route = NavItem.Client.path + "/{isSelected}",
+            arguments = listOf(navArgument("isSelected") { type = NavType.BoolType })
+        ) { backStackEntry ->
+            val isSelected = backStackEntry.arguments?.getBoolean("isSelected") ?: false
+            ClientScreen(
+                navController = navController,
+                paddingValues = paddingValues,
+                isSelected = isSelected
+            )
 
+        }
+
+        composable(NavItem.Client.path) {
+            ClientScreen(
+                navController = navController,
+                paddingValues = paddingValues,
+                isSelected = false
+
+            )
         }
 
         composable(NavItem.Items.path) {

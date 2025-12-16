@@ -372,6 +372,7 @@ fun IconWithLabel(
 fun TextWithLabel(
     label: String,
     textValue: String,
+    imageVector: ImageVector = Icons.Default.KeyboardArrowRight,
     onClick: () -> Unit
 ) {
     Box(
@@ -425,7 +426,7 @@ fun TextWithLabel(
 
 
             Icon(
-                imageVector = Icons.Default.KeyboardArrowRight,
+                imageVector = imageVector,
                 contentDescription = "Label Icon",
                 modifier = Modifier
                     .size(40.dp) // Set a fixed size for the icon
