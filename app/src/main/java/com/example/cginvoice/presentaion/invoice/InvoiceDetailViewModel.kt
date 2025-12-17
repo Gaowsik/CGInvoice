@@ -149,6 +149,14 @@ class InvoiceDetailViewModel @Inject constructor(
         }
     }
 
+    fun deleteInvoiceItemFromCurrentState(itemName: String) {
+        _currentInvoice.update { invoice ->
+            invoice?.copy(
+                invoiceItemList = invoice.invoiceItemList.filter { it.itemName != itemName }
+            )
+        }
+    }
+
     fun addPaymentCurrentState(payment: Payment) {
         _currentInvoice.update { invoice ->
             invoice?.copy(

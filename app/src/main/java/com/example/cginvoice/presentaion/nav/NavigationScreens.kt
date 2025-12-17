@@ -81,17 +81,35 @@ fun NavigationScreens(
         }
 
         composable(
-            route = NavItem.AddItem.path + "/{itemId}",
-            arguments = listOf(navArgument("itemId") { type = NavType.IntType })
+            route = NavItem.AddItem.path + "/{itemId}?fromInvoice={fromInvoice}",
+            arguments = listOf(
+                navArgument("itemId") {
+                    type = NavType.IntType
+                },
+                navArgument("fromInvoice") {
+                    type = NavType.BoolType
+                    defaultValue = false
+                }
+            )
         ) { backStackEntry ->
-            val itemId = backStackEntry.arguments?.getInt("itemId") ?: -1
+
+            val itemId =
+                backStackEntry.arguments?.getInt("itemId") ?: -1
+
+            val isSelectedFromInvoice =
+                backStackEntry.arguments?.getBoolean("fromInvoice") ?: false
+
             AddItemScreen(
-                navController,
+                navController = navController,
                 paddingValues = paddingValues,
                 itemId = itemId,
+                isSelectedFromInvoice = isSelectedFromInvoice,
                 topBarConfig = topBarConfig
             )
+
         }
+
+
 
 
         composable(

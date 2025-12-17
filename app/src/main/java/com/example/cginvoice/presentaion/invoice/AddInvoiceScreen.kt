@@ -1,6 +1,5 @@
 package com.example.cginvoice.presentaion.invoice
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -23,7 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.example.cginvoice.domain.model.client.ClientData
+import com.example.cginvoice.domain.model.invoiceItem.InvoiceItemData
 import com.example.cginvoice.presentaion.TopBarConfig
 import com.example.cginvoice.presentaion.nav.NavItem
 import com.example.cginvoice.utills.IconWithLabel
@@ -64,6 +63,14 @@ fun AddInvoiceScreen(
                 name?.let { viewModel.updateInvoiceField { it.copy(clientName = name) } }
             }
         }
+
+        launch {
+            savedStateHandle?.getStateFlow<InvoiceItemData?>("selectedInvoiceItem", null)
+                ?.collect { invoiceItem ->
+                    invoiceItem?.let { viewModel.addInvoiceItemToCurrentState(invoiceItem) }
+                }
+        }
+
     }
 
     Column(
@@ -87,7 +94,7 @@ fun AddInvoiceScreen(
         }
         Spacer(modifier = Modifier.height(16.dp))
         IconWithLabel(Icons.Default.Add, "Add Items") {
-            // TODO: navigate to itemscreen
+            navController.navigate(NavItem.AddItem.createRoute(-1, isSelectedFromInvoice = true))
         }
 
         LazyColumn(
@@ -96,7 +103,7 @@ fun AddInvoiceScreen(
         ) {
             items(invoiceState.invoiceItemList.size) { number ->
                 InvoiceItemForUIState(invoiceState.invoiceItemList[number]) {
-                    // TODO: swipe to delete item 
+                  viewModel.deleteInvoiceItemFromCurrentState(it)
                 }
             }
         }
@@ -104,7 +111,7 @@ fun AddInvoiceScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
         IconWithLabel(Icons.Default.Add, "Add Payments") {
-                // TODO: navigate to payment Screen
+            // TODO: navigate to payment Screen
         }
 
         LazyColumn(
@@ -113,7 +120,6 @@ fun AddInvoiceScreen(
         ) {
             items(invoiceState.paymentList.size) { number ->
                 InvoicePaymentUIState(invoiceState.paymentList[number]) {
-                    // TODO: swipe to delete item
                 }
             }
         }

@@ -35,8 +35,16 @@ sealed class NavItem {
             title = NavTitle.ADD_ITEM,
             icon = Icons.Default.Search
         ) {
-        fun createRoute(itemId: Int) = NavPath.ADD_ITEM.toString() + "/$itemId"
+
+        fun createRoute(
+            itemId: Int,
+            isSelectedFromInvoice: Boolean = false
+        ): String {
+            return "${path}/$itemId?fromInvoice=$isSelectedFromInvoice"
+        }
+
     }
+
 
     object AddInvoice :
         Item(

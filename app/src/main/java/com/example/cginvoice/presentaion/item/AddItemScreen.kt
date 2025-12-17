@@ -22,7 +22,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.example.cginvoice.domain.model.invoiceItem.InvoiceItemData
+import com.example.cginvoice.domain.model.item.toInvoiceItemData
 import com.example.cginvoice.presentaion.TopBarConfig
+import com.example.cginvoice.presentaion.invoice.InvoiceDetailViewModel
+import com.example.cginvoice.presentaion.nav.Item
 import com.example.cginvoice.utills.MyAlertDialog
 import com.example.cginvoice.utills.TextFieldWithLabel
 import com.example.cginvoice.utills.TextInputWithLabel
@@ -33,9 +37,9 @@ fun AddItemScreen(
     viewModel: ItemViewModel = hiltViewModel(),
     paddingValues: PaddingValues = PaddingValues(),
     itemId: Int,
+    isSelectedFromInvoice: Boolean = false,
     topBarConfig: (TopBarConfig) -> Unit
 ) {
-
 
 
     val itemState by viewModel.currentItemData.collectAsState()
@@ -45,10 +49,12 @@ fun AddItemScreen(
     }
 
     var discountText by remember {
-        mutableStateOf(if (itemState.defaultDiscount == 0.0) "" else itemState.defaultDiscount.toString())}
+        mutableStateOf(if (itemState.defaultDiscount == 0.0) "" else itemState.defaultDiscount.toString())
+    }
 
     var unitPriceText by remember {
-        mutableStateOf(if (itemState.defaultUnitPrice == 0.0) "" else itemState.defaultUnitPrice.toString())}
+        mutableStateOf(if (itemState.defaultUnitPrice == 0.0) "" else itemState.defaultUnitPrice.toString())
+    }
 
     val shouldShowSaveDialog = remember { mutableStateOf(false) }
 
@@ -56,7 +62,7 @@ fun AddItemScreen(
 
     topBarConfig(
         TopBarConfig("Add Item", actions = {
-            TextButton(onClick = { viewModel.updateItemDataDB() }) {
+            TextButton(onClick = { handleIsSelected(isSelectedFromInvoice, navController, itemState.toInvoiceItemData(), viewModel) }) {
                 Text("Save")
             }
         })
@@ -118,7 +124,7 @@ fun AddItemScreen(
         ) { discount ->
             if (discount.matches(Regex("^\\d*\\.?\\d*\$"))) {
                 discountText = discount
-                if (discount.isNotEmpty()  && discount != ".") {
+                if (discount.isNotEmpty() && discount != ".") {
                     viewModel.updateField { it.copy(defaultDiscount = discount.toDouble()) }
                 }
             }
@@ -148,4 +154,23 @@ fun AddItemScreen(
 
 
     }
+}
+
+private fun handleIsSelected(
+    isSelectedFromInvoice: Boolean,
+    navController: NavHostController,
+    item: InvoiceItemData,
+    viewModel: ItemViewModel
+) {
+    if (isSelectedFromInvoice) {
+        navController.previousBackStackEntry
+            ?.savedStateHandle
+            ?.set("selectedInvoiceItem", item)
+        navController.popBackStack()
+    }
+    else{
+        viewModel.updateItemDataDB()
+    }
+
+
 }
