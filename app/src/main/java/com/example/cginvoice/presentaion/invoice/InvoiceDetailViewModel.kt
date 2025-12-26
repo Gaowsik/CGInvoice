@@ -130,7 +130,7 @@ class InvoiceDetailViewModel @Inject constructor(
                 InvoicePaymentState(
                     paymentId = it.paymentId ?: 0,
                     amount = it.amount,
-                    paymentDate = it.paymentDate
+                    paymentDate = it.paymentDate.toString()
                 )
             }
         )
@@ -157,10 +157,28 @@ class InvoiceDetailViewModel @Inject constructor(
         }
     }
 
-    fun addPaymentCurrentState(payment: Payment) {
+
+    fun upsertPayment(payment: Payment) {
         _currentInvoice.update { invoice ->
             invoice?.copy(
-                paymentList = invoice.paymentList + payment
+                paymentList = invoice.paymentList.map { existing ->
+                    if (existing.paymentId == payment.paymentId && payment.paymentId != null) {
+                        existing.copy(
+                            paymentDate = payment.paymentDate,
+                            amount = payment.amount,
+                            paymentMethod = payment.paymentMethod,
+                            note = payment.note
+                        )
+                    } else {
+                        existing
+                    }
+                }.let { updatedList ->
+                    if (payment.paymentId == null) {
+                        updatedList + payment
+                    } else {
+                        updatedList
+                    }
+                }
             )
         }
     }

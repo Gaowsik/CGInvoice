@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.example.cginvoice.domain.model.invoice.Payment
 import com.example.cginvoice.domain.model.invoiceItem.InvoiceItemData
 import com.example.cginvoice.presentaion.TopBarConfig
 import com.example.cginvoice.presentaion.nav.NavItem
@@ -71,6 +72,13 @@ fun AddInvoiceScreen(
                 }
         }
 
+        launch {
+            savedStateHandle?.getStateFlow<Payment?>("selectedPayment", null)
+                ?.collect { paymentItem ->
+                    paymentItem?.let { viewModel.upsertPayment(paymentItem) }
+                }
+        }
+
     }
 
     Column(
@@ -103,7 +111,7 @@ fun AddInvoiceScreen(
         ) {
             items(invoiceState.invoiceItemList.size) { number ->
                 InvoiceItemForUIState(invoiceState.invoiceItemList[number]) {
-                  viewModel.deleteInvoiceItemFromCurrentState(it)
+                    viewModel.deleteInvoiceItemFromCurrentState(it)
                 }
             }
         }
@@ -111,7 +119,7 @@ fun AddInvoiceScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
         IconWithLabel(Icons.Default.Add, "Add Payments") {
-            // TODO: navigate to payment Screen
+            navigateToAddPayment(navController, null)
         }
 
         LazyColumn(
@@ -131,6 +139,21 @@ fun AddInvoiceScreen(
         }
 
 
+
+
     }
 
+}
+
+fun navigateToAddPayment(
+    navController: NavHostController,
+    payment: Payment? = null
+) {
+    payment?.let {
+        navController.currentBackStackEntry
+            ?.savedStateHandle
+            ?.set("payment", it)
+    }
+
+    navController.navigate(NavItem.AddPayment.path)
 }

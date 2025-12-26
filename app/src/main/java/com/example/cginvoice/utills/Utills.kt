@@ -1,9 +1,22 @@
 package com.example.cginvoice.utills
 
+import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.input.KeyboardType
 import com.example.cginvoice.data.APIResource
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.reflect.TypeToken
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 fun parseErrors(failure: APIResource.Error): String {
     return when {
@@ -68,9 +81,42 @@ enum class SyncType(val type: String) {
 }
 
 enum class SyncStatus(val status: String) {
-    PENDING("pending"), COMPLETED("completed"),DELETE("delete")
+    PENDING("pending"), COMPLETED("completed"), DELETE("delete")
 }
 
 inline fun <reified T> String.fromJsonList(): List<T> {
     return Gson().fromJson(this, object : TypeToken<List<T>>() {}.type)
+}
+
+@OptIn(ExperimentalTime::class)
+fun todayMillis(): Long {
+    return Clock.System.now().toEpochMilliseconds()
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+fun formatDate(timeInMills: Long): String {
+    val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
+    return Instant.ofEpochMilli(timeInMills)
+        .atZone(ZoneId.systemDefault())
+        .toLocalDate()
+        .format(formatter)
+}
+
+@Composable
+fun DecimalTextField(
+    label: String,
+    value: String,
+    placeholder: String = "0.00",
+    onValueChange: (Double?) -> Unit
+) {
+    var text by remember { mutableStateOf(value) }
+
+    TextFieldWithLabel(label, text, KeyboardType.Decimal, placeholder) { input ->
+        // Allow only digits and decimal point
+        if (input.matches(Regex("^\\d*\\.?\\d*\$"))) {
+            text = input
+            val number = input.toDoubleOrNull()
+            onValueChange(number)
+        }
+    }
 }

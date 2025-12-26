@@ -33,7 +33,7 @@ data class PaymentEntity(
             paymentId = paymentId.toInt(),
             paymentObjectId = paymentObjectId,
             invoiceId = invoiceId,
-            paymentDate = paymentDate,
+            paymentDate = paymentDate.toLong(),
             amount = amount,
             paymentMethod = paymentMethod,
             note = note

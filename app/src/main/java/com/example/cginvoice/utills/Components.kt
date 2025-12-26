@@ -2,6 +2,7 @@ package com.example.cginvoice.utills
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,11 +18,16 @@ import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
@@ -123,26 +129,27 @@ fun TextFieldWithLabel(
                     strokeWidth = 0.5.dp.toPx()
                 )
                 drawContent() // Draw the inner content
-            }
-    ) {
+            },
+
+        ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color.White.copy(alpha = 0.8f))
+                .background(Color.White.copy(alpha = 0.8f)),
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Text(
                 text = label,
                 style = MaterialTheme.typography.titleSmall,
                 modifier = Modifier
                     .padding(8.dp)
-                    .weight(2f)
+
             )
 
             Box(
                 modifier = Modifier
-                    .fillMaxWidth()
                     .padding(8.dp)
-                    .weight(3f)
+
             ) {
                 BasicTextField(
                     value = value,
@@ -476,6 +483,43 @@ fun PermissionDialog(
             Text(permission.getDescription(isPermanentlyDeclined))
 
         }, modifier = modifier)
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CustomDatePickerDialog(
+    selectedDateMillis: Long,
+    onDismiss: () -> Unit,
+    onConfirm: (Long) -> Unit,
+    title: String = "Select date"
+) {
+    val state = rememberDatePickerState(
+        initialSelectedDateMillis = selectedDateMillis
+    )
+
+    DatePickerDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    state.selectedDateMillis?.let(onConfirm)
+                }
+            ) {
+                Text("Select")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    ) {
+        DatePicker(
+            state = state,
+            showModeToggle = true,
+            title = { Text(title, Modifier.padding(16.dp)) }
+        )
     }
 }
 

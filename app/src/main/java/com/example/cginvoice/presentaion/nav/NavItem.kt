@@ -45,6 +45,13 @@ sealed class NavItem {
 
     }
 
+    object AddPayment :
+        Item(
+            path = NavPath.ADD_PAYMENT.toString(),
+            title = NavTitle.ADD_PAYMENT,
+            icon = Icons.Default.Search
+        )
+
 
     object AddInvoice :
         Item(

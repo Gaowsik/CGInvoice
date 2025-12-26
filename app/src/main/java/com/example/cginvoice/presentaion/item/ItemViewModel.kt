@@ -59,7 +59,6 @@ class ItemViewModel @Inject constructor(
     private val _getItemInfo = MutableSharedFlow<List<ItemData>>()
     val getItemInfo = _getItemInfo.asSharedFlow()
 
-
     private val _currentItemData = MutableStateFlow<ItemData>(ItemData())
     val currentItemData = _currentItemData.asStateFlow()
 
@@ -168,7 +167,7 @@ class ItemViewModel @Inject constructor(
                     is DBResource.Success -> {
                         setLoading(false)
 
-                          _isSaved.emit(true)
+                        _isSaved.emit(true)
                     }
                 }
             }

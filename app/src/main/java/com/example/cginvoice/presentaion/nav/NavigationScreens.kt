@@ -9,10 +9,12 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.cginvoice.domain.model.invoice.Payment
 import com.example.cginvoice.presentaion.TopBarConfig
 import com.example.cginvoice.presentaion.client.AddClientScreen
 import com.example.cginvoice.presentaion.client.ClientScreen
 import com.example.cginvoice.presentaion.invoice.AddInvoiceScreen
+import com.example.cginvoice.presentaion.invoice.AddPaymentScreen
 import com.example.cginvoice.presentaion.invoice.InvoiceListScreen
 import com.example.cginvoice.presentaion.item.AddItemScreen
 import com.example.cginvoice.presentaion.item.ItemScreen
@@ -104,6 +106,24 @@ fun NavigationScreens(
                 paddingValues = paddingValues,
                 itemId = itemId,
                 isSelectedFromInvoice = isSelectedFromInvoice,
+                topBarConfig = topBarConfig
+            )
+
+        }
+
+        composable(
+            route = NavItem.AddPayment.path
+        ) {
+            val payment = navController
+                .previousBackStackEntry
+                ?.savedStateHandle
+                ?.get<Payment>("payment")
+
+
+            AddPaymentScreen(
+                navController = navController,
+                paddingValues = paddingValues,
+                payment = payment,
                 topBarConfig = topBarConfig
             )
 

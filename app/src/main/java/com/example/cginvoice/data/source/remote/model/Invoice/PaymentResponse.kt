@@ -17,7 +17,7 @@ data class PaymentResponse(
             paymentId = this.paymentId,
             paymentObjectId = this.paymentObjectId,
             invoiceObjectId = this.invoiceObjectId,
-            paymentDate = this.paymentDate,
+            paymentDate = this.paymentDate.toLong(),
             amount = this.amount,
             paymentMethod = this.paymentMethod,
             note = this.note
