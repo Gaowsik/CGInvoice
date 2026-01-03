@@ -10,18 +10,21 @@ import com.example.cginvoice.domain.model.invoice.Invoice
 import com.example.cginvoice.domain.model.invoice.Payment
 import com.example.cginvoice.domain.model.invoiceItem.InvoiceItemData
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@OptIn(FlowPreview::class)
 @HiltViewModel
 class InvoiceDetailViewModel @Inject constructor(
     private val invoiceRepository: InvoiceRepository,
@@ -36,21 +39,62 @@ class InvoiceDetailViewModel @Inject constructor(
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
 
-    private val _currentInvoice = MutableStateFlow<Invoice?>(Invoice())
-    val currentInvoice = _currentInvoice.asStateFlow()
+    private val _baseInvoice = MutableStateFlow<Invoice?>(Invoice())
+    val baseInvoice = _baseInvoice.asStateFlow()
+
+    private val _invoiceItems = MutableStateFlow<List<InvoiceItemData>>(emptyList())
+    val invoiceItems = _invoiceItems.asStateFlow()
+
+    private val _payments = MutableStateFlow<List<Payment>>(emptyList())
+    val payments = _payments.asStateFlow()
+
+
+    val currentInvoice: StateFlow<Invoice?> = combine(
+        _baseInvoice, _invoiceItems, _payments
+    ) { base, items, payments ->
+        base?.copy(
+            invoiceItemList = items,
+            paymentList = payments
+        )
+    }.stateIn(viewModelScope, SharingStarted.Lazily, _baseInvoice.value)
+
+
+    private val derivedTotalAmount: StateFlow<Double> =
+        _invoiceItems
+            .map { items ->
+                items.sumOf { it.defaultUnitPrice * it.quantity }
+            }
+            .stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(5000),
+                0.0
+            )
+
+    private val _manualTotalAmount = MutableStateFlow<Double?>(null)
+    val manualTotalAmount = _manualTotalAmount.asStateFlow()
+
+    val totalAmount: StateFlow<Double> =
+        combine(derivedTotalAmount, _manualTotalAmount) { derived, manual ->
+            manual ?: derived
+        }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            0.0
+        )
+
 
     private val _isSaved = MutableSharedFlow<Boolean>()
     val isSaved = _isSaved.asSharedFlow()
 
     fun updateInvoiceField(transform: (Invoice) -> Invoice) {
-        _currentInvoice.update { invoice ->
+        _baseInvoice.update { invoice ->
             invoice?.let { transform(it) }
         }
     }
 
 
     val invoiceDetailState: StateFlow<InvoiceDetailState> =
-        _currentInvoice.map { invoice ->
+        currentInvoice.map { invoice ->
             invoice?.let { toInvoiceState(it) } ?: InvoiceDetailState()
         }.stateIn(
             scope = viewModelScope,
@@ -137,49 +181,54 @@ class InvoiceDetailViewModel @Inject constructor(
     }
 
     fun setCurrentInvoice(invoice: Invoice) {
-        _currentInvoice.value = invoice
+        _baseInvoice.value = invoice
+        _payments.value = invoice.paymentList
+        _invoiceItems.value = invoice.invoiceItemList
     }
 
 
     fun addInvoiceItemToCurrentState(item: InvoiceItemData) {
-        _currentInvoice.update { invoice ->
-            invoice?.copy(
-                invoiceItemList = invoice.invoiceItemList + item
-            )
+        _invoiceItems.update { invoiceItemList ->
+            invoiceItemList + item
         }
     }
 
+
     fun deleteInvoiceItemFromCurrentState(itemName: String) {
-        _currentInvoice.update { invoice ->
-            invoice?.copy(
-                invoiceItemList = invoice.invoiceItemList.filter { it.itemName != itemName }
-            )
+        _invoiceItems.update { invoiceItemList ->
+            invoiceItemList.filter { it.itemName != itemName }
+
+        }
+    }
+
+    fun deletePaymentItemFromCurrentState(paymentAmount: Double, paymentDate: Long) {
+        _payments.update { paymentList ->
+            paymentList.filter { it.paymentDate != paymentDate }
+
         }
     }
 
 
     fun upsertPayment(payment: Payment) {
-        _currentInvoice.update { invoice ->
-            invoice?.copy(
-                paymentList = invoice.paymentList.map { existing ->
-                    if (existing.paymentId == payment.paymentId && payment.paymentId != null) {
-                        existing.copy(
-                            paymentDate = payment.paymentDate,
-                            amount = payment.amount,
-                            paymentMethod = payment.paymentMethod,
-                            note = payment.note
-                        )
-                    } else {
-                        existing
-                    }
-                }.let { updatedList ->
-                    if (payment.paymentId == null) {
-                        updatedList + payment
-                    } else {
-                        updatedList
-                    }
+        _payments.update { paymentsList ->
+            paymentsList.map { existing ->
+                if (existing.paymentId == payment.paymentId && payment.paymentId != null) {
+                    existing.copy(
+                        paymentDate = payment.paymentDate,
+                        amount = payment.amount,
+                        paymentMethod = payment.paymentMethod,
+                        note = payment.note
+                    )
+                } else {
+                    existing
                 }
-            )
+            }.let { updatedList ->
+                if (payment.paymentId == null) {
+                    updatedList + payment
+                } else {
+                    updatedList
+                }
+            }
         }
     }
 
@@ -188,7 +237,7 @@ class InvoiceDetailViewModel @Inject constructor(
         viewModelScope.launch {
             setLoading(true)
 
-            val invoice = _currentInvoice.value
+            val invoice = currentInvoice.value
             if (invoice == null) {
                 setLoading(false)
                 return@launch
@@ -211,5 +260,14 @@ class InvoiceDetailViewModel @Inject constructor(
         }
     }
 
+
+    fun updateManualTotalAmount(input: String) {
+        val parsed = input.toDoubleOrNull()
+        _manualTotalAmount.value = parsed
+    }
+
+    fun clearManualTotalAmount() {
+        _manualTotalAmount.value = null
+    }
 
 }

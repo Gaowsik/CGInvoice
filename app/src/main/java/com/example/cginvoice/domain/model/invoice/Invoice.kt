@@ -2,6 +2,7 @@ package com.example.cginvoice.domain.model.invoice
 
 import com.example.cginvoice.data.source.remote.model.Invoice.InvoiceResponse
 import com.example.cginvoice.domain.model.invoiceItem.InvoiceItemData
+import com.example.cginvoice.utills.SyncStatus
 
 data class Invoice(
     val invoiceId: Long = 0,
@@ -16,7 +17,7 @@ data class Invoice(
     val note: String = "",
     val paymentList: List<Payment> = emptyList(),
     val invoiceItemList: List<InvoiceItemData> = emptyList(),
-    val syncStatus: String = ""
+    val syncStatus: String = SyncStatus.PENDING.status
 ) {
     fun toInvoiceResponse(): InvoiceResponse {
         return InvoiceResponse(

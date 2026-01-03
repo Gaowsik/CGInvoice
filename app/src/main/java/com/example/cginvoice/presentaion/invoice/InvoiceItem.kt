@@ -99,7 +99,7 @@ fun InvoiceItemForUIState(
 @Composable
 fun InvoicePaymentUIState(
     payment: InvoiceDetailViewModel.InvoicePaymentState,
-    onDeleteListener: (String) -> Unit
+    onDeleteListener: (InvoiceDetailViewModel.InvoicePaymentState) -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -123,7 +123,7 @@ fun InvoicePaymentUIState(
                 style = MaterialTheme.typography.titleMedium
             )
 
-            IconButton(onClick = { onDeleteListener(payment.paymentDate) }) {
+            IconButton(onClick = { onDeleteListener(payment) }) {
                 Icon(
                     imageVector = Icons.Default.Delete,
                     contentDescription = "Delete",

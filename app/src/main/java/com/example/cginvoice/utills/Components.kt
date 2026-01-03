@@ -108,10 +108,11 @@ fun TextFieldWithLabel(
     value: String,
     keyboardType: KeyboardType = KeyboardType.Text,
     placeholder: String = "",
+    modifier: Modifier = Modifier,
     onValueChange: (String) -> Unit
 ) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .drawWithContent {
                 // Draw top stroke
