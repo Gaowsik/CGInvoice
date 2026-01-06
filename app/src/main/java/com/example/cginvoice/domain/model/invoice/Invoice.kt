@@ -15,6 +15,7 @@ data class Invoice(
     val clientName: String = "",
     val imageId: String = "",
     val note: String = "",
+    val paymentStatus : Boolean = false,
     val paymentList: List<Payment> = emptyList(),
     val invoiceItemList: List<InvoiceItemData> = emptyList(),
     val syncStatus: String = SyncStatus.PENDING.status

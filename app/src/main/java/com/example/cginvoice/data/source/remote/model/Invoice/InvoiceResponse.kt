@@ -13,6 +13,7 @@ data class InvoiceResponse(
     val clientObjectId: String?,
     val imageId: String = "",
     val note: String = "",
+    val paymentStatus: Boolean = false,
     val paymentList: List<PaymentResponse> = emptyList(),
     val invoiceItemList: List<InvoiceItemResponse> = emptyList()
 ) {
@@ -28,6 +29,7 @@ data class InvoiceResponse(
             clientId = this.clientObjectId?.toLong() ?: 0L,
             imageId = this.imageId,
             note = this.note,
+            paymentStatus = paymentStatus,
             paymentList = this.paymentList.map { it.toPayment() },
             invoiceItemList = this.invoiceItemList.map { it.toInvoiceItem() },
             syncStatus = SyncStatus.COMPLETED.status

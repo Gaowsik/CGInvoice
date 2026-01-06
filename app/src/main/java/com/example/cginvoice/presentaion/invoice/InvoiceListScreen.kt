@@ -67,7 +67,7 @@ fun InvoiceListScreen(
         ) {
             items(getInvoices.size) { number ->
                 InvoiceItem(getInvoices[number], onClickListener = {
-                    navController.navigate(NavItem.AddClient.createRoute(clientId = it))
+                    navController.navigate(NavItem.AddInvoice.createRoute(invoiceId = it))
                 }) {
                     viewModel.deleteInvoice(it)
                 }

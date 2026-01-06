@@ -67,6 +67,12 @@ fun AddInvoiceScreen(
     }
 
 
+    LaunchedEffect(key1 = true, block = {
+        if (invoiceId != -1) {
+            viewModel.getInvoiceByInvoiceId(invoiceId)
+        }
+    })
+
     topBarConfig(
         TopBarConfig("Add Invoice", actions = {
             TextButton(onClick = { viewModel.updateInvoiceData() }) {

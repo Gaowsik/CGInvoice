@@ -56,6 +56,10 @@ fun AddItemScreen(
         mutableStateOf(if (itemState.defaultUnitPrice == 0.0) "" else itemState.defaultUnitPrice.toString())
     }
 
+    var quantityText by remember {
+        mutableStateOf(if (itemState.defaultQuantity == 0) "" else itemState.defaultQuantity.toString())
+    }
+
     val shouldShowSaveDialog = remember { mutableStateOf(false) }
 
     val customDialogMessage = remember { mutableStateOf("") }
@@ -117,6 +121,22 @@ fun AddItemScreen(
         }
 
         TextFieldWithLabel(
+            "Quantity",
+            quantityText,
+            KeyboardType.Number,
+            "0"
+        ) { quantity ->
+            if (quantity.matches(Regex("^\\d*\$"))) {
+                quantityText = quantity
+                if (quantity.isNotEmpty()) {
+                    viewModel.updateField { it.copy(defaultQuantity = quantity.toInt()) }
+                } else {
+                    viewModel.updateField { it.copy(defaultQuantity = 0) }
+                }
+            }
+        }
+
+        TextFieldWithLabel(
             "Discount",
             discountText,
             KeyboardType.Decimal,
@@ -171,6 +191,4 @@ private fun handleIsSelected(
     else{
         viewModel.updateItemDataDB()
     }
-
-
 }

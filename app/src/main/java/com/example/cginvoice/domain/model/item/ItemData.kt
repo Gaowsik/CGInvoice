@@ -13,6 +13,7 @@ data class ItemData(
     val defaultUnitPrice: Double = 0.0,
     val defaultTax: Double = 0.0,
     val defaultDiscount: Double = 0.0,
+    val defaultQuantity: Int = 1,
     val syncStatus: String = SyncStatus.PENDING.status
 ) {
     fun toItemResponse(): ItemResponse {
@@ -41,6 +42,7 @@ fun ItemData.toInvoiceItemData(): InvoiceItemData {
         defaultTax = defaultTax,
         defaultDiscount = defaultDiscount,
         syncStatus = syncStatus,
+        quantity = defaultQuantity,
         invoiceObjectId = null,
         invoiceId = null
     )

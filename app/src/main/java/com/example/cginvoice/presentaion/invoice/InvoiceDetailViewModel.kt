@@ -83,6 +83,20 @@ class InvoiceDetailViewModel @Inject constructor(
         )
 
 
+    val paymentStatus: StateFlow<Boolean> = combine(
+        _payments,
+        totalAmount
+    ) { payments, total ->
+        val totalPaid = payments.sumOf { it.amount }
+        totalPaid >= total
+    }
+        .stateIn(
+            viewModelScope,
+            SharingStarted.Eagerly, // ensure it starts emitting immediately
+            false
+        )
+
+
     private val _isSaved = MutableSharedFlow<Boolean>()
     val isSaved = _isSaved.asSharedFlow()
 
@@ -197,7 +211,6 @@ class InvoiceDetailViewModel @Inject constructor(
     fun deleteInvoiceItemFromCurrentState(itemName: String) {
         _invoiceItems.update { invoiceItemList ->
             invoiceItemList.filter { it.itemName != itemName }
-
         }
     }
 
@@ -243,18 +256,24 @@ class InvoiceDetailViewModel @Inject constructor(
                 return@launch
             }
 
-            when (val response = invoiceRepository.insertOrUpdateInvoiceDB(invoice)) {
-                is DBResource.Error -> {
-                    _errorMessage.emit(response.exception.message ?: "Unknown error")
-                }
 
-                is DBResource.Success -> {
-                    _isSaved.emit(true)
-                }
+            val invoiceToSave = invoice.copy(
+                totalAmount = totalAmount.value, paymentStatus = paymentStatus.value
+            )
 
-                is DBResource.Loading -> {
-                }
-            }
+                 when (val response = invoiceRepository.insertOrUpdateInvoiceDB(invoiceToSave)) {
+                     is DBResource.Error -> {
+                         _errorMessage.emit(response.exception.message ?: "Unknown error")
+                     }
+
+                     is DBResource.Success -> {
+                         _isSaved.emit(true)
+                     }
+
+                     is DBResource.Loading -> {
+                         // Optional: handle loading state from repository
+                     }
+                 }
 
             setLoading(false)
         }

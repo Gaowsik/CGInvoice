@@ -15,6 +15,7 @@ data class InvoiceEntity(
     val clientId: Long,
     val imageId: String,
     val note: String,
+    val paymentStatus: Boolean,
     val syncStatus: String
 ) {
 
@@ -29,6 +30,7 @@ data class InvoiceEntity(
             clientId = clientId,
             imageId = imageId,
             note = note,
+            paymentStatus = paymentStatus,
             syncStatus = syncStatus
         )
     }
@@ -45,6 +47,7 @@ fun Invoice.toInvoiceEntity(): InvoiceEntity {
         clientId = clientId,
         imageId = imageId,
         note = note,
+        paymentStatus = paymentStatus,
         invoiceObjectId = invoiceObjectId,
         syncStatus = syncStatus
     )
