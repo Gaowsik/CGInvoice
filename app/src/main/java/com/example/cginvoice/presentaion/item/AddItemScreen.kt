@@ -25,8 +25,6 @@ import androidx.navigation.NavHostController
 import com.example.cginvoice.domain.model.invoiceItem.InvoiceItemData
 import com.example.cginvoice.domain.model.item.toInvoiceItemData
 import com.example.cginvoice.presentaion.TopBarConfig
-import com.example.cginvoice.presentaion.invoice.InvoiceDetailViewModel
-import com.example.cginvoice.presentaion.nav.Item
 import com.example.cginvoice.utills.MyAlertDialog
 import com.example.cginvoice.utills.TextFieldWithLabel
 import com.example.cginvoice.utills.TextInputWithLabel
@@ -66,7 +64,14 @@ fun AddItemScreen(
 
     topBarConfig(
         TopBarConfig("Add Item", actions = {
-            TextButton(onClick = { handleIsSelected(isSelectedFromInvoice, navController, itemState.toInvoiceItemData(), viewModel) }) {
+            TextButton(onClick = {
+                handleIsSelected(
+                    isSelectedFromInvoice,
+                    navController,
+                    itemState.toInvoiceItemData(),
+                    viewModel
+                )
+            }) {
                 Text("Save")
             }
         })
@@ -120,20 +125,23 @@ fun AddItemScreen(
             }
         }
 
-        TextFieldWithLabel(
-            "Quantity",
-            quantityText,
-            KeyboardType.Number,
-            "0"
-        ) { quantity ->
-            if (quantity.matches(Regex("^\\d*\$"))) {
-                quantityText = quantity
-                if (quantity.isNotEmpty()) {
-                    viewModel.updateField { it.copy(defaultQuantity = quantity.toInt()) }
-                } else {
-                    viewModel.updateField { it.copy(defaultQuantity = 0) }
+        if (isSelectedFromInvoice) {
+            TextFieldWithLabel(
+                "Quantity",
+                quantityText,
+                KeyboardType.Number,
+                "0"
+            ) { quantity ->
+                if (quantity.matches(Regex("^\\d*\$"))) {
+                    quantityText = quantity
+                    if (quantity.isNotEmpty()) {
+                        viewModel.updateField { it.copy(defaultQuantity = quantity.toInt()) }
+                    } else {
+                        viewModel.updateField { it.copy(defaultQuantity = 0) }
+                    }
                 }
             }
+
         }
 
         TextFieldWithLabel(
@@ -187,8 +195,7 @@ private fun handleIsSelected(
             ?.savedStateHandle
             ?.set("selectedInvoiceItem", item)
         navController.popBackStack()
-    }
-    else{
+    } else {
         viewModel.updateItemDataDB()
     }
 }
