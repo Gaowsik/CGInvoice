@@ -5,6 +5,7 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.example.cginvoice.domain.model.invoice.Payment
+import com.example.cginvoice.utills.SyncStatus
 
 @Entity(
     foreignKeys = [
@@ -24,7 +25,8 @@ data class PaymentEntity(
     val paymentDate: String,
     val amount: Double,
     val paymentMethod: String?,
-    val note: String? = null
+    val note: String? = null,
+    val syncStatus: String = SyncStatus.PENDING.status
 ) {
 
 
@@ -36,7 +38,8 @@ data class PaymentEntity(
             paymentDate = paymentDate.toLong(),
             amount = amount,
             paymentMethod = paymentMethod,
-            note = note
+            note = note,
+            syncStatus = syncStatus
         )
     }
 
