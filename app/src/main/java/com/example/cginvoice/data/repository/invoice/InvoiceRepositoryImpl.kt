@@ -9,7 +9,9 @@ import com.example.cginvoice.data.source.local.entitiy.invoice.toInvoiceEntity
 import com.example.cginvoice.data.source.remote.dataSource.invoice.RemoteInvoiceDataSource
 import com.example.cginvoice.data.source.remote.model.common.IdInfoRemoteResponse
 import com.example.cginvoice.domain.model.invoice.Invoice
+import com.example.cginvoice.domain.model.invoice.Payment
 import com.example.cginvoice.domain.model.invoice.toPaymentEntity
+import com.example.cginvoice.domain.model.invoiceItem.InvoiceItemData
 import com.example.cginvoice.domain.model.invoiceItem.toInvoiceItemEntity
 import com.example.cginvoice.utills.SyncStatus
 import com.example.cginvoice.utills.SyncType
@@ -88,6 +90,23 @@ class InvoiceRepositoryImpl @Inject constructor(
             updateStatusDelete(invoice.invoiceId.toInt())
         }
     }
+
+    override suspend fun deleteInvoiceItem(invoiceItemData: InvoiceItemData) {
+        if (invoiceItemData.invoiceItemObjectId.isNullOrEmpty()) {
+            localInvoiceDataSource.deleteInvoiceItem(invoiceItemData.toInvoiceItemEntity())
+        } else {
+            updateStatusDeleteInvoiceItem(invoiceItemData.invoiceItemId)
+        }
+    }
+
+    override suspend fun deleteInvoicePayment(invoicePayment: Payment) {
+        if (invoicePayment.paymentObjectId.isNullOrEmpty()) {
+            localInvoiceDataSource.deletePaymentItem(invoicePayment.toPaymentEntity())
+        } else {
+            updateStatusDeletePaymentItem(invoicePayment.paymentId!!)
+        }
+    }
+
 
     override suspend fun syncAllInvoices(invoiceList: List<Invoice>): APIResource<List<IdInfoRemoteResponse>> {
         val idInfoRemoteResponseList = emptyList<IdInfoRemoteResponse>().toMutableList()
@@ -310,6 +329,14 @@ class InvoiceRepositoryImpl @Inject constructor(
 
     private suspend fun updateStatusDelete(invoiceId: Int) {
         localInvoiceDataSource.updateStatusByInvoiceId(invoiceId, SyncStatus.DELETE.status)
+    }
+
+    private suspend fun updateStatusDeleteInvoiceItem(invoiceItemId: Int) {
+        localInvoiceDataSource.updateStatusByInvoiceId(invoiceItemId, SyncStatus.DELETE.status)
+    }
+
+    private suspend fun updateStatusDeletePaymentItem(invoicePaymentId: Int) {
+        localInvoiceDataSource.updateStatusByInvoiceId(invoicePaymentId, SyncStatus.DELETE.status)
     }
 
 

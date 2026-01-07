@@ -35,7 +35,7 @@ data class InvoiceItemData(
     }
 }
 
-fun InvoiceItemData.toInvoiceItemEntity(invoiceIdGenerated: Long): InvoiceItemEntity {
+fun InvoiceItemData.toInvoiceItemEntity(invoiceIdGenerated: Long = 0L): InvoiceItemEntity {
     return InvoiceItemEntity(
         invoiceItemId = this.invoiceItemId,
         invoiceItemObjectId = this.invoiceItemObjectId,

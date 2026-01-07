@@ -28,6 +28,10 @@ interface LocalInvoiceDataSource {
 
     suspend fun updateStatusByInvoiceId(invoiceId: Int, syncStatus: String): DBResource<Unit>
 
+    suspend fun updateStatusByInvoiceItemId(invoiceItemId: Int, syncStatus: String): DBResource<Unit>
+
+    suspend fun updateStatusByInvoicePaymentId(invoicePaymentId: Int, syncStatus: String): DBResource<Unit>
+
     suspend fun insertInvoiceItemEntity(invoiceItemEntity: InvoiceItemEntity): DBResource<Long>
 
     suspend fun updateInvoiceItemEntity(invoiceItemEntity: InvoiceItemEntity): DBResource<Unit>

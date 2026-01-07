@@ -6,7 +6,6 @@ import com.example.cginvoice.data.source.local.dao.invoice.InvoiceDao
 import com.example.cginvoice.data.source.local.entitiy.invoicItem.InvoiceItemEntity
 import com.example.cginvoice.data.source.local.entitiy.invoice.InvoiceEntity
 import com.example.cginvoice.data.source.local.entitiy.invoice.PaymentEntity
-import com.example.cginvoice.data.source.local.relation.invoice.InvoiceWithItemsAndPayments
 import com.example.cginvoice.domain.model.invoice.Invoice
 
 class LocalInvoiceDataSourceImpl(private val invoiceDao: InvoiceDao) : LocalInvoiceDataSource,
@@ -48,17 +47,32 @@ class LocalInvoiceDataSourceImpl(private val invoiceDao: InvoiceDao) : LocalInvo
         }
     }
 
-    override suspend fun getInvoicesListWithItemsAndPayments(): DBResource<List<Invoice>> = safeDbCall{
-        invoiceDao.getInvoicesListWithItemsAndPayments().map {
-            it.toInvoice()
+    override suspend fun getInvoicesListWithItemsAndPayments(): DBResource<List<Invoice>> =
+        safeDbCall {
+            invoiceDao.getInvoicesListWithItemsAndPayments().map {
+                it.toInvoice()
+            }
         }
-    }
 
     override suspend fun updateStatusByInvoiceId(
         invoiceId: Int,
         syncStatus: String
     ): DBResource<Unit> = safeDbCall {
         invoiceDao.updateStatusByInvoiceId(invoiceId, syncStatus)
+    }
+
+    override suspend fun updateStatusByInvoiceItemId(
+        invoiceItemId: Int,
+        syncStatus: String
+    ): DBResource<Unit> = safeDbCall {
+        invoiceDao.updateStatusByInvoiceItemId(invoiceItemId, syncStatus)
+    }
+
+    override suspend fun updateStatusByInvoicePaymentId(
+        invoicePaymentId: Int,
+        syncStatus: String
+    ): DBResource<Unit> = safeDbCall {
+        invoiceDao.updateStatusByInvoicePaymentId(invoicePaymentId, syncStatus)
     }
 
     override suspend fun insertInvoiceItemEntity(invoiceItemEntity: InvoiceItemEntity): DBResource<Long> =
