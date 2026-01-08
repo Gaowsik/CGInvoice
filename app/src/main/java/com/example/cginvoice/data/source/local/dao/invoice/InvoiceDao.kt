@@ -43,6 +43,12 @@ interface InvoiceDao {
     @Query("UPDATE InvoiceEntity SET syncStatus = :syncStatus WHERE invoiceId = :invoiceId")
     suspend fun updateStatusByInvoiceId(invoiceId: Int, syncStatus: String)
 
+    @Query("UPDATE PaymentEntity SET syncStatus = :syncStatus WHERE paymentId = :invoicePaymentId")
+    suspend fun updateStatusByInvoicePaymentId(invoicePaymentId: Int, syncStatus: String)
+
+    @Query("UPDATE InvoiceItemEntity SET syncStatus = :syncStatus WHERE invoiceItemId = :invoiceItemId")
+    suspend fun updateStatusByInvoiceItemId(invoiceItemId: Int, syncStatus: String)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertInvoiceItemEntity(invoiceItemEntity: InvoiceItemEntity): Long
 
@@ -73,4 +79,6 @@ interface InvoiceDao {
 
     @Delete
     suspend fun deletePaymentItem(paymentEntity: PaymentEntity)
+
+
 }

@@ -191,39 +191,33 @@ class InvoiceRepositoryImpl @Inject constructor(
     }
 
 
-    private suspend fun updateInvoiceResponseToDB(invoice: Invoice): DBResource<Unit> {
+    private suspend fun updateInvoiceResponseToDB(
+        invoice: Invoice
+    ): DBResource<Unit> {
 
-        val response = localInvoiceDataSource.updateInvoiceEntity(invoice.toInvoiceEntity())
+        val invoiceResult = localInvoiceDataSource
+            .updateInvoiceEntity(invoice.toInvoiceEntity())
 
-        return if (response is DBResource.Success) {
-            val invoiceId = response.value// Assuming DBResource.Success returns the rowId
-
-
-            invoice.invoiceItemList.forEach { item ->
-                val insertItemResponse = localInvoiceDataSource.insertInvoiceItemEntity(
-                    item.toInvoiceItemEntity(invoiceId.toLong())
-                )
-                if (insertItemResponse is DBResource.Error) {
-                    return DBResource.Error(insertItemResponse.exception)
-                }
-            }
-
-            invoice.paymentList.forEach { payment ->
-                val insertPaymentResponse = localInvoiceDataSource.insertPaymentEntity(
-                    payment.toPaymentEntity(invoiceId.toLong())
-                )
-                if (insertPaymentResponse is DBResource.Error) {
-                    return DBResource.Error(insertPaymentResponse.exception)
-                }
-            }
-
-            DBResource.Success(Unit)
-        } else if (response is DBResource.Error) {
-            DBResource.Error(response.exception)
-        } else {
-            DBResource.Error(Exception("Unknown error while inserting invoice"))
+        if (invoiceResult !is DBResource.Success) {
+            return DBResource.Error(
+                (invoiceResult as? DBResource.Error)?.exception
+                    ?: Exception("Unknown error while updating invoice")
+            )
         }
+
+        val invoiceId = invoiceResult.value.toLong()
+
+        saveInvoiceItems(invoiceId, invoice.invoiceItemList)
+            .takeIf { it is DBResource.Error }
+            ?.let { return it }
+
+        savePayments(invoiceId, invoice.paymentList)
+            .takeIf { it is DBResource.Error }
+            ?.let { return it }
+
+        return DBResource.Success(Unit)
     }
+
 
 
     private suspend fun invoiceInfoSync(invoice: Invoice): APIResource<List<IdInfoRemoteResponse>> {
@@ -406,6 +400,56 @@ class InvoiceRepositoryImpl @Inject constructor(
         }
 
     }
+
+    private suspend fun saveInvoiceItems(
+        invoiceId: Long,
+        items: List<InvoiceItemData>
+    ): DBResource<Unit> {
+
+        items.forEach { item ->
+            if (item.shouldDeleteFromDb()) {
+                localInvoiceDataSource.deleteInvoiceItem(
+                    item.toInvoiceItemEntity()
+                )
+            } else {
+                val result = localInvoiceDataSource.insertInvoiceItemEntity(
+                    item.toInvoiceItemEntity(invoiceId)
+                )
+                if (result is DBResource.Error) return result
+            }
+        }
+
+        return DBResource.Success(Unit)
+    }
+
+    private suspend fun savePayments(
+        invoiceId: Long,
+        payments: List<Payment>
+    ): DBResource<Unit> {
+
+        payments.forEach { payment ->
+            if (payment.shouldDeleteFromDb()) {
+                localInvoiceDataSource.deletePaymentItem(
+                    payment.toPaymentEntity()
+                )
+            } else {
+                val result = localInvoiceDataSource.insertPaymentEntity(
+                    payment.toPaymentEntity(invoiceId)
+                )
+                if (result is DBResource.Error) return result
+            }
+        }
+
+        return DBResource.Success(Unit)
+    }
+
+    private fun InvoiceItemData.shouldDeleteFromDb(): Boolean =
+        invoiceItemObjectId.isNullOrEmpty() &&
+                syncStatus == SyncStatus.DELETE.status
+
+    private fun Payment.shouldDeleteFromDb(): Boolean =
+        paymentObjectId.isNullOrEmpty() &&
+                syncStatus == SyncStatus.DELETE.status
 
 
 }

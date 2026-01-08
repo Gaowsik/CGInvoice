@@ -9,6 +9,7 @@ import com.example.cginvoice.data.repository.user.UserRepository
 import com.example.cginvoice.domain.model.invoice.Invoice
 import com.example.cginvoice.domain.model.invoice.Payment
 import com.example.cginvoice.domain.model.invoiceItem.InvoiceItemData
+import com.example.cginvoice.utills.SyncStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -109,7 +110,24 @@ class InvoiceDetailViewModel @Inject constructor(
 
     val invoiceDetailState: StateFlow<InvoiceDetailState> =
         currentInvoice.map { invoice ->
-            invoice?.let { toInvoiceState(it) } ?: InvoiceDetailState()
+            invoice?.let {
+                val filteredPayments = it.paymentList
+                    .filter { payment ->
+                        payment.syncStatus != SyncStatus.DELETE.status
+                    }
+
+                val filteredInvoiceItems = it.invoiceItemList
+                    .filter { item ->
+                        item.syncStatus != SyncStatus.DELETE.status
+                    }
+
+                toInvoiceState(
+                    it.copy(
+                        paymentList = filteredPayments,
+                        invoiceItemList = filteredInvoiceItems
+                    )
+                )
+            } ?: InvoiceDetailState()
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
@@ -157,6 +175,7 @@ class InvoiceDetailViewModel @Inject constructor(
     )
 
     data class InvoiceItemState(
+        val invoiceItemId: Int = 0,
         val itemName: String = "",
         val quantity: Int = 0,
         val unitPrice: Double = 0.0,
@@ -164,6 +183,7 @@ class InvoiceDetailViewModel @Inject constructor(
     )
 
     data class InvoicePaymentState(
+        val invoicePaymentId: Int = 0,
         val paymentId: Int = 0,
         val amount: Double = 0.0,
         val paymentDate: String = "",
@@ -178,6 +198,7 @@ class InvoiceDetailViewModel @Inject constructor(
             clientName = invoice.clientName,
             invoiceItemList = invoice.invoiceItemList.map {
                 InvoiceItemState(
+                    invoiceItemId = it.invoiceItemId,
                     itemName = it.itemName.orEmpty(),
                     quantity = it.quantity,
                     unitPrice = it.defaultUnitPrice,
@@ -208,16 +229,67 @@ class InvoiceDetailViewModel @Inject constructor(
     }
 
 
-    fun deleteInvoiceItemFromCurrentState(itemName: String) {
-        _invoiceItems.update { invoiceItemList ->
-            invoiceItemList.filter { it.itemName != itemName }
+    fun deleteInvoiceItemFromCurrentState(itemName: String, invoiceItemId: Int) {
+        if (invoiceItemId != 0) {
+            updateInvoiceItemStatus(SyncStatus.DELETE.status, invoiceItemId)
+        } else {
+            updateInvoiceItemStatusByName(SyncStatus.DELETE.status, itemName)
         }
     }
 
-    fun deletePaymentItemFromCurrentState(paymentAmount: Double, paymentDate: Long) {
-        _payments.update { paymentList ->
-            paymentList.filter { it.paymentDate != paymentDate }
+    fun deletePaymentItemFromCurrentState(paymentDate: Long,paymentId: Int) {
+        if (paymentId != 0) {
+            updateInvoicePaymentStatus(SyncStatus.DELETE.status, paymentId)
+        } else {
+            updateInvoicePaymentStatusByDate(SyncStatus.DELETE.status, paymentDate)
+        }
+    }
 
+    fun updateInvoiceItemStatus(status: String, invoiceItemId: Int) {
+        _invoiceItems.update { invoiceItemList ->
+            invoiceItemList.map { invoiceItem ->
+                if (invoiceItem.invoiceItemId == invoiceItemId) {
+                    invoiceItem.copy(syncStatus = status)
+                } else {
+                    invoiceItem
+                }
+            }
+        }
+    }
+
+    fun updateInvoiceItemStatusByName(status: String, invoiceItemName: String) {
+        _invoiceItems.update { invoiceItemList ->
+            invoiceItemList.map { invoiceItem ->
+                if (invoiceItem.itemName == invoiceItemName) {
+                    invoiceItem.copy(syncStatus = status)
+                } else {
+                    invoiceItem
+                }
+            }
+        }
+    }
+
+    fun updateInvoicePaymentStatus(status: String, invoicePaymentId: Int) {
+        _payments.update { paymentItemList ->
+            paymentItemList.map { invoicePayment ->
+                if (invoicePayment.paymentId == invoicePaymentId) {
+                    invoicePayment.copy(syncStatus = status)
+                } else {
+                    invoicePayment
+                }
+            }
+        }
+    }
+
+    fun updateInvoicePaymentStatusByDate(status: String, invoicePaymentDate: Long) {
+        _payments.update { paymentItemList ->
+            paymentItemList.map { invoicePayment ->
+                if (invoicePayment.paymentDate == invoicePaymentDate) {
+                    invoicePayment.copy(syncStatus = status)
+                } else {
+                    invoicePayment
+                }
+            }
         }
     }
 
@@ -256,24 +328,37 @@ class InvoiceDetailViewModel @Inject constructor(
                 return@launch
             }
 
+            val filteredPayments = invoice.paymentList
+                .filter { payment ->
+                    !(payment.syncStatus == SyncStatus.DELETE.status && payment.paymentId == 0)
+                }
+
+            val filteredInvoiceItems = invoice.invoiceItemList
+                .filter { item ->
+                    !(item.syncStatus == SyncStatus.DELETE.status && item.invoiceItemId == 0)
+                }
+
 
             val invoiceToSave = invoice.copy(
-                totalAmount = totalAmount.value, paymentStatus = paymentStatus.value
+                totalAmount = totalAmount.value,
+                paymentStatus = paymentStatus.value,
+                paymentList = filteredPayments,
+                invoiceItemList = filteredInvoiceItems
             )
 
-                 when (val response = invoiceRepository.insertOrUpdateInvoiceDB(invoiceToSave)) {
-                     is DBResource.Error -> {
-                         _errorMessage.emit(response.exception.message ?: "Unknown error")
-                     }
+            when (val response = invoiceRepository.insertOrUpdateInvoiceDB(invoiceToSave)) {
+                is DBResource.Error -> {
+                    _errorMessage.emit(response.exception.message ?: "Unknown error")
+                }
 
-                     is DBResource.Success -> {
-                         _isSaved.emit(true)
-                     }
+                is DBResource.Success -> {
+                    _isSaved.emit(true)
+                }
 
-                     is DBResource.Loading -> {
-                         // Optional: handle loading state from repository
-                     }
-                 }
+                is DBResource.Loading -> {
+                    // Optional: handle loading state from repository
+                }
+            }
 
             setLoading(false)
         }

@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.cginvoice.domain.model.invoice.Invoice
+import com.example.cginvoice.domain.model.invoiceItem.InvoiceItemData
 
 @Composable
 fun InvoiceItem(
@@ -62,7 +63,7 @@ fun InvoiceItem(
 @Composable
 fun InvoiceItemForUIState(
     invoice: InvoiceDetailViewModel.InvoiceItemState,
-    onDeleteListener: (String) -> Unit
+    onDeleteListener: (InvoiceDetailViewModel.InvoiceItemState) -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -83,7 +84,7 @@ fun InvoiceItemForUIState(
         ) {
             Text(text = invoice.itemName, style = MaterialTheme.typography.titleMedium)
 
-            IconButton(onClick = { onDeleteListener(invoice.itemName) }) {
+            IconButton(onClick = { onDeleteListener(invoice) }) {
                 Icon(
                     imageVector = Icons.Default.Delete,
                     contentDescription = "Delete",

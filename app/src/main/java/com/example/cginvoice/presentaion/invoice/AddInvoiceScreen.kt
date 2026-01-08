@@ -206,7 +206,7 @@ fun AddInvoiceScreen(
         ) {
             items(invoiceState.invoiceItemList.size) { number ->
                 InvoiceItemForUIState(invoiceState.invoiceItemList[number]) {
-                    viewModel.deleteInvoiceItemFromCurrentState(it)
+                    viewModel.deleteInvoiceItemFromCurrentState(it.itemName,it.invoiceItemId)
                 }
             }
         }
@@ -223,7 +223,7 @@ fun AddInvoiceScreen(
         ) {
             items(invoiceState.paymentList.size) { number ->
                 InvoicePaymentUIState(invoiceState.paymentList[number]) {
-                    viewModel.deletePaymentItemFromCurrentState(it.amount, it.paymentDate.toLong())
+                    viewModel.deletePaymentItemFromCurrentState( it.paymentDate.toLong(),it.invoicePaymentId,)
                 }
             }
         }
