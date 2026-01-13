@@ -62,15 +62,13 @@ fun AddInvoiceScreen(
     var totalPriceText by rememberSaveable { mutableStateOf("") }
 
     LaunchedEffect(totalPrice) {
-            totalPriceText =
-                if (totalPrice == 0.0) "" else totalPrice.toString()
+        totalPriceText =
+            if (totalPrice == 0.0) "" else totalPrice.toString()
     }
 
 
     LaunchedEffect(key1 = true, block = {
-        if (invoiceId != -1) {
-            viewModel.getInvoiceByInvoiceId(invoiceId)
-        }
+        viewModel.loadInvoiceOnce(invoiceId)
     })
 
     topBarConfig(
@@ -206,7 +204,7 @@ fun AddInvoiceScreen(
         ) {
             items(invoiceState.invoiceItemList.size) { number ->
                 InvoiceItemForUIState(invoiceState.invoiceItemList[number]) {
-                    viewModel.deleteInvoiceItemFromCurrentState(it.itemName,it.invoiceItemId)
+                    viewModel.deleteInvoiceItemFromCurrentState(it.itemName, it.invoiceItemId)
                 }
             }
         }
@@ -223,7 +221,10 @@ fun AddInvoiceScreen(
         ) {
             items(invoiceState.paymentList.size) { number ->
                 InvoicePaymentUIState(invoiceState.paymentList[number]) {
-                    viewModel.deletePaymentItemFromCurrentState( it.paymentDate.toLong(),it.invoicePaymentId,)
+                    viewModel.deletePaymentItemFromCurrentState(
+                        it.paymentDate.toLong(),
+                        it.invoicePaymentId,
+                    )
                 }
             }
         }

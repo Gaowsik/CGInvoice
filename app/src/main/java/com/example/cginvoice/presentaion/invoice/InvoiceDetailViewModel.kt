@@ -1,5 +1,6 @@
 package com.example.cginvoice.presentaion.invoice
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.work.WorkManager
@@ -19,7 +20,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -49,6 +52,8 @@ class InvoiceDetailViewModel @Inject constructor(
     private val _payments = MutableStateFlow<List<Payment>>(emptyList())
     val payments = _payments.asStateFlow()
 
+    private var hasLoadedInvoice = false
+
 
     val currentInvoice: StateFlow<Invoice?> = combine(
         _baseInvoice, _invoiceItems, _payments
@@ -57,7 +62,14 @@ class InvoiceDetailViewModel @Inject constructor(
             invoiceItemList = items,
             paymentList = payments
         )
-    }.stateIn(viewModelScope, SharingStarted.Lazily, _baseInvoice.value)
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.Eagerly,
+        _baseInvoice.value?.copy(
+            invoiceItemList = _invoiceItems.value,
+            paymentList = _payments.value
+        )
+    )
 
 
     private val derivedTotalAmount: StateFlow<Double> =
@@ -134,6 +146,23 @@ class InvoiceDetailViewModel @Inject constructor(
             initialValue = InvoiceDetailState()
         )
 
+    init {
+        _invoiceItems
+            .onEach {
+                Log.d(
+                    "INVOICE_FLOW",
+                    "Items = ${it.map { i -> i.invoiceItemId }}"
+                )
+            }
+            .launchIn(viewModelScope)
+    }
+
+    fun loadInvoiceOnce(invoiceId: Int) {
+        if (!hasLoadedInvoice && invoiceId != -1) {
+            getInvoiceByInvoiceId(invoiceId)
+        }
+    }
+
 
     fun getInvoiceByInvoiceId(invoiceId: Int) {
         viewModelScope.launch {
@@ -153,6 +182,7 @@ class InvoiceDetailViewModel @Inject constructor(
                 is DBResource.Success -> {
                     setLoading(false)
                     setCurrentInvoice(response.value)
+                    hasLoadedInvoice = true
                 }
             }
 
@@ -237,7 +267,7 @@ class InvoiceDetailViewModel @Inject constructor(
         }
     }
 
-    fun deletePaymentItemFromCurrentState(paymentDate: Long,paymentId: Int) {
+    fun deletePaymentItemFromCurrentState(paymentDate: Long, paymentId: Int) {
         if (paymentId != 0) {
             updateInvoicePaymentStatus(SyncStatus.DELETE.status, paymentId)
         } else {
