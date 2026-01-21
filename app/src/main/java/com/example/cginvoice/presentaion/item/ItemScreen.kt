@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.example.cginvoice.domain.model.item.ItemData
 import com.example.cginvoice.presentaion.nav.NavItem
 import com.example.cginvoice.utills.SearchBar
 
@@ -28,7 +29,8 @@ import com.example.cginvoice.utills.SearchBar
 fun ItemScreen(
     navController: NavHostController,
     viewModel: ItemViewModel = hiltViewModel(),
-    paddingValues: PaddingValues = PaddingValues()
+    paddingValues: PaddingValues = PaddingValues(),
+    isSelectedFromInvoice: Boolean = false
 ) {
     val getItems by viewModel.getItemInfo.collectAsState(emptyList())
 
@@ -50,11 +52,26 @@ fun ItemScreen(
         ) {
             items(getItems.size) { number ->
                 ItemsItem(getItems[number], onClickListener = {
-                    navController.navigate(NavItem.AddClient.createRoute(clientId = it))
+                    handleIsSelectedFromInvoice(isSelectedFromInvoice, navController, it)
                 }) {
                     viewModel.deleteItem(it)
                 }
             }
         }
+    }
+}
+
+
+private fun handleIsSelectedFromInvoice(
+    isSelectedFromInvoice: Boolean,
+    navController: NavHostController,
+    item: ItemData
+) {
+    if (isSelectedFromInvoice) {
+        navController.previousBackStackEntry?.savedStateHandle?.set("selectedItem", item)
+        navController.popBackStack()
+
+    } else {
+        navController.navigate(NavItem.AddItem.createRoute(itemId = item.itemId))
     }
 }

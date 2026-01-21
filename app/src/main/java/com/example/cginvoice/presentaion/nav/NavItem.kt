@@ -50,7 +50,7 @@ sealed class NavItem {
             path = NavPath.ADD_PAYMENT.toString(),
             title = NavTitle.ADD_PAYMENT,
             icon = Icons.Default.Search
-        )
+        ){}
 
 
     object AddInvoice :
@@ -63,7 +63,9 @@ sealed class NavItem {
     }
 
     object Items :
-        Item(path = NavPath.ITEM.toString(), title = NavTitle.ITEM, icon = Icons.Default.List)
+        Item(path = NavPath.ITEM.toString(), title = NavTitle.ITEM, icon = Icons.Default.List){
+        fun createRoute(isSelectedFromInvoice: Boolean) = NavPath.ITEM.toString() + "/$isSelectedFromInvoice"
+        }
 
     object User :
         Item(path = NavPath.USER.toString(), title = NavTitle.USER, icon = Icons.Default.Face)

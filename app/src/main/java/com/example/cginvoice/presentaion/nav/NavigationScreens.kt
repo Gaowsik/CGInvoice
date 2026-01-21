@@ -56,6 +56,19 @@ fun NavigationScreens(
             )
         }
 
+        composable(
+            route = NavItem.Items.path + "/{isSelectedFromInvoice}",
+            arguments = listOf(navArgument("isSelectedFromInvoice") { type = NavType.BoolType })
+        ) { backStackEntry ->
+            val isSelected = backStackEntry.arguments?.getBoolean("isSelectedFromInvoice") ?: false
+            ItemScreen(
+                navController = navController,
+                paddingValues = paddingValues,
+                isSelectedFromInvoice = isSelected
+            )
+
+        }
+
         composable(NavItem.Items.path) {
             ItemScreen(
                 navController = navController,

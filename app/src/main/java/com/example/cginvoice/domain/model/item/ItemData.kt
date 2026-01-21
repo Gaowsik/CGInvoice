@@ -1,9 +1,12 @@
 package com.example.cginvoice.domain.model.item
 
+import android.os.Parcelable
 import com.example.cginvoice.data.source.remote.model.item.ItemResponse
 import com.example.cginvoice.domain.model.invoiceItem.InvoiceItemData
 import com.example.cginvoice.utills.SyncStatus
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 data class ItemData(
     val itemId: Int = 0,
     val itemObjectId: String? = null,
@@ -15,7 +18,7 @@ data class ItemData(
     val defaultDiscount: Double = 0.0,
     val defaultQuantity: Int = 1,
     val syncStatus: String = SyncStatus.PENDING.status
-) {
+) : Parcelable {
     fun toItemResponse(): ItemResponse {
         return ItemResponse(
             itemId = itemId,

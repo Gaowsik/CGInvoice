@@ -23,16 +23,20 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.cginvoice.domain.model.invoiceItem.InvoiceItemData
+import com.example.cginvoice.domain.model.item.ItemData
 import com.example.cginvoice.domain.model.item.toInvoiceItemData
 import com.example.cginvoice.presentaion.TopBarConfig
+import com.example.cginvoice.presentaion.nav.NavItem
 import com.example.cginvoice.utills.MyAlertDialog
 import com.example.cginvoice.utills.TextFieldWithLabel
 import com.example.cginvoice.utills.TextInputWithLabel
+import com.example.cginvoice.utills.TextWithLabel
+import kotlinx.coroutines.launch
 
 @Composable
 fun AddItemScreen(
     navController: NavHostController,
-    viewModel: ItemViewModel = hiltViewModel(),
+    viewModel: ItemDetailViewModel = hiltViewModel(),
     paddingValues: PaddingValues = PaddingValues(),
     itemId: Int,
     isSelectedFromInvoice: Boolean = false,
@@ -47,16 +51,42 @@ fun AddItemScreen(
     }
 
     var discountText by remember {
-        mutableStateOf(if (itemState.defaultDiscount == 0.0) "" else itemState.defaultDiscount.toString())
+        mutableStateOf("")
     }
 
-    var unitPriceText by remember {
-        mutableStateOf(if (itemState.defaultUnitPrice == 0.0) "" else itemState.defaultUnitPrice.toString())
+    LaunchedEffect(itemState) {
+        discountText =
+            if (itemState.defaultDiscount == 0.0) "" else itemState.defaultDiscount.toString()
+    }
+
+    var unitPriceText by remember { mutableStateOf("") }
+
+    LaunchedEffect(itemState) {
+        unitPriceText =
+            if (itemState.defaultUnitPrice == 0.0) "" else itemState.defaultUnitPrice.toString()
     }
 
     var quantityText by remember {
-        mutableStateOf(if (itemState.defaultQuantity == 0) "" else itemState.defaultQuantity.toString())
+        mutableStateOf("")
     }
+    LaunchedEffect(itemState) {
+        quantityText =
+            if (itemState.defaultQuantity == 0) "" else itemState.defaultQuantity.toString()
+    }
+    val savedStateHandle = navController.currentBackStackEntry?.savedStateHandle
+    LaunchedEffect(savedStateHandle) {
+        launch {
+            savedStateHandle
+                ?.getStateFlow<ItemData?>("selectedItem", null)
+                ?.collect { invoiceItem ->
+                    invoiceItem?.let {
+                        viewModel.addItemToCurrentState(it)
+                        savedStateHandle["selectedItem"] = null
+                    }
+                }
+        }
+    }
+
 
     val shouldShowSaveDialog = remember { mutableStateOf(false) }
 
@@ -86,6 +116,12 @@ fun AddItemScreen(
         }
     }
 
+    LaunchedEffect(key1 = true, block = {
+        viewModel.loadItem(itemId)
+    })
+
+
+
     Column(
         modifier = Modifier
             .padding(
@@ -96,6 +132,13 @@ fun AddItemScreen(
             .verticalScroll(rememberScrollState())
 
     ) {
+        if (isSelectedFromInvoice) {
+            TextWithLabel("Choose from Item list", "") {
+                  navController.navigate(NavItem.Items.createRoute(isSelectedFromInvoice = true))
+            }
+        }
+
+        Spacer(modifier = Modifier.height(40.dp))
 
         TextInputWithLabel(label = "Name", value = itemState.itemName) { name ->
             viewModel.updateField { it.copy(itemName = name) }
@@ -188,7 +231,7 @@ private fun handleIsSelected(
     isSelectedFromInvoice: Boolean,
     navController: NavHostController,
     item: InvoiceItemData,
-    viewModel: ItemViewModel
+    viewModel: ItemDetailViewModel
 ) {
     if (isSelectedFromInvoice) {
         navController.previousBackStackEntry

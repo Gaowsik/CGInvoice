@@ -23,12 +23,12 @@ import com.example.cginvoice.domain.model.item.ItemData
 import com.example.cginvoice.presentaion.nav.Item
 
 @Composable
-fun ItemsItem(itemData: ItemData, onClickListener: (Int) -> Unit, onDeleteListener: (ItemData) -> Unit) {
+fun ItemsItem(itemData: ItemData, onClickListener: (ItemData) -> Unit, onDeleteListener: (ItemData) -> Unit) {
     Card(
         modifier = Modifier
             .padding(horizontal = 16.dp)
             .fillMaxWidth()
-            .clickable { onClickListener(itemData.itemId) }
+            .clickable { onClickListener(itemData) }
             .padding(top = 8.dp, bottom = 8.dp),
         shape = RoundedCornerShape(4.dp),
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp),

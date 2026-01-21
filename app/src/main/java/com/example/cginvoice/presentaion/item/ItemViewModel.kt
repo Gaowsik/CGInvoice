@@ -49,9 +49,6 @@ class ItemViewModel @Inject constructor(
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
-    private val _isSaved = MutableSharedFlow<Boolean>()
-    val isSaved = _isSaved.asSharedFlow()
-
 
     private val _errorMessage = MutableSharedFlow<String>()
     val errorMessage = _errorMessage.asSharedFlow()
@@ -59,12 +56,6 @@ class ItemViewModel @Inject constructor(
     private val _getItemInfo = MutableSharedFlow<List<ItemData>>()
     val getItemInfo = _getItemInfo.asSharedFlow()
 
-    private val _currentItemData = MutableStateFlow<ItemData>(ItemData())
-    val currentItemData = _currentItemData.asStateFlow()
-
-    fun updateField(field: (ItemData) -> ItemData) {
-        _currentItemData.value = field(_currentItemData.value)
-    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun getItems() {
@@ -146,29 +137,6 @@ class ItemViewModel @Inject constructor(
 
                     WorkInfo.State.FAILED -> viewModelScope.launch { _errorMessage.emit("Work failed: $errorMessage") }
                     else -> {} // Handle other states if needed
-                }
-            }
-        }
-    }
-
-    fun updateItemDataDB() {
-        viewModelScope.launch {
-            setLoading(true)
-            val updatedItem = _currentItemData.first()
-            updatedItem.let {
-                val response = itemRepository.insertOrUpdateItemInfoDB(it)
-                when (response) {
-                    is DBResource.Error -> {
-                        setLoading(false)
-                        _errorMessage.emit(response.exception.message.toString())
-                    }
-
-                    DBResource.Loading -> TODO()
-                    is DBResource.Success -> {
-                        setLoading(false)
-
-                        _isSaved.emit(true)
-                    }
                 }
             }
         }
