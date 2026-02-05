@@ -36,7 +36,7 @@ abstract class BaseRepo() {
 
     }
 
-    suspend fun <T : Any> safeDbCall(
+    suspend fun <T> safeDbCall(
         dbCall: suspend () -> T,
     ): DBResource<T> {
         return withContext(Dispatchers.IO) {

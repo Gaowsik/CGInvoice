@@ -1,5 +1,6 @@
 package com.example.cginvoice.presentaion.invoice
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -33,6 +34,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.example.cginvoice.domain.model.client.ClientData
 import com.example.cginvoice.domain.model.invoice.Payment
 import com.example.cginvoice.domain.model.invoiceItem.InvoiceItemData
 import com.example.cginvoice.presentaion.TopBarConfig
@@ -42,6 +44,7 @@ import com.example.cginvoice.utills.MyAlertDialog
 import com.example.cginvoice.utills.TextFieldWithLabel
 import com.example.cginvoice.utills.TextInputWithLabel
 import com.example.cginvoice.utills.TextWithLabel
+import com.google.gson.Gson
 import kotlinx.coroutines.launch
 
 
@@ -84,29 +87,18 @@ fun AddInvoiceScreen(
 
         launch {
             savedStateHandle
-                ?.getStateFlow<Int?>("selectedClientId", null)
+                ?.getStateFlow<ClientData?>("selectedClient", null)
                 ?.collect { id ->
                     id?.let {
                         viewModel.updateInvoiceField { invoice ->
-                            invoice.copy(clientId = it.toLong())
+                            invoice.copy(clientId = it.clientId.toLong(), clientName = it.name, clientObjectId = it.objectId?:"")
                         }
                         savedStateHandle["selectedClientId"] = null
                     }
                 }
         }
 
-        launch {
-            savedStateHandle
-                ?.getStateFlow<String?>("selectedClientName", null)
-                ?.collect { name ->
-                    name?.let {
-                        viewModel.updateInvoiceField { invoice ->
-                            invoice.copy(clientName = it)
-                        }
-                        savedStateHandle["selectedClientName"] = null
-                    }
-                }
-        }
+
 
         launch {
             savedStateHandle

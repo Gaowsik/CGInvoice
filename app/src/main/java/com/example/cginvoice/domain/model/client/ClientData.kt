@@ -1,11 +1,14 @@
 package com.example.cginvoice.domain.model.client
 
+import android.os.Parcelable
 import com.example.cginvoice.data.source.local.entitiy.client.ClientEntity
 import com.example.cginvoice.data.source.remote.model.client.ClientInfoResponse
 import com.example.cginvoice.domain.model.common.Address
 import com.example.cginvoice.domain.model.common.Contact
 import com.example.cginvoice.utills.SyncStatus
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 data class ClientData(
     val clientId: Int = 0,
     val name: String = "",
@@ -14,7 +17,7 @@ data class ClientData(
     val address: Address = Address(),
     val contact: Contact = Contact(),
     val syncStatus: String = SyncStatus.PENDING.status
-) {
+) : Parcelable {
     fun toClientInfoResponse() = ClientInfoResponse(
         clientId = clientId,
         name = name,

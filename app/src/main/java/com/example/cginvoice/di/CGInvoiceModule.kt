@@ -96,12 +96,14 @@ class CGInvoiceModule {
         fun provideInvoiceRepository(
             remoteInvoiceDataSource: RemoteInvoiceDataSource,
             localInvoiceDataSource: LocalInvoiceDataSource,
-            userRepository: UserRepository
+            userRepository: UserRepository,
+            clientRepository: ClientRepository
         ): InvoiceRepository {
             return InvoiceRepositoryImpl(
                 remoteInvoiceDataSource,
                 localInvoiceDataSource,
-                userRepository
+                userRepository,
+                clientRepository
             )
         }
     }

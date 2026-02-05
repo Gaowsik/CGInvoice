@@ -8,13 +8,9 @@ import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
 import com.example.cginvoice.data.source.local.entitiy.client.ClientEntity
-import com.example.cginvoice.data.source.local.entitiy.user.UserEntity
 import com.example.cginvoice.data.source.local.relation.client.ClientEntityAndAddressEntity
 import com.example.cginvoice.data.source.local.relation.client.ClientEntityAndContactEntity
 import com.example.cginvoice.data.source.local.relation.client.ClientEntityWithInvoicesEntity
-import com.example.cginvoice.data.source.local.relation.user.UserEntityAndAddressEntity
-import com.example.cginvoice.data.source.local.relation.user.UserEntityAndContactEntity
-import com.example.cginvoice.data.source.local.relation.user.UserEntityWithInvoiceEntities
 
 @Dao
 interface ClientDao {
@@ -53,4 +49,8 @@ interface ClientDao {
 
     @Query("UPDATE ClientEntity SET status = :status WHERE clientId = :clientId")
     suspend fun updateStatusByClientID(clientId: Int, status: String)
+
+    @Query("SELECT * FROM ClientEntity WHERE objectId = :objectId LIMIT 1")
+    suspend fun getClientByObjectId(objectId: String): ClientEntity?
+
 }

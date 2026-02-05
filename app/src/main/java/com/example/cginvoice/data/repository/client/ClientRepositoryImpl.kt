@@ -266,6 +266,9 @@ class ClientRepositoryImpl @Inject constructor(
         return APIResource.Success(idInfoRemoteResponseList)
     }
 
+    override suspend fun getClientByObjectId(objectId: String) =
+        localClientDataSource.getClientByObjectId(objectId)
+
     suspend fun updateObjectId(value: List<IdInfoRemoteResponse>) {
         value.forEach {
             when (it.table) {

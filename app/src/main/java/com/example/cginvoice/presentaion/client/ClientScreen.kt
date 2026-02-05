@@ -77,11 +77,8 @@ private fun handleIsSelected(
     if (isSelected) {
         navController.previousBackStackEntry
             ?.savedStateHandle
-            ?.set("selectedClientId", client.clientId)
+            ?.set("selectedClient", client)
 
-        navController.previousBackStackEntry
-            ?.savedStateHandle
-            ?.set("selectedClientName", client.name)
         navController.popBackStack()
     } else {
         navController.navigate(NavItem.AddClient.createRoute(clientId = client.clientId))

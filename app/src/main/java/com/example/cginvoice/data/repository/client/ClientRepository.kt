@@ -4,6 +4,7 @@ import com.example.cginvoice.data.APIResource
 import com.example.cginvoice.data.DBResource
 import com.example.cginvoice.data.source.remote.model.client.ClientInfoResponse
 import com.example.cginvoice.data.source.remote.model.common.IdInfoRemoteResponse
+import com.example.cginvoice.domain.model.client.Client
 import com.example.cginvoice.domain.model.client.ClientData
 
 interface ClientRepository {
@@ -17,4 +18,5 @@ interface ClientRepository {
     suspend fun deleteClientById(clientID: Int)
     suspend fun getClientsWithContactAndAddress(): DBResource<List<ClientData>>
     suspend fun syncAllClients(clients: List<ClientData>): APIResource<List<IdInfoRemoteResponse>>
+    suspend fun getClientByObjectId(objectId: String): DBResource<Client?>
 }

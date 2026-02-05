@@ -1,12 +1,14 @@
 package com.example.cginvoice.data.source.remote.back4AppManager.invoice
 
 
+import android.util.Log
 import com.example.cginvoice.data.APIResource
 import com.example.cginvoice.data.source.remote.model.Invoice.InvoiceItemResponse
 import com.example.cginvoice.data.source.remote.model.Invoice.InvoiceResponse
 import com.example.cginvoice.data.source.remote.model.Invoice.PaymentResponse
 import com.example.cginvoice.data.source.remote.model.common.IdInfoRemoteResponse
 import com.example.cginvoice.utills.SyncType
+import com.google.gson.Gson
 import com.parse.ParseException
 import com.parse.ParseObject
 import com.parse.ParseQuery
@@ -32,6 +34,7 @@ class Back4AppInvoiceManager {
                 val invoiceObj = ParseObject("Invoice").apply {
                     put("invoiceData", invoice.invoiceData)
                     put("dueDate", invoice.dueDate)
+                    put("paymentStatus",invoice.paymentStatus)
                     put("totalAmount", invoice.totalAmount.toString())
                     put("note", invoice.note)
                     put("userId", userPointer)
@@ -117,6 +120,7 @@ class Back4AppInvoiceManager {
                 // Update Invoice fields
                 invoiceObj.apply {
                     put("invoiceData", invoice.invoiceData)
+                    put("paymentStatus",invoice.paymentStatus)
                     put("dueDate", invoice.dueDate)
                     put("totalAmount", invoice.totalAmount.toString())
                     put("note", invoice.note ?: "") // safe null handling
@@ -272,11 +276,12 @@ class Back4AppInvoiceManager {
                             invoiceData = invObj.getString("invoiceData") ?: "",
                             dueDate = invObj.getString("dueDate") ?: "",
                             invoiceObjectId = invObj.objectId,
-                            totalAmount = invObj.getDouble("totalAmount"),
+                            totalAmount = invObj.getString("totalAmount")?:"",
                             userObjectId = userInfoObject?.objectId,
                             clientObjectId = clientObject?.objectId,
                             note = invObj.getString("note") ?: "",
                             imageId = "",
+                            paymentStatus = invObj.getBoolean("paymentStatus"),
                             paymentList = paymentList,
                             invoiceItemList = itemList
                         )
