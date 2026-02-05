@@ -11,8 +11,10 @@ data class InvoiceEntity(
     val dueDate: String,
     val totalAmount: Double,
     val invoiceObjectId: String,
-    val userId: Long,
+    val userId: String,
     val clientId: Long,
+    val clientName: String,
+    val clientObjectId: String,
     val imageId: String,
     val note: String,
     val paymentStatus: Boolean,
@@ -26,8 +28,10 @@ data class InvoiceEntity(
             dueDate = dueDate,
             totalAmount = totalAmount,
             userId = userId,
+            clientObjectId = clientObjectId,
             invoiceObjectId = invoiceObjectId,
             clientId = clientId,
+            clientName = clientName,
             imageId = imageId,
             note = note,
             paymentStatus = paymentStatus,
@@ -37,18 +41,20 @@ data class InvoiceEntity(
 }
 
 // Extension function to convert Invoice to InvoiceEntity
-fun Invoice.toInvoiceEntity(): InvoiceEntity {
+fun Invoice.toInvoiceEntity(clientIdSync: Long = 0L, clientNameSync: String = ""): InvoiceEntity {
     return InvoiceEntity(
         invoiceId = invoiceId,
         invoiceData = invoiceData,
         dueDate = dueDate,
         totalAmount = totalAmount,
         userId = userId,
-        clientId = clientId,
+        clientId = if (clientId == 0L) clientIdSync else clientId,
         imageId = imageId,
         note = note,
         paymentStatus = paymentStatus,
         invoiceObjectId = invoiceObjectId,
-        syncStatus = syncStatus
+        syncStatus = syncStatus,
+        clientObjectId = clientObjectId,
+        clientName = if (clientName.isNullOrEmpty()) clientNameSync else clientName
     )
 }

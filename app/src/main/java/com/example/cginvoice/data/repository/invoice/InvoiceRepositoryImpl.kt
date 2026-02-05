@@ -3,6 +3,7 @@ package com.example.cginvoice.data.repository.invoice
 import android.util.Log
 import com.example.cginvoice.data.APIResource
 import com.example.cginvoice.data.DBResource
+import com.example.cginvoice.data.repository.client.ClientRepository
 import com.example.cginvoice.data.repository.user.UserRepository
 import com.example.cginvoice.data.source.local.dataSource.invoice.LocalInvoiceDataSource
 import com.example.cginvoice.data.source.local.entitiy.invoice.toInvoiceEntity
@@ -15,12 +16,15 @@ import com.example.cginvoice.domain.model.invoiceItem.InvoiceItemData
 import com.example.cginvoice.domain.model.invoiceItem.toInvoiceItemEntity
 import com.example.cginvoice.utills.SyncStatus
 import com.example.cginvoice.utills.SyncType
+import com.google.gson.Gson
 import javax.inject.Inject
 
 class InvoiceRepositoryImpl @Inject constructor(
     private val remoteInvoiceDataSource: RemoteInvoiceDataSource,
     private val localInvoiceDataSource: LocalInvoiceDataSource,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val clientRepository: ClientRepository
+
 ) : InvoiceRepository {
     override suspend fun getInvoiceList(): DBResource<List<Invoice>> {
         val response = getInvoicesFromDb()
@@ -133,7 +137,8 @@ class InvoiceRepositoryImpl @Inject constructor(
         return APIResource.Success(idInfoRemoteResponseList)
     }
 
-    private suspend fun getInvoicesFromDb() = localInvoiceDataSource.getInvoices()
+    private suspend fun getInvoicesFromDb() =
+        localInvoiceDataSource.getInvoicesListWithItemsAndPayments()
 
     suspend fun getAndSaveInvoiceListFromRemote(): DBResource<Unit> {
         val userObjectId = userRepository.getUserObjectId()
@@ -158,7 +163,19 @@ class InvoiceRepositoryImpl @Inject constructor(
 
     private suspend fun insertInvoiceResponseToDB(invoice: Invoice): DBResource<Unit> {
 
-        val response = localInvoiceDataSource.insertInvoiceEntity(invoice.toInvoiceEntity())
+        val localClient = when (
+            val result = clientRepository.getClientByObjectId(invoice.clientObjectId)
+        ) {
+            is DBResource.Success -> result.value
+            is DBResource.Error -> return DBResource.Error(result.exception)
+            else -> return DBResource.Error(Exception("Unknown error resolving clientId"))
+        }
+
+        val response = localInvoiceDataSource.insertInvoiceEntity(
+            invoice.toInvoiceEntity(
+                localClient?.clientId?.toLong() ?: 0, localClient?.clientName ?: ""
+            )
+        )
 
         return if (response is DBResource.Success) {
             val invoiceId = response.value
@@ -195,8 +212,11 @@ class InvoiceRepositoryImpl @Inject constructor(
         invoice: Invoice
     ): DBResource<Unit> {
 
+        val invoiceToUpdate = invoice.copy(
+            syncStatus = SyncStatus.PENDING.status
+        )
         val invoiceResult = localInvoiceDataSource
-            .updateInvoiceEntity(invoice.toInvoiceEntity())
+            .updateInvoiceEntity(invoiceToUpdate.toInvoiceEntity())
 
         if (invoiceResult !is DBResource.Success) {
             return DBResource.Error(
@@ -205,19 +225,16 @@ class InvoiceRepositoryImpl @Inject constructor(
             )
         }
 
-        val invoiceId = invoiceResult.value.toLong()
-
-        saveInvoiceItems(invoiceId, invoice.invoiceItemList)
+        saveInvoiceItems(invoice.invoiceId, invoice.invoiceItemList)
             .takeIf { it is DBResource.Error }
             ?.let { return it }
 
-        savePayments(invoiceId, invoice.paymentList)
+        savePayments(invoice.invoiceId, invoice.paymentList)
             .takeIf { it is DBResource.Error }
             ?.let { return it }
 
         return DBResource.Success(Unit)
     }
-
 
 
     private suspend fun invoiceInfoSync(invoice: Invoice): APIResource<List<IdInfoRemoteResponse>> {
@@ -349,7 +366,7 @@ class InvoiceRepositoryImpl @Inject constructor(
             }
 
             SyncStatus.DELETE.status -> {
-                if (!invoice.invoiceObjectId.isNullOrEmpty()) {
+                if (invoice.invoiceObjectId.isNotEmpty()) {
 
                     val response = remoteInvoiceDataSource.deleteInvoice(
                         invoice.invoiceObjectId, invoice.invoiceId.toInt()

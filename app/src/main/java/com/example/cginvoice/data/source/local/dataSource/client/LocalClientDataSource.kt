@@ -5,7 +5,6 @@ import com.example.cginvoice.data.source.local.entitiy.client.ClientEntity
 import com.example.cginvoice.domain.model.client.Client
 import com.example.cginvoice.domain.model.client.ClientAndAddress
 import com.example.cginvoice.domain.model.client.ClientAndContact
-import com.example.cginvoice.domain.model.client.ClientData
 import com.example.cginvoice.domain.model.client.ClientWithInvoices
 
 interface LocalClientDataSource {
@@ -20,4 +19,5 @@ interface LocalClientDataSource {
     suspend fun getClientEntityById(clientId: Int): DBResource<Client>
     suspend fun updateStatusByClientID(clientId: Int, status: String): DBResource<Unit>
     suspend fun getClients(): DBResource<List<Client>>
+    suspend fun getClientByObjectId(objectId: String): DBResource<Client?>
 }

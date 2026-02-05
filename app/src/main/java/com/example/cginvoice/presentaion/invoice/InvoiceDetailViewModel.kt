@@ -11,6 +11,7 @@ import com.example.cginvoice.domain.model.invoice.Invoice
 import com.example.cginvoice.domain.model.invoice.Payment
 import com.example.cginvoice.domain.model.invoiceItem.InvoiceItemData
 import com.example.cginvoice.utills.SyncStatus
+import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -368,12 +369,20 @@ class InvoiceDetailViewModel @Inject constructor(
                     !(item.syncStatus == SyncStatus.DELETE.status && item.invoiceItemId == 0)
                 }
 
+            val userObjectId = userRepository.getUserObjectId()
+
+            if (userObjectId.isNullOrBlank()) {
+                _errorMessage.emit("Cannot sync: Missing user ID.")
+                return@launch
+            }
+
 
             val invoiceToSave = invoice.copy(
                 totalAmount = totalAmount.value,
                 paymentStatus = paymentStatus.value,
                 paymentList = filteredPayments,
-                invoiceItemList = filteredInvoiceItems
+                invoiceItemList = filteredInvoiceItems,
+                userId = userObjectId
             )
 
             when (val response = invoiceRepository.insertOrUpdateInvoiceDB(invoiceToSave)) {

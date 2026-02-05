@@ -10,8 +10,9 @@ data class Invoice(
     val dueDate: String = "",
     val invoiceObjectId: String = "",
     val totalAmount: Double = 0.0,
-    val userId: Long = 0,
+    val userId: String = "",
     val clientId: Long = 0,
+    val clientObjectId: String = "",
     val clientName: String = "",
     val imageId: String = "",
     val note: String = "",
@@ -26,9 +27,9 @@ data class Invoice(
             invoiceData = invoiceData,
             dueDate = dueDate,
             invoiceObjectId = invoiceObjectId,
-            totalAmount = totalAmount,
-            userObjectId = userId.toString(),   // Assuming userId represents server objectId as String
-            clientObjectId = clientId.toString(), // Same assumption for clientId
+            totalAmount = totalAmount.toString(),
+            userObjectId = userId,   // Assuming userId represents server objectId as String
+            clientObjectId = clientObjectId, // Same assumption for clientId
             imageId = imageId,
             note = note,
             paymentList = paymentList.map { it.toPaymentResponse() },

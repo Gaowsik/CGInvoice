@@ -24,6 +24,8 @@ data class InvoiceWithItemsAndPayments(
             totalAmount = invoice.totalAmount,
             userId = invoice.userId,
             clientId = invoice.clientId,
+            clientObjectId = invoice.clientObjectId,
+            clientName = invoice.clientName,
             imageId = invoice.imageId,
             note = invoice.note,
             paymentList = payments.map { it.toPayment() },

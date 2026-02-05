@@ -69,4 +69,8 @@ class LocalClientDataSourceImpl(private val clientDao: ClientDao) : LocalClientD
             it.toClient()
         }
     }
+
+    override suspend fun getClientByObjectId(objectId: String) = safeDbCall {
+        clientDao.getClientByObjectId(objectId)?.toClient()
+    }
 }

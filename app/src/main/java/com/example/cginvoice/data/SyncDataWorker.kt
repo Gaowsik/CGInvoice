@@ -7,12 +7,14 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import com.example.cginvoice.data.repository.client.ClientRepository
+import com.example.cginvoice.data.repository.invoice.InvoiceRepository
 import com.example.cginvoice.data.repository.item.ItemRepository
 import com.example.cginvoice.data.repository.user.UserRepository
 import com.example.cginvoice.data.source.remote.model.common.IdInfoRemoteResponse
 import com.example.cginvoice.data.source.remote.model.user.UserInfoResponse
 import com.example.cginvoice.data.source.remote.model.user.toUserData
 import com.example.cginvoice.domain.model.client.ClientData
+import com.example.cginvoice.domain.model.invoice.Invoice
 import com.example.cginvoice.domain.model.item.ItemData
 import com.example.cginvoice.domain.model.user.UserData
 import com.example.cginvoice.utills.Constants.KEY_SYNC_DATA_REQUEST
@@ -29,6 +31,7 @@ class SyncDataWorker @AssistedInject constructor(
     @Assisted private val userRepository: UserRepository,
     @Assisted private val clientRepository: ClientRepository,
     @Assisted private val itemRepository: ItemRepository,
+    @Assisted private val invoiceRepository: InvoiceRepository,
     @Assisted private val context: Context,
     @Assisted private val params: WorkerParameters
 ) : CoroutineWorker(context, params) {
@@ -41,6 +44,8 @@ class SyncDataWorker @AssistedInject constructor(
             SyncType.CLIENT.type -> handleClientSync(syncDataRequestBody)
 
             SyncType.ITEM.type -> handleItemSync(syncDataRequestBody)
+
+            SyncType.INVOICE.type -> handleInvoiceSync(syncDataRequestBody)
             else -> Result.failure()
         }
     }
@@ -65,6 +70,14 @@ class SyncDataWorker @AssistedInject constructor(
         val requestBody = requestBodyJson?.fromJson<List<ItemData>>()
         return requestBody?.let {
             val response = itemRepository.syncAllItems(it)
+            manageResponse(response)
+        } ?: Result.failure()
+    }
+
+    private suspend fun handleInvoiceSync(requestBodyJson: String?): Result {
+        val requestBody = requestBodyJson?.fromJson<List<Invoice>>()
+        return requestBody?.let {
+            val response = invoiceRepository.syncAllInvoices(it)
             manageResponse(response)
         } ?: Result.failure()
     }

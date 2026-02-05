@@ -44,7 +44,7 @@ fun ItemData.toInvoiceItemData(): InvoiceItemData {
         defaultUnitPrice = defaultUnitPrice,
         defaultTax = defaultTax,
         defaultDiscount = defaultDiscount,
-        syncStatus = syncStatus,
+        syncStatus = SyncStatus.PENDING.status,
         quantity = defaultQuantity,
         invoiceObjectId = null,
         invoiceId = null
