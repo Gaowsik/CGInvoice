@@ -1,14 +1,12 @@
 package com.example.cginvoice.data.source.remote.back4AppManager.invoice
 
 
-import android.util.Log
 import com.example.cginvoice.data.APIResource
 import com.example.cginvoice.data.source.remote.model.Invoice.InvoiceItemResponse
 import com.example.cginvoice.data.source.remote.model.Invoice.InvoiceResponse
 import com.example.cginvoice.data.source.remote.model.Invoice.PaymentResponse
 import com.example.cginvoice.data.source.remote.model.common.IdInfoRemoteResponse
 import com.example.cginvoice.utills.SyncType
-import com.google.gson.Gson
 import com.parse.ParseException
 import com.parse.ParseObject
 import com.parse.ParseQuery
@@ -34,7 +32,7 @@ class Back4AppInvoiceManager {
                 val invoiceObj = ParseObject("Invoice").apply {
                     put("invoiceData", invoice.invoiceData)
                     put("dueDate", invoice.dueDate)
-                    put("paymentStatus",invoice.paymentStatus)
+                    put("paymentStatus", invoice.paymentStatus)
                     put("totalAmount", invoice.totalAmount.toString())
                     put("note", invoice.note)
                     put("userId", userPointer)
@@ -120,7 +118,7 @@ class Back4AppInvoiceManager {
                 // Update Invoice fields
                 invoiceObj.apply {
                     put("invoiceData", invoice.invoiceData)
-                    put("paymentStatus",invoice.paymentStatus)
+                    put("paymentStatus", invoice.paymentStatus)
                     put("dueDate", invoice.dueDate)
                     put("totalAmount", invoice.totalAmount.toString())
                     put("note", invoice.note ?: "") // safe null handling
@@ -335,5 +333,64 @@ class Back4AppInvoiceManager {
             )
         }
     }
+
+    suspend fun deleteInvoiceItem(
+        invoiceItemObjectId: String,
+        invoiceItemId: Int
+    ): APIResource<IdInfoRemoteResponse> = withContext(Dispatchers.IO) {
+
+        try {
+            val invoiceQuery = ParseQuery.getQuery<ParseObject>("InvoiceItem")
+            val invoiceItemObject = invoiceQuery.get(invoiceItemObjectId)
+
+            invoiceItemObject.delete()
+
+            val response = IdInfoRemoteResponse(
+                id = invoiceItemId,
+                table = SyncType.INVOICE_ITEM.type,
+                objectId = invoiceItemObject.objectId
+            )
+
+            APIResource.Success(response)
+
+        } catch (e: Exception) {
+
+            APIResource.ErrorString(
+                isNetworkError = e is java.net.UnknownHostException,
+                errorCode = (e as? ParseException)?.code,
+                errorBody = e.message.toString()
+            )
+
+        }
+
+
+    }
+
+    suspend fun deletePaymentItem(
+        paymentObjectId: String,
+        paymentId: Int
+    ): APIResource<IdInfoRemoteResponse> = withContext(Dispatchers.IO) {
+        try {
+            val paymentQuery = ParseQuery.getQuery<ParseObject>("Payment")
+            val paymentObject = paymentQuery.get(paymentObjectId)
+
+            paymentObject.delete()
+
+            APIResource.Success(
+                IdInfoRemoteResponse(
+                    id = paymentId,
+                    table = SyncType.PAYMENT.type,
+                    objectId = paymentObjectId
+                )
+            )
+        } catch (e: Exception) {
+            APIResource.ErrorString(
+                isNetworkError = e is java.net.UnknownHostException,
+                errorCode = (e as? ParseException)?.code,
+                errorBody = e.message
+            )
+        }
+    }
+
 
 }

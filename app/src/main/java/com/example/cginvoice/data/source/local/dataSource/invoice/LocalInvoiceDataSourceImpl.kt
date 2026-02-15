@@ -127,5 +127,15 @@ class LocalInvoiceDataSourceImpl(private val invoiceDao: InvoiceDao) : LocalInvo
             invoiceDao.deletePaymentItem(paymentEntity)
         }
 
+    override suspend fun deleteInvoiceItemByInvoiceId(invoiceItemId: Int) = safeDbCall {
+        invoiceDao.deleteInvoiceItemByInvoiceId(invoiceItemId)
+
+    }
+
+
+    override suspend fun deletePaymentByPaymentId(paymentId: Int) = safeDbCall {
+        invoiceDao.deletePaymentByPaymentId(paymentId)
+    }
+
 
 }

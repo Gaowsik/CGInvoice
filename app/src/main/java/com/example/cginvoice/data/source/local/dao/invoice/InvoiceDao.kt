@@ -58,6 +58,12 @@ interface InvoiceDao {
     @Query("UPDATE InvoiceItemEntity SET invoiceItemObjectId = :newObjectId WHERE invoiceItemId = :invoiceItemId")
     suspend fun updateInvoiceItemObjectId(invoiceItemId: Int, newObjectId: String)
 
+    @Query("DELETE FROM InvoiceItemEntity WHERE invoiceItemId = :invoiceItemId")
+    suspend fun deleteInvoiceItemByInvoiceId(invoiceItemId: Int)
+
+    @Query("DELETE FROM PaymentEntity WHERE paymentId = :paymentId")
+    suspend fun deletePaymentByPaymentId(paymentId: Int)
+
     @Query("DELETE FROM InvoiceItemEntity")
     suspend fun deleteAllInvoiceEntity()
 

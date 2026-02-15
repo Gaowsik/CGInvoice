@@ -51,4 +51,8 @@ interface LocalInvoiceDataSource {
     suspend fun deleteAllPaymentEntity(): DBResource<Unit>
 
     suspend fun deletePaymentItem(paymentEntity: PaymentEntity): DBResource<Unit>
+
+    suspend fun deleteInvoiceItemByInvoiceId(invoiceItemId: Int) : DBResource<Unit>
+
+    suspend fun deletePaymentByPaymentId(paymentId: Int) : DBResource<Unit>
 }

@@ -14,8 +14,8 @@ class RemoteInvoiceDataSourceImpl @Inject constructor(private val back4AppInvoic
         back4AppInvoiceManager.updateInvoice(invoice.toInvoiceResponse())
 
 
-    override suspend fun getAllInvoices(userId: String)  = safeApiCall{
-       back4AppInvoiceManager.getAllInvoices(userId).map {
+    override suspend fun getAllInvoices(userId: String) = safeApiCall {
+        back4AppInvoiceManager.getAllInvoices(userId).map {
             it.toInvoice()
         }
     }
@@ -25,5 +25,14 @@ class RemoteInvoiceDataSourceImpl @Inject constructor(private val back4AppInvoic
         invoiceId: Int
     ) = back4AppInvoiceManager.deleteInvoice(invoiceObjectId, invoiceId)
 
+    override suspend fun deleteInvoiceItem(
+        invoiceItemObjectId: String,
+        invoiceItemId: Int
+    ) = back4AppInvoiceManager.deleteInvoiceItem(invoiceItemObjectId, invoiceItemId)
+
+    override suspend fun deletePaymentItem(
+        paymentObjectId: String,
+        paymentId: Int
+    ) = back4AppInvoiceManager.deletePaymentItem(paymentObjectId, paymentId)
 
 }

@@ -15,4 +15,14 @@ interface RemoteInvoiceDataSource {
         invoiceObjectId: String, invoiceId: Int
     ): APIResource<IdInfoRemoteResponse>
 
+    suspend fun deleteInvoiceItem(
+        invoiceItemObjectId: String,
+        invoiceItemId: Int
+    ): APIResource<IdInfoRemoteResponse>
+
+    suspend fun deletePaymentItem(
+        paymentObjectId: String,
+        paymentId: Int
+    ): APIResource<IdInfoRemoteResponse>
+
 }

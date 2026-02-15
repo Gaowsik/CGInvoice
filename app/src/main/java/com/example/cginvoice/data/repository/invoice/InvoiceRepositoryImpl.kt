@@ -16,7 +16,6 @@ import com.example.cginvoice.domain.model.invoiceItem.InvoiceItemData
 import com.example.cginvoice.domain.model.invoiceItem.toInvoiceItemEntity
 import com.example.cginvoice.utills.SyncStatus
 import com.example.cginvoice.utills.SyncType
-import com.google.gson.Gson
 import javax.inject.Inject
 
 class InvoiceRepositoryImpl @Inject constructor(
@@ -115,7 +114,7 @@ class InvoiceRepositoryImpl @Inject constructor(
     override suspend fun syncAllInvoices(invoiceList: List<Invoice>): APIResource<List<IdInfoRemoteResponse>> {
         val idInfoRemoteResponseList = emptyList<IdInfoRemoteResponse>().toMutableList()
         invoiceList.filter { it.syncStatus != SyncStatus.COMPLETED.status }.forEach { invoice ->
-            val response = invoiceSync(invoice)
+            val response = invoiceInfoSync(invoice)
 
             when (response) {
                 is APIResource.Success -> {
@@ -246,35 +245,62 @@ class InvoiceRepositoryImpl @Inject constructor(
                         response.value.forEach { mapping ->
                             when (mapping.table) {
                                 SyncType.INVOICE_ITEM.type -> {
-                                    updateInvoiceItemObjectId(mapping)
+                                    updateInvoiceItemObjectIdAndStatus(mapping)
                                 }
 
                                 SyncType.PAYMENT.type -> {
-                                    updatePaymentObjectId(mapping)
+                                    updatePaymentObjectIdStatus(mapping)
                                 }
 
                                 SyncType.INVOICE.type -> {
-                                    updateInvoiceObjectId(mapping)
+                                    updateInvoiceObjectIdAndStatus(mapping)
                                 }
                             }
                         }
                     }
                     response
                 } else {
-                    val updateResponse = remoteInvoiceDataSource.updateInvoiceRemote(invoice)
+
+                    val itemsToDelete = invoice.invoiceItemList
+                        .filter { it.syncStatus == SyncStatus.DELETE.status && !it.invoiceItemObjectId.isNullOrEmpty() }
+
+
+                    val itemDeleteResponse = deleteInvoiceItemList(itemsToDelete)
+                    if (itemDeleteResponse is APIResource.ErrorString) {
+                        return itemDeleteResponse
+                    }
+
+                    val paymentsToDelete = invoice.paymentList
+                        .filter { it.syncStatus == SyncStatus.DELETE.status && !it.paymentObjectId.isNullOrEmpty() }
+
+                    val paymentDeleteResponse = deletePaymentItemList(paymentsToDelete)
+
+                    if (paymentDeleteResponse is APIResource.ErrorString) {
+                        return paymentDeleteResponse
+                    }
+
+
+                    val invoiceToSync = invoice.copy(
+                        invoiceItemList = invoice.invoiceItemList
+                            .filter { it.syncStatus == SyncStatus.PENDING.status },
+                        paymentList = invoice.paymentList
+                            .filter { it.syncStatus == SyncStatus.PENDING.status })
+
+
+                    val updateResponse = remoteInvoiceDataSource.updateInvoiceRemote(invoiceToSync)
                     if (updateResponse is APIResource.Success) {
                         updateResponse.value.forEach { mapping ->
                             when (mapping.table) {
                                 SyncType.INVOICE_ITEM.type -> {
-                                    updateInvoiceItemObjectId(mapping)
+                                    updateInvoiceItemObjectIdAndStatus(mapping)
                                 }
 
                                 SyncType.PAYMENT.type -> {
-                                    updatePaymentObjectId(mapping)
+                                    updatePaymentObjectIdStatus(mapping)
                                 }
 
                                 SyncType.INVOICE.type -> {
-                                    updateInvoiceObjectId(mapping)
+                                    updateInvoiceObjectIdAndStatus(mapping)
                                 }
                             }
 
@@ -315,7 +341,7 @@ class InvoiceRepositoryImpl @Inject constructor(
         }
     }
 
-    private suspend fun updateInvoiceObjectId(it: IdInfoRemoteResponse) {
+    private suspend fun updateInvoiceObjectIdAndStatus(it: IdInfoRemoteResponse) {
         localInvoiceDataSource.updateInvoiceObjectId(
             it.id, it.objectId
         )
@@ -324,17 +350,20 @@ class InvoiceRepositoryImpl @Inject constructor(
     }
 
 
-    private suspend fun updateInvoiceItemObjectId(it: IdInfoRemoteResponse) {
+    private suspend fun updateInvoiceItemObjectIdAndStatus(it: IdInfoRemoteResponse) {
         localInvoiceDataSource.updateInvoiceItemObjectId(
             it.id, it.objectId
         )
 
+        localInvoiceDataSource.updateStatusByInvoiceItemId(it.id, SyncStatus.COMPLETED.status)
     }
 
-    private suspend fun updatePaymentObjectId(it: IdInfoRemoteResponse) {
+    private suspend fun updatePaymentObjectIdStatus(it: IdInfoRemoteResponse) {
         localInvoiceDataSource.updatePaymentObjectId(
             it.id, it.objectId
         )
+
+        localInvoiceDataSource.updateStatusByInvoicePaymentId(it.id, SyncStatus.COMPLETED.status)
 
     }
 
@@ -400,15 +429,15 @@ class InvoiceRepositoryImpl @Inject constructor(
         value.forEach {
             when (it.table) {
                 SyncType.INVOICE_ITEM.type -> {
-                    updateInvoiceItemObjectId(it)
+                    updateInvoiceItemObjectIdAndStatus(it)
                 }
 
                 SyncType.INVOICE.type -> {
-                    updateInvoiceObjectId(it)
+                    updateInvoiceObjectIdAndStatus(it)
                 }
 
                 SyncType.PAYMENT.type -> {
-                    updatePaymentObjectId(it)
+                    updatePaymentObjectIdStatus(it)
                 }
 
 
@@ -468,5 +497,50 @@ class InvoiceRepositoryImpl @Inject constructor(
         paymentObjectId.isNullOrEmpty() &&
                 syncStatus == SyncStatus.DELETE.status
 
+
+    private suspend fun deleteInvoiceItemList(
+        items: List<InvoiceItemData>
+    ): APIResource<Unit> {
+
+        items.forEach { item ->
+            val response = remoteInvoiceDataSource.deleteInvoiceItem(
+                invoiceItemObjectId = item.invoiceItemObjectId!!,
+                invoiceItemId = item.invoiceItemId
+            )
+
+            if (response is APIResource.ErrorString) {
+                return response
+            }
+        }
+
+        return APIResource.Success(Unit)
+    }
+
+    private suspend fun deletePaymentItemList(
+        payments: List<Payment>
+    ): APIResource<Unit> {
+
+        payments.forEach { payment ->
+            val response = remoteInvoiceDataSource.deletePaymentItem(
+                paymentObjectId = payment.paymentObjectId!!,
+                paymentId = payment.paymentId!!
+            )
+
+            if (response is APIResource.ErrorString) {
+                return response
+            }
+        }
+
+        return APIResource.Success(Unit)
+    }
+
+
+    private suspend fun deleteInvoiceItemByInvoiceId(invoiceItemId : Int){
+        localInvoiceDataSource.deleteInvoiceItemByInvoiceId(invoiceItemId)
+    }
+
+    private suspend fun deletePaymentByPaymentId(paymentId : Int){
+        localInvoiceDataSource.deletePaymentByPaymentId(paymentId)
+    }
 
 }
