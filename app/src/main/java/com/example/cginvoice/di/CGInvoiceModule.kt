@@ -13,6 +13,9 @@ import com.example.cginvoice.data.repository.item.ItemRepository
 import com.example.cginvoice.data.repository.item.ItemRepositoryImpl
 import com.example.cginvoice.data.repository.user.UserRepository
 import com.example.cginvoice.data.repository.user.UserRepositoryImpl
+import com.example.cginvoice.data.source.export.dataSource.InvoiceExportDataSource
+import com.example.cginvoice.data.source.export.dataSource.InvoiceExportDataSourceImpl
+import com.example.cginvoice.data.source.export.pdf.InvoicePdfGenerator
 import com.example.cginvoice.data.source.local.CGInvoiceDatabase
 import com.example.cginvoice.data.source.local.dataSource.client.LocalClientDataSource
 import com.example.cginvoice.data.source.local.dataSource.client.LocalClientDataSourceImpl
@@ -59,7 +62,10 @@ class CGInvoiceModule {
             remoteCommonDataSource: RemoteCommonDataSource
         ): UserRepository {
             return UserRepositoryImpl(
-                localUserDataSource, remoteUserDataSource, localCommonDataSource,remoteCommonDataSource
+                localUserDataSource,
+                remoteUserDataSource,
+                localCommonDataSource,
+                remoteCommonDataSource
             )
         }
 
@@ -97,13 +103,15 @@ class CGInvoiceModule {
             remoteInvoiceDataSource: RemoteInvoiceDataSource,
             localInvoiceDataSource: LocalInvoiceDataSource,
             userRepository: UserRepository,
-            clientRepository: ClientRepository
+            clientRepository: ClientRepository,
+            exportDataSourceImpl: InvoiceExportDataSourceImpl
         ): InvoiceRepository {
             return InvoiceRepositoryImpl(
                 remoteInvoiceDataSource,
                 localInvoiceDataSource,
                 userRepository,
-                clientRepository
+                clientRepository,
+                exportDataSourceImpl
             )
         }
     }
@@ -182,6 +190,16 @@ class CGInvoiceModule {
             return LocalInvoiceDataSourceImpl(database.invoiceDao())
         }
 
+        @Singleton
+        @Provides
+        fun provideInvoiceExportDataSource(
+            pdfGenerator: InvoicePdfGenerator, @ApplicationContext context: Context
+        ): InvoiceExportDataSource {
+            return InvoiceExportDataSourceImpl(
+                pdfGenerator, context
+            )
+        }
+
         @Provides
         @Singleton
         fun provideBack4AppUserManager(): Back4AppUserManager {
@@ -210,6 +228,12 @@ class CGInvoiceModule {
         @Singleton
         fun provideBack4AppImageHandler(): Back4AppImageHandler {
             return Back4AppImageHandler()
+        }
+
+        @Provides
+        @Singleton
+        fun provideInvoicePdfGenerator(): InvoicePdfGenerator {
+            return InvoicePdfGenerator()
         }
 
     }
