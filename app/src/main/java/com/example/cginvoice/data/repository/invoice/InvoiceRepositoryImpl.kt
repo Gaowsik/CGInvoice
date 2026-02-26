@@ -1,10 +1,12 @@
 package com.example.cginvoice.data.repository.invoice
 
+import android.graphics.pdf.PdfDocument
 import android.util.Log
 import com.example.cginvoice.data.APIResource
 import com.example.cginvoice.data.DBResource
 import com.example.cginvoice.data.repository.client.ClientRepository
 import com.example.cginvoice.data.repository.user.UserRepository
+import com.example.cginvoice.data.source.export.dataSource.InvoiceExportDataSource
 import com.example.cginvoice.data.source.local.dataSource.invoice.LocalInvoiceDataSource
 import com.example.cginvoice.data.source.local.entitiy.invoice.toInvoiceEntity
 import com.example.cginvoice.data.source.remote.dataSource.invoice.RemoteInvoiceDataSource
@@ -16,13 +18,15 @@ import com.example.cginvoice.domain.model.invoiceItem.InvoiceItemData
 import com.example.cginvoice.domain.model.invoiceItem.toInvoiceItemEntity
 import com.example.cginvoice.utills.SyncStatus
 import com.example.cginvoice.utills.SyncType
+import java.io.File
 import javax.inject.Inject
 
 class InvoiceRepositoryImpl @Inject constructor(
     private val remoteInvoiceDataSource: RemoteInvoiceDataSource,
     private val localInvoiceDataSource: LocalInvoiceDataSource,
     private val userRepository: UserRepository,
-    private val clientRepository: ClientRepository
+    private val clientRepository: ClientRepository,
+    private val invoiceExportDataSource: InvoiceExportDataSource
 
 ) : InvoiceRepository {
     override suspend fun getInvoiceList(): DBResource<List<Invoice>> {
@@ -135,6 +139,15 @@ class InvoiceRepositoryImpl @Inject constructor(
         }
         return APIResource.Success(idInfoRemoteResponseList)
     }
+
+    override suspend fun generatePdf(invoice: Invoice) =
+        invoiceExportDataSource.generatePdf(invoice)
+
+    override suspend fun savePdf(pdfDocument: PdfDocument, invoiceId: String): DBResource<File> {
+        val fileName = "Invoice_${invoiceId}.pdf"
+        return invoiceExportDataSource.savePdf(pdfDocument, fileName)
+    }
+
 
     private suspend fun getInvoicesFromDb() =
         localInvoiceDataSource.getInvoicesListWithItemsAndPayments()
@@ -508,6 +521,10 @@ class InvoiceRepositoryImpl @Inject constructor(
                 invoiceItemId = item.invoiceItemId
             )
 
+            if (response is APIResource.Success) {
+                deleteInvoiceItemByInvoiceId(response.value.id)
+            }
+
             if (response is APIResource.ErrorString) {
                 return response
             }
@@ -526,6 +543,10 @@ class InvoiceRepositoryImpl @Inject constructor(
                 paymentId = payment.paymentId!!
             )
 
+            if (response is APIResource.Success) {
+                deletePaymentByPaymentId(response.value.id)
+            }
+
             if (response is APIResource.ErrorString) {
                 return response
             }
@@ -535,11 +556,11 @@ class InvoiceRepositoryImpl @Inject constructor(
     }
 
 
-    private suspend fun deleteInvoiceItemByInvoiceId(invoiceItemId : Int){
+    private suspend fun deleteInvoiceItemByInvoiceId(invoiceItemId: Int) {
         localInvoiceDataSource.deleteInvoiceItemByInvoiceId(invoiceItemId)
     }
 
-    private suspend fun deletePaymentByPaymentId(paymentId : Int){
+    private suspend fun deletePaymentByPaymentId(paymentId: Int) {
         localInvoiceDataSource.deletePaymentByPaymentId(paymentId)
     }
 
