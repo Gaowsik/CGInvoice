@@ -10,8 +10,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
+import javax.inject.Inject
 
-class InvoiceExportDataSourceImpl(
+class InvoiceExportDataSourceImpl @Inject constructor(
     private val pdfGenerator: InvoicePdfGenerator,
     private val context: Context
 ) : InvoiceExportDataSource, BaseRepo() {
