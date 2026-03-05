@@ -11,7 +11,6 @@ import com.example.cginvoice.domain.model.invoice.Invoice
 import com.example.cginvoice.domain.model.invoice.Payment
 import com.example.cginvoice.domain.model.invoiceItem.InvoiceItemData
 import com.example.cginvoice.utills.SyncStatus
-import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -43,6 +42,9 @@ class InvoiceDetailViewModel @Inject constructor(
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
+    private val _isSavedSuccessfull = MutableStateFlow(false)
+    val isSavedSuccessfull: StateFlow<Boolean> = _isSavedSuccessfull.asStateFlow()
+
 
     private val _baseInvoice = MutableStateFlow<Invoice?>(Invoice())
     val baseInvoice = _baseInvoice.asStateFlow()
@@ -52,6 +54,9 @@ class InvoiceDetailViewModel @Inject constructor(
 
     private val _payments = MutableStateFlow<List<Payment>>(emptyList())
     val payments = _payments.asStateFlow()
+
+    private val _generatedPdf = MutableStateFlow<ByteArray?>(null)
+    val generatedPdf = _generatedPdf.asStateFlow()
 
     private var hasLoadedInvoice = false
 
@@ -400,6 +405,40 @@ class InvoiceDetailViewModel @Inject constructor(
             }
 
             setLoading(false)
+        }
+    }
+
+    fun onGenerateInvoiceClicked() {
+        setLoading(true)
+        viewModelScope.launch {
+            val invoice = currentInvoice.value
+            val pdfBytes = invoice?.let { invoiceRepository.generatePdf(it) }
+            pdfBytes?.let { _generatedPdf.value = it }
+            setLoading(false)
+        }
+    }
+
+    fun onDownloadInvoiceSaveClicked() {
+        setLoading(true)
+        viewModelScope.launch {
+            _generatedPdf.value?.let {
+                when (val response = invoiceRepository.savePdf(
+                    it,
+                    baseInvoice.value?.invoiceId.toString()
+                )) {
+                    is DBResource.Error -> {
+                        _errorMessage.emit(response.exception.message ?: "Unknown error")
+                    }
+
+                    is DBResource.Success -> {
+                        _isSavedSuccessfull.emit(true)
+                    }
+
+                    is DBResource.Loading -> {
+                        // Optional: handle loading state from repository
+                    }
+                }
+            }
         }
     }
 

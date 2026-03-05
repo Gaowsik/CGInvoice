@@ -1,6 +1,6 @@
 package com.example.cginvoice.data.repository.invoice
 
-import android.graphics.pdf.PdfDocument
+import android.net.Uri
 import android.util.Log
 import com.example.cginvoice.data.APIResource
 import com.example.cginvoice.data.DBResource
@@ -18,6 +18,7 @@ import com.example.cginvoice.domain.model.invoiceItem.InvoiceItemData
 import com.example.cginvoice.domain.model.invoiceItem.toInvoiceItemEntity
 import com.example.cginvoice.utills.SyncStatus
 import com.example.cginvoice.utills.SyncType
+import java.io.ByteArrayOutputStream
 import java.io.File
 import javax.inject.Inject
 
@@ -140,12 +141,18 @@ class InvoiceRepositoryImpl @Inject constructor(
         return APIResource.Success(idInfoRemoteResponseList)
     }
 
-    override suspend fun generatePdf(invoice: Invoice) =
-        invoiceExportDataSource.generatePdf(invoice)
+    override suspend fun generatePdf(invoice: Invoice): ByteArray {
+        val pdfDocument = invoiceExportDataSource.generatePdf(invoice)
+        val outputStream = ByteArrayOutputStream()
+        pdfDocument.writeTo(outputStream)
+        pdfDocument.close()
+        return outputStream.toByteArray()
+    }
 
-    override suspend fun savePdf(pdfDocument: PdfDocument, invoiceId: String): DBResource<File> {
+
+    override suspend fun savePdf(pdfBytes: ByteArray, invoiceId: String): DBResource<Uri> {
         val fileName = "Invoice_${invoiceId}.pdf"
-        return invoiceExportDataSource.savePdf(pdfDocument, fileName)
+        return invoiceExportDataSource.savePdf(pdfBytes, fileName)
     }
 
 

@@ -1,6 +1,7 @@
 package com.example.cginvoice.data.repository.invoice
 
 import android.graphics.pdf.PdfDocument
+import android.net.Uri
 import com.example.cginvoice.data.APIResource
 import com.example.cginvoice.data.DBResource
 import com.example.cginvoice.data.source.remote.model.common.IdInfoRemoteResponse
@@ -19,10 +20,10 @@ interface InvoiceRepository {
     suspend fun deleteInvoiceItem(invoiceItemData: InvoiceItemData)
     suspend fun deleteInvoicePayment(invoicePayment: Payment)
     suspend fun syncAllInvoices(invoiceList: List<Invoice>): APIResource<List<IdInfoRemoteResponse>>
-    suspend fun generatePdf(invoice: Invoice): PdfDocument
+    suspend fun generatePdf(invoice: Invoice): ByteArray
 
     suspend fun savePdf(
-        pdfDocument: PdfDocument,
+        pdfBytes: ByteArray,
         invoiceId: String
-    ): DBResource<File>
+    ): DBResource<Uri>
 }

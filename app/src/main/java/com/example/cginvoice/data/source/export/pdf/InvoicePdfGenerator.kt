@@ -23,12 +23,12 @@ class InvoicePdfGenerator {
         var canvas = page.canvas
 
         val titlePaint = Paint().apply {
-            textSize = 20f
+            textSize = 24f
             isFakeBoldText = true
         }
 
         val normalPaint = Paint().apply {
-            textSize = 12f
+            textSize = 16f
         }
 
         val linePaint = Paint().apply {
@@ -114,7 +114,7 @@ class InvoicePdfGenerator {
         // -------------------------
         // Totals
         // -------------------------
-        canvas.drawText("Total Amount:", 350f, y, titlePaint)
+        canvas.drawText("Total Amount:", 300f, y, titlePaint)
         canvas.drawText(invoice.totalAmount.toString(), 450f, y, titlePaint)
 
         y += 30f
