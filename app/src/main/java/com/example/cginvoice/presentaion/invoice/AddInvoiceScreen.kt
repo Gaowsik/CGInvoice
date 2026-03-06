@@ -1,5 +1,6 @@
 package com.example.cginvoice.presentaion.invoice
 
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.pdf.PdfRenderer
 import android.os.ParcelFileDescriptor
@@ -72,7 +73,9 @@ fun AddInvoiceScreen(
     val shouldShowSaveDialog = remember { mutableStateOf(false) }
     val totalPrice by viewModel.totalAmount.collectAsState()
     val pdfBytes by viewModel.generatedPdf.collectAsState(initial = null)
+    val sharedUri by viewModel.shareUri.collectAsState(initial = null)
     var bitmap by remember { mutableStateOf<Bitmap?>(null) }
+
 
     var totalPriceText by rememberSaveable { mutableStateOf("") }
 
@@ -161,6 +164,20 @@ fun AddInvoiceScreen(
                 shouldShowSaveDialog.value = true
             }
         }
+    }
+
+    LaunchedEffect(sharedUri) {
+        sharedUri?.let { uri ->
+            val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                type = "application/pdf"
+                putExtra(Intent.EXTRA_STREAM, uri)
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+            appContext.startActivity(
+                Intent.createChooser(shareIntent, "Share Invoice")
+            )
+        }
+
     }
 
     LaunchedEffect(pdfBytes) {
@@ -335,7 +352,7 @@ fun AddInvoiceScreen(
 
                     Row(modifier = Modifier.align(Alignment.TopEnd)) {
                         TextButton(onClick = {
-                            // TODO:  
+                            viewModel.getShareUri()
                         }, modifier = Modifier.padding(end = 4.dp)) {
                             Text("Share")
                         }

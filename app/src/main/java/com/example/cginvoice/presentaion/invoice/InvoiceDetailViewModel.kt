@@ -1,5 +1,6 @@
 package com.example.cginvoice.presentaion.invoice
 
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -57,6 +58,9 @@ class InvoiceDetailViewModel @Inject constructor(
 
     private val _generatedPdf = MutableStateFlow<ByteArray?>(null)
     val generatedPdf = _generatedPdf.asStateFlow()
+
+    private val _shareUri = MutableStateFlow<Uri?>(null)
+    val shareUri: StateFlow<Uri?> = _shareUri.asStateFlow()
 
     private var hasLoadedInvoice = false
 
@@ -440,6 +444,37 @@ class InvoiceDetailViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun getShareUri() {
+        setLoading(true)
+        viewModelScope.launch {
+            val response = _generatedPdf.value?.let {
+                invoiceRepository.createTempPdfFile(
+                    it,
+                    currentInvoice.value
+                )
+            }
+
+            when (response) {
+                is DBResource.Error -> {
+                    _errorMessage.emit(response.exception.message ?: "Unknown error")
+                }
+
+                DBResource.Loading -> {}
+                is DBResource.Success -> {
+                    _shareUri.value = response.value
+                    setLoading(false)
+                }
+
+                null -> {
+                    _errorMessage.emit("something went wrong")
+                }
+            }
+
+        }
+
+
     }
 
 

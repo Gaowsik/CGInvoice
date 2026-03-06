@@ -27,11 +27,11 @@ class InvoiceExportDataSourceImpl @Inject constructor(
     override suspend fun generatePdf(invoice: Invoice) =
         pdfGenerator.generate(invoice)
 
-    override suspend fun createTempPdfFile(pdfBytes: ByteArray): DBResource<Uri> = safeDbCall {
+    override suspend fun createTempPdfFile(pdfBytes: ByteArray,fileName: String): DBResource<Uri> = safeDbCall {
 
         val file = File(
             context.cacheDir,
-            "temp_invoice.pdf"
+            fileName
         )
 
         FileOutputStream(file).use {

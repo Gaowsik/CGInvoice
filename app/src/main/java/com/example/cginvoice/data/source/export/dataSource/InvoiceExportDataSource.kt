@@ -8,7 +8,7 @@ import com.example.cginvoice.domain.model.invoice.Invoice
 interface InvoiceExportDataSource {
     suspend fun generatePdf(invoice: Invoice): PdfDocument
 
-    suspend fun createTempPdfFile(pdfBytes: ByteArray): DBResource<Uri>
+    suspend fun createTempPdfFile(pdfBytes: ByteArray,fileName: String): DBResource<Uri>
 
     suspend fun savePdf(
         pdfByteArray: ByteArray,

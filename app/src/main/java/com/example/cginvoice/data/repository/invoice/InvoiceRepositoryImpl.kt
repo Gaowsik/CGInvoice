@@ -19,7 +19,6 @@ import com.example.cginvoice.domain.model.invoiceItem.toInvoiceItemEntity
 import com.example.cginvoice.utills.SyncStatus
 import com.example.cginvoice.utills.SyncType
 import java.io.ByteArrayOutputStream
-import java.io.File
 import javax.inject.Inject
 
 class InvoiceRepositoryImpl @Inject constructor(
@@ -153,6 +152,21 @@ class InvoiceRepositoryImpl @Inject constructor(
     override suspend fun savePdf(pdfBytes: ByteArray, invoiceId: String): DBResource<Uri> {
         val fileName = "Invoice_${invoiceId}.pdf"
         return invoiceExportDataSource.savePdf(pdfBytes, fileName)
+    }
+
+    override suspend fun createTempPdfFile(
+        pdfBytes: ByteArray,
+        invoice: Invoice?
+    ): DBResource<Uri> {
+        invoice?.let {
+
+            val safeClientName = invoice.clientName
+                ?.replace("[^A-Za-z0-9]".toRegex(), "_")
+
+            val fileName = "Invoice_${invoice.invoiceId}_${safeClientName}.pdf"
+            return invoiceExportDataSource.createTempPdfFile(pdfBytes, fileName)
+        }
+        return DBResource.Error(Exception("Invoice is null"))
     }
 
 
