@@ -19,6 +19,7 @@ data class InvoiceWithItemsAndPayments(
         return Invoice(
             invoiceId = invoice.invoiceId,
             invoiceData = invoice.invoiceData,
+            generatedDate = invoice.generatedDate,
             dueDate = invoice.dueDate,
             invoiceObjectId = invoice.invoiceObjectId,
             totalAmount = invoice.totalAmount,

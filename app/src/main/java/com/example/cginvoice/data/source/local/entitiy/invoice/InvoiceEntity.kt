@@ -8,6 +8,7 @@ import com.example.cginvoice.domain.model.invoice.Invoice
 data class InvoiceEntity(
     @PrimaryKey(autoGenerate = true) val invoiceId: Long,
     val invoiceData: String,
+    val generatedDate: String,
     val dueDate: String,
     val totalAmount: Double,
     val invoiceObjectId: String,
@@ -25,6 +26,7 @@ data class InvoiceEntity(
         return Invoice(
             invoiceId = invoiceId,
             invoiceData = invoiceData,
+            generatedDate = generatedDate,
             dueDate = dueDate,
             totalAmount = totalAmount,
             userId = userId,
@@ -41,10 +43,11 @@ data class InvoiceEntity(
 }
 
 // Extension function to convert Invoice to InvoiceEntity
-fun Invoice.toInvoiceEntity(clientIdSync: Long = 0L, clientNameSync: String = ""): InvoiceEntity {
+fun Invoice.toInvoiceEntity(clientIdSync: Long = 0L, clientNameSync: String = "",paymentStatus: Boolean= false): InvoiceEntity {
     return InvoiceEntity(
         invoiceId = invoiceId,
         invoiceData = invoiceData,
+        generatedDate = generatedDate,
         dueDate = dueDate,
         totalAmount = totalAmount,
         userId = userId,

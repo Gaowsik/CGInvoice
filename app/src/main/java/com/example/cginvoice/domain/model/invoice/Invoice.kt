@@ -7,6 +7,7 @@ import com.example.cginvoice.utills.SyncStatus
 data class Invoice(
     val invoiceId: Long = 0,
     val invoiceData: String = "",
+    val generatedDate: String = "",
     val dueDate: String = "",
     val invoiceObjectId: String = "",
     val totalAmount: Double = 0.0,
@@ -25,6 +26,7 @@ data class Invoice(
         return InvoiceResponse(
             invoiceId = invoiceId.toInt(),
             invoiceData = invoiceData,
+            generatedDate = generatedDate,
             dueDate = dueDate,
             invoiceObjectId = invoiceObjectId,
             totalAmount = totalAmount.toString(),

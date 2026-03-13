@@ -31,6 +31,7 @@ class Back4AppInvoiceManager {
 
                 val invoiceObj = ParseObject("Invoice").apply {
                     put("invoiceData", invoice.invoiceData)
+                    put("generatedDate", invoice.generatedDate)
                     put("dueDate", invoice.dueDate)
                     put("paymentStatus", invoice.paymentStatus)
                     put("totalAmount", invoice.totalAmount.toString())
@@ -118,6 +119,7 @@ class Back4AppInvoiceManager {
                 // Update Invoice fields
                 invoiceObj.apply {
                     put("invoiceData", invoice.invoiceData)
+                    put("generatedDate", invoice.generatedDate)
                     put("paymentStatus", invoice.paymentStatus)
                     put("dueDate", invoice.dueDate)
                     put("totalAmount", invoice.totalAmount.toString())
@@ -272,6 +274,7 @@ class Back4AppInvoiceManager {
 
                         InvoiceResponse(
                             invoiceData = invObj.getString("invoiceData") ?: "",
+                            generatedDate = invObj.getString("generatedDate") ?: "",
                             dueDate = invObj.getString("dueDate") ?: "",
                             invoiceObjectId = invObj.objectId,
                             totalAmount = invObj.getString("totalAmount")?:"",
