@@ -2,7 +2,14 @@ package com.example.cginvoice.data.source.export.pdf
 
 import android.graphics.Paint
 import android.graphics.pdf.PdfDocument
+import android.os.Build
 import com.example.cginvoice.domain.model.invoice.Invoice
+import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.Date
+import java.util.Locale
 
 
 class InvoicePdfGenerator {
@@ -115,14 +122,98 @@ class InvoicePdfGenerator {
         // Totals
         // -------------------------
         canvas.drawText("Total Amount:", 300f, y, titlePaint)
-        canvas.drawText(invoice.totalAmount.toString(), 450f, y, titlePaint)
+        canvas.drawText(formatMoney(invoice.totalAmount), 450f, y, titlePaint)
 
         y += 30f
 
         // -------------------------
+        // Payments summary
+        // -------------------------
+        val totalPaid = invoice.paymentList.sumOf { it.amount }
+        val remaining = (invoice.totalAmount - totalPaid).coerceAtLeast(0.0)
+
+        canvas.drawText("Paid Amount:", 300f, y, normalPaint)
+        canvas.drawText(formatMoney(totalPaid), 450f, y, normalPaint)
+        y += 20f
+
+        canvas.drawText("Remaining to Pay:", 300f, y, normalPaint)
+        canvas.drawText(formatMoney(remaining), 450f, y, normalPaint)
+        y += 30f
+
+        // -------------------------
+        // Payments list
+        // -------------------------
+        canvas.drawText("Payments", 40f, y, titlePaint)
+        y += 20f
+
+        if (invoice.paymentList.isEmpty()) {
+            canvas.drawText("No payments recorded.", 40f, y, normalPaint)
+            y += 20f
+        } else {
+            // Header
+            canvas.drawLine(startX, y, endX, y, linePaint)
+            y += 15f
+
+            canvas.drawText("Date", 45f, y, normalPaint)
+            canvas.drawText("Method", 190f, y, normalPaint)
+            canvas.drawText("Amount", 350f, y, normalPaint)
+            canvas.drawText("Note", 450f, y, normalPaint)
+
+            y += 10f
+            canvas.drawLine(startX, y, endX, y, linePaint)
+            y += 20f
+
+            invoice.paymentList
+                .sortedBy { it.paymentDate ?: 0L }
+                .forEach { payment ->
+                    if (y > pageHeight - 100) {
+                        pdfDocument.finishPage(page)
+
+                        pageNumber++
+                        pageInfo = PdfDocument.PageInfo.Builder(
+                            pageWidth, pageHeight, pageNumber
+                        ).create()
+
+                        page = pdfDocument.startPage(pageInfo)
+                        canvas = page.canvas
+                        y = 40f
+
+                        // Re-render payments header on the new page for readability
+                        canvas.drawText("Payments (cont.)", 40f, y, titlePaint)
+                        y += 20f
+                        canvas.drawLine(startX, y, endX, y, linePaint)
+                        y += 15f
+                        canvas.drawText("Date", 45f, y, normalPaint)
+                        canvas.drawText("Method", 190f, y, normalPaint)
+                        canvas.drawText("Amount", 350f, y, normalPaint)
+                        canvas.drawText("Note", 450f, y, normalPaint)
+                        y += 10f
+                        canvas.drawLine(startX, y, endX, y, linePaint)
+                        y += 20f
+                    }
+
+                    val dateText = payment.paymentDate?.let { formatDateForPdf(it) } ?: "-"
+                    val methodText = payment.paymentMethod.orEmpty().ifBlank { "-" }
+                    val amountText = formatMoney(payment.amount)
+                    val noteText = payment.note.orEmpty().ifBlank { "-" }
+
+                    canvas.drawText(dateText, 45f, y, normalPaint)
+                    canvas.drawText(methodText, 190f, y, normalPaint)
+                    canvas.drawText(amountText, 350f, y, normalPaint)
+                    canvas.drawText(ellipsize(noteText, 18), 450f, y, normalPaint)
+
+                    y += 20f
+                }
+
+            y += 10f
+            canvas.drawLine(startX, y, endX, y, linePaint)
+            y += 20f
+        }
+
+        // -------------------------
         // Note
         // -------------------------
-        invoice.note?.let {
+        invoice.note.takeIf { it.isNotBlank() }?.let {
             canvas.drawText("Note:", 40f, y, titlePaint)
             y += 20f
             canvas.drawText(it, 40f, y, normalPaint)
@@ -131,5 +222,26 @@ class InvoicePdfGenerator {
         pdfDocument.finishPage(page)
 
         return pdfDocument
+    }
+
+    private fun formatMoney(amount: Double): String =
+        String.format(Locale.getDefault(), "%.2f", amount)
+
+    private fun formatDateForPdf(timeInMillis: Long): String {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
+            Instant.ofEpochMilli(timeInMillis)
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate()
+                .format(formatter)
+        } else {
+            SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(Date(timeInMillis))
+        }
+    }
+
+    private fun ellipsize(text: String, maxChars: Int): String {
+        if (text.length <= maxChars) return text
+        if (maxChars <= 3) return text.take(maxChars)
+        return text.take(maxChars - 3) + "..."
     }
 }

@@ -29,9 +29,12 @@ import com.example.cginvoice.utills.toJson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.Duration
 import java.util.UUID
@@ -52,6 +55,14 @@ class InvoiceViewModel @Inject constructor(
 
     private val _getInvoices = MutableStateFlow<List<Invoice>>(emptyList())
     val getInvoices = _getInvoices.asStateFlow()
+
+    val paidInvoices: StateFlow<List<Invoice>> = _getInvoices
+        .map { it.filter { invoice -> invoice.paymentStatus } }
+        .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+
+    val unpaidInvoices: StateFlow<List<Invoice>> = _getInvoices
+        .map { it.filter { invoice -> !invoice.paymentStatus } }
+        .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun getInvoices() {

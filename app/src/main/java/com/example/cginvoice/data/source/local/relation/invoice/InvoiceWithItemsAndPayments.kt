@@ -30,7 +30,8 @@ data class InvoiceWithItemsAndPayments(
             note = invoice.note,
             paymentList = payments.map { it.toPayment() },
             invoiceItemList = items.map { it.toInvoiceItemData() },
-            syncStatus = invoice.syncStatus
+            syncStatus = invoice.syncStatus,
+            paymentStatus = invoice.paymentStatus
         )
 
     }
