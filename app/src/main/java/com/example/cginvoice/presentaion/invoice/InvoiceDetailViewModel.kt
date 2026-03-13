@@ -106,20 +106,6 @@ class InvoiceDetailViewModel @Inject constructor(
         )
 
 
-    val paymentStatus: StateFlow<Boolean> = combine(
-        _payments,
-        totalAmount
-    ) { payments, total ->
-        val totalPaid = payments.sumOf { it.amount }
-        totalPaid >= total
-    }
-        .stateIn(
-            viewModelScope,
-            SharingStarted.Eagerly, // ensure it starts emitting immediately
-            false
-        )
-
-
     private val _isSaved = MutableSharedFlow<Boolean>()
     val isSaved = _isSaved.asSharedFlow()
 
@@ -388,7 +374,6 @@ class InvoiceDetailViewModel @Inject constructor(
 
             val invoiceToSave = invoice.copy(
                 totalAmount = totalAmount.value,
-                paymentStatus = paymentStatus.value,
                 paymentList = filteredPayments,
                 invoiceItemList = filteredInvoiceItems,
                 userId = userObjectId

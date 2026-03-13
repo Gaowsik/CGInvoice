@@ -204,11 +204,14 @@ class InvoiceRepositoryImpl @Inject constructor(
             else -> return DBResource.Error(Exception("Unknown error resolving clientId"))
         }
 
+        val paymentStatus = calculatePaymentStatus(invoice.totalAmount, invoice.paymentList)
+
         val response = localInvoiceDataSource.insertInvoiceEntity(
             invoice.toInvoiceEntity(
-                localClient?.clientId?.toLong() ?: 0, localClient?.clientName ?: ""
+                localClient?.clientId?.toLong() ?: 0, localClient?.clientName ?: "", paymentStatus
+            ),
+
             )
-        )
 
         return if (response is DBResource.Success) {
             val invoiceId = response.value
@@ -245,11 +248,13 @@ class InvoiceRepositoryImpl @Inject constructor(
         invoice: Invoice
     ): DBResource<Unit> {
 
+
         val invoiceToUpdate = invoice.copy(
             syncStatus = SyncStatus.PENDING.status
         )
+        val paymentStatus = calculatePaymentStatus(invoice.totalAmount, invoice.paymentList)
         val invoiceResult = localInvoiceDataSource
-            .updateInvoiceEntity(invoiceToUpdate.toInvoiceEntity())
+            .updateInvoiceEntity(invoiceToUpdate.toInvoiceEntity(paymentStatus = paymentStatus))
 
         if (invoiceResult !is DBResource.Success) {
             return DBResource.Error(
@@ -583,6 +588,15 @@ class InvoiceRepositoryImpl @Inject constructor(
 
     private suspend fun deletePaymentByPaymentId(paymentId: Int) {
         localInvoiceDataSource.deletePaymentByPaymentId(paymentId)
+    }
+
+    private fun calculatePaymentStatus(
+        totalAmount: Double,
+        paymentList: List<Payment>
+    ): Boolean {
+        val totalPaid = paymentList.sumOf { it.amount }
+        return totalPaid >= totalAmount
+
     }
 
 }
