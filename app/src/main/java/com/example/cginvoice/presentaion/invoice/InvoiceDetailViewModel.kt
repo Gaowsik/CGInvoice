@@ -11,6 +11,7 @@ import com.example.cginvoice.data.repository.user.UserRepository
 import com.example.cginvoice.domain.model.invoice.Invoice
 import com.example.cginvoice.domain.model.invoice.Payment
 import com.example.cginvoice.domain.model.invoiceItem.InvoiceItemData
+import com.example.cginvoice.utills.DateTimeProvider.getCurrentFormattedDate
 import com.example.cginvoice.utills.SyncStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
@@ -27,6 +28,9 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 @OptIn(FlowPreview::class)
@@ -371,12 +375,19 @@ class InvoiceDetailViewModel @Inject constructor(
                 return@launch
             }
 
+            val currentDate = if (invoice.generatedDate.isEmpty()) {
+                getCurrentFormattedDate()
+            } else {
+                invoice.generatedDate
+            }
+
 
             val invoiceToSave = invoice.copy(
                 totalAmount = totalAmount.value,
                 paymentList = filteredPayments,
                 invoiceItemList = filteredInvoiceItems,
-                userId = userObjectId
+                userId = userObjectId,
+                generatedDate = currentDate
             )
 
             when (val response = invoiceRepository.insertOrUpdateInvoiceDB(invoiceToSave)) {
