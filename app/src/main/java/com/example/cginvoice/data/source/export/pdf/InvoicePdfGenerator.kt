@@ -34,6 +34,11 @@ class InvoicePdfGenerator {
             isFakeBoldText = true
         }
 
+        val subTitleColor = Paint().apply {
+            textSize = 16f
+            isFakeBoldText = true
+        }
+
         val normalPaint = Paint().apply {
             textSize = 16f
         }
@@ -47,22 +52,52 @@ class InvoicePdfGenerator {
         // -------------------------
         // Header
         // -------------------------
+        val boxPadding = 8f
+        val boxLeft = 40f
+        val boxTop = y
+
+        val boxPaint = Paint().apply {
+            color = 0xFF7B1FA2.toInt() // Violet
+            style = Paint.Style.FILL
+        }
+
+        val textPaint = Paint().apply {
+            color = 0xFFFFFFFF.toInt() // White
+            textSize = 14f
+            isFakeBoldText = true
+        }
+
+// Prepare text
+        val dateText = invoice.generatedDate
+        val invoiceIdText = "INVC${invoice.invoiceId}"
+
+// Calculate box height based on two lines of text
+        val lineHeight = 20f
+        val boxHeight = lineHeight * 2 + boxPadding * 2
+        val boxWidth = 180f // adjust width if needed
+
+// Draw the violet rectangle
+        canvas.drawRect(boxLeft, boxTop, boxLeft + boxWidth, boxTop + boxHeight, boxPaint)
+
+// Draw the date text
+        canvas.drawText(invoiceIdText, boxLeft + boxPadding, boxTop + boxPadding + lineHeight / 1.5f, textPaint)
+
+// Draw the invoice ID below the date
+        canvas.drawText(dateText, boxLeft + boxPadding, boxTop + boxPadding + lineHeight + lineHeight / 1.5f, textPaint)
+
+// Move y after the box for the next content
+        y += boxHeight + 40f
+
+
+
+
         canvas.drawText("INVOICE", 40f, y, titlePaint)
-        y += 30f
-
-        canvas.drawText("Invoice No: ${invoice.invoiceId}", 40f, y, normalPaint)
-        y += 20f
-
-        canvas.drawText("Date: ${invoice.invoiceData}", 40f, y, normalPaint)
-        y += 20f
-
-        canvas.drawText("Due Date: ${invoice.dueDate}", 40f, y, normalPaint)
         y += 30f
 
         // -------------------------
         // Client Info
         // -------------------------
-        canvas.drawText("Bill To:", 40f, y, titlePaint)
+        canvas.drawText("Bill To:", 40f, y, subTitleColor)
         y += 20f
 
         canvas.drawText(invoice.clientName.orEmpty(), 40f, y, normalPaint)
