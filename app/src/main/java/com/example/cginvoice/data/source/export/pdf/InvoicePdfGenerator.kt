@@ -53,8 +53,8 @@ class InvoicePdfGenerator {
         // Header
         // -------------------------
         val boxPadding = 8f
-        val boxLeft = 40f
-        val boxTop = y
+        val boxLeft = 0f
+        val boxTop = 0f
 
         val boxPaint = Paint().apply {
             color = 0xFF7B1FA2.toInt() // Violet
