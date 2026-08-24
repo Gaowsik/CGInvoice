@@ -32,7 +32,7 @@ fun MainScreen(navController: NavHostController) {
     val topBarConfig = remember { mutableStateOf(TopBarConfig(title = "CG Invoice")) }
     val showFab = remember(currentRoute) {
         currentRoute == NavItem.Client.path ||
-                currentRoute == NavItem.Invoice.path ||
+                currentRoute == NavItem.InvoiceList.path ||
                 currentRoute == NavItem.Items.path
     }
 
@@ -40,7 +40,7 @@ fun MainScreen(navController: NavHostController) {
         // Default config
         topBarConfig.value = when (currentRoute) {
             NavItem.Client.path -> TopBarConfig("Clients")
-            NavItem.Invoice.path -> TopBarConfig("Invoices")
+           "invoice_list"-> TopBarConfig("Invoices")
             NavItem.Items.path -> TopBarConfig("Items")
             NavItem.User.path -> TopBarConfig("User")
             else -> TopBarConfig("CG Invoice")
@@ -84,7 +84,7 @@ fun handleFabClick(currentRoute: String?, navController: NavHostController) {
             navController.navigate(NavItem.AddClient.createRoute(-1)) // Navigate to Add Client screen
         }
 
-        NavItem.Invoice.path -> {
+        NavItem.InvoiceList.path -> {
             navController.navigate(NavItem.AddInvoice.createRoute(-1)) // Replace with your actual invoice creation route
         }
 

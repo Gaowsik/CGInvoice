@@ -14,7 +14,7 @@ import com.example.cginvoice.presentaion.nav.NavItem
 
 @Composable
 fun BottomNavigationBar(navController: NavHostController) {
-    val navItems = listOf(NavItem.Invoice, NavItem.Client, NavItem.Items,NavItem.User)
+    val navItems = listOf(NavItem.InvoiceList, NavItem.Client, NavItem.Items, NavItem.User)
     var selectedItem by rememberSaveable { mutableStateOf(0) }
 
     NavigationBar {
@@ -28,7 +28,10 @@ fun BottomNavigationBar(navController: NavHostController) {
                     selectedItem = index
                     navController.navigate(item.path) {
                         navController.graph.startDestinationRoute?.let { route ->
-                            popUpTo(route) { saveState = true }
+                            popUpTo(route) {
+                                saveState = true
+                                inclusive = true
+                            }
                         }
                         launchSingleTop = true
                         restoreState = true

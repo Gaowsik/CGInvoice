@@ -6,10 +6,18 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Search
 import com.example.cginvoice.utills.NavTitle
+import kotlin.toString
 
 sealed class NavItem {
     object Invoice :
         Item(path = NavPath.INVOICE.toString(), title = NavTitle.INVOICE, icon = Icons.Default.Home)
+
+    object InvoiceList :
+        Item(
+            path = NavPath.INVOICE_LIST.toString(),
+            title = NavTitle.INVOICE,  // Reuse same title
+            icon = Icons.Default.Home  // Reuse same icon
+        )
 
     object Client :
         Item(

@@ -9,6 +9,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import androidx.navigation.navigation
 import com.example.cginvoice.domain.model.invoice.Payment
 import com.example.cginvoice.presentaion.TopBarConfig
 import com.example.cginvoice.presentaion.client.AddClientScreen
@@ -28,11 +29,30 @@ fun NavigationScreens(
     topBarConfig: (TopBarConfig) -> Unit
 ) {
     NavHost(navController, startDestination = NavItem.Invoice.path) {
-        composable(NavItem.Invoice.path) {
-            InvoiceListScreen(
-                navController = navController,
-                paddingValues = paddingValues
-            )
+
+        navigation(
+            route = NavItem.Invoice.path,
+            startDestination = NavItem.InvoiceList.path
+        ) {
+            composable(NavItem.InvoiceList.path) {
+                InvoiceListScreen(
+                    navController = navController,
+                    paddingValues = paddingValues
+                )
+            }
+
+            composable(
+                route = NavItem.AddInvoice.path + "/{invoiceId}",
+                arguments = listOf(navArgument("invoiceId") { type = NavType.IntType })
+            ) { backStackEntry ->
+                val invoiceId = backStackEntry.arguments?.getInt("invoiceId") ?: -1
+                AddInvoiceScreen(
+                    navController,
+                    paddingValues = paddingValues,
+                    invoiceId = invoiceId,
+                    topBarConfig = topBarConfig
+                )
+            }
         }
         composable(
             route = NavItem.Client.path + "/{isSelected}",
@@ -142,21 +162,6 @@ fun NavigationScreens(
 
         }
 
-
-
-
-        composable(
-            route = NavItem.AddInvoice.path + "/{invoiceId}",
-            arguments = listOf(navArgument("invoiceId") { type = NavType.IntType })
-        ) { backStackEntry ->
-            val invoiceId = backStackEntry.arguments?.getInt("invoiceId") ?: -1
-            AddInvoiceScreen(
-                navController,
-                paddingValues = paddingValues,
-                invoiceId = invoiceId,
-                topBarConfig = topBarConfig
-            )
-        }
 
     }
 }
